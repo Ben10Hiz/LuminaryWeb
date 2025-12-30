@@ -1,0 +1,1594 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Luminary Network — Intelligent Infrastructure for Complex Operations</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --gold-primary: #D4A853;
+            --gold-light: #E8C97A;
+            --gold-dark: #B8923E;
+            --gold-glow: rgba(212, 168, 83, 0.4);
+            --bg-deep: #0A0B0F;
+            --bg-card: rgba(15, 17, 23, 0.85);
+            --text-primary: #E8E6E3;
+            --text-secondary: rgba(232, 230, 227, 0.7);
+            --text-muted: rgba(232, 230, 227, 0.5);
+            --border-subtle: rgba(212, 168, 83, 0.15);
+        }
+
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Cormorant Garamond', Georgia, serif;
+            background: var(--bg-deep);
+            color: var(--text-primary);
+            line-height: 1.7;
+            font-size: 18px;
+            overflow-x: hidden;
+        }
+
+        /* Background Effects */
+        .bg-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+            background: var(--bg-deep);
+        }
+
+        .network-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.5;
+            pointer-events: none;
+        }
+
+        /* Hide particle canvas in hero area - let the image shine */
+        .hero ~ .network-canvas,
+        .hero .network-canvas {
+            display: none;
+        }
+
+        /* Typography */
+        h1, h2, h3, h4 {
+            font-family: 'Cinzel', serif;
+            font-weight: 500;
+            letter-spacing: 0.04em;
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            padding: 1.5rem 4rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            background: linear-gradient(to bottom, rgba(10, 11, 15, 0.98), rgba(10, 11, 15, 0.8), transparent);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            text-decoration: none;
+        }
+
+        .logo-icon {
+            width: 44px;
+            height: 44px;
+            object-fit: contain;
+        }
+
+        .logo-text {
+            font-family: 'Cinzel', serif;
+            font-size: 1.1rem;
+            font-weight: 600;
+            letter-spacing: 0.2em;
+            color: var(--gold-primary);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2.5rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.85rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            transition: color 0.3s ease;
+            position: relative;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 1px;
+            background: var(--gold-primary);
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--gold-primary);
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+            padding: 8rem 4rem 4rem;
+            text-align: center;
+            position: relative;
+            background: 
+                linear-gradient(to bottom, 
+                    rgba(10, 11, 15, 0.7) 0%,
+                    rgba(10, 11, 15, 0.4) 30%,
+                    rgba(10, 11, 15, 0.2) 50%,
+                    rgba(10, 11, 15, 0.4) 80%,
+                    rgba(10, 11, 15, 0.95) 100%
+                ),
+                url('luminary-banner.png');
+            background-size: cover;
+            background-position: center 60%;
+            background-repeat: no-repeat;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 900px;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.5rem 1.25rem;
+            border: 1px solid rgba(212, 168, 83, 0.4);
+            border-radius: 100px;
+            font-size: 0.75rem;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--gold-primary);
+            margin-bottom: 2.5rem;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeUp 0.8s ease 0.2s forwards;
+            background: rgba(10, 11, 15, 0.5);
+            backdrop-filter: blur(10px);
+        }
+
+        .hero-badge::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            background: var(--gold-primary);
+            border-radius: 50%;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.2); }
+        }
+
+        .hero h1 {
+            font-size: clamp(3rem, 8vw, 5.5rem);
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, var(--gold-light) 0%, var(--gold-primary) 50%, var(--gold-dark) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeUp 1s ease 0.4s forwards;
+            filter: drop-shadow(0 4px 20px rgba(0,0,0,0.5));
+        }
+
+        .hero-tagline {
+            font-size: clamp(1.2rem, 2.5vw, 1.5rem);
+            color: var(--text-primary);
+            max-width: 600px;
+            margin: 0 auto 1rem;
+            font-weight: 300;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeUp 0.8s ease 0.6s forwards;
+            text-shadow: 0 2px 20px rgba(0,0,0,0.8);
+        }
+
+        .hero-statement {
+            font-size: clamp(1.4rem, 3vw, 1.8rem);
+            color: var(--text-primary);
+            max-width: 700px;
+            margin: 0 auto 3rem;
+            font-weight: 400;
+            font-style: italic;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeUp 0.8s ease 0.7s forwards;
+            text-shadow: 0 2px 20px rgba(0,0,0,0.8);
+        }
+
+        .hero-cta {
+            display: flex;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+            justify-content: center;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeUp 0.8s ease 0.9s forwards;
+        }
+
+        @keyframes fadeUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Buttons */
+        .btn {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1rem;
+            padding: 1rem 2.25rem;
+            border: none;
+            cursor: pointer;
+            text-decoration: none;
+            letter-spacing: 0.08em;
+            transition: all 0.4s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--gold-primary), var(--gold-dark));
+            color: var(--bg-deep);
+            font-weight: 600;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .btn-primary:hover::before {
+            left: 100%;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 40px var(--gold-glow);
+        }
+
+        .btn-secondary {
+            background: rgba(10, 11, 15, 0.6);
+            color: var(--text-primary);
+            border: 1px solid rgba(212, 168, 83, 0.4);
+            backdrop-filter: blur(10px);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--gold-primary);
+            color: var(--gold-primary);
+            background: rgba(212, 168, 83, 0.15);
+        }
+
+        .scroll-indicator {
+            position: absolute;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.75rem;
+            opacity: 0;
+            animation: fadeUp 0.8s ease 1.2s forwards;
+            z-index: 2;
+        }
+
+        .scroll-indicator span {
+            font-size: 0.7rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--gold-primary);
+            text-shadow: 0 2px 10px rgba(0,0,0,0.8);
+        }
+
+        .scroll-line {
+            width: 1px;
+            height: 50px;
+            background: linear-gradient(to bottom, var(--gold-primary), transparent);
+            animation: scrollPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes scrollPulse {
+            0%, 100% { transform: scaleY(1); opacity: 1; }
+            50% { transform: scaleY(0.6); opacity: 0.5; }
+        }
+
+        /* Sections */
+        section {
+            padding: 7rem 4rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .section-label {
+            display: inline-block;
+            font-size: 0.75rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--gold-primary);
+            margin-bottom: 1.5rem;
+            position: relative;
+            padding: 0 2rem;
+        }
+
+        .section-label::before,
+        .section-label::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            width: 30px;
+            height: 1px;
+            background: var(--border-subtle);
+        }
+
+        .section-label::before { left: -20px; }
+        .section-label::after { right: -20px; }
+
+        .section-title {
+            font-size: clamp(2rem, 4vw, 3rem);
+            color: var(--text-primary);
+            margin-bottom: 1.5rem;
+        }
+
+        .section-desc {
+            font-size: 1.15rem;
+            color: var(--text-secondary);
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.9;
+        }
+
+        /* Problem Section */
+        .problem-section {
+            padding: 6rem 4rem;
+            position: relative;
+        }
+
+        .problem-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 10%;
+            right: 10%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--border-subtle), transparent);
+        }
+
+        .problem-intro {
+            max-width: 900px;
+            margin: 0 auto 4rem;
+            text-align: center;
+        }
+
+        .problem-intro p {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            line-height: 1.9;
+            margin-bottom: 1.5rem;
+        }
+
+        .problem-intro p:last-child {
+            margin-bottom: 0;
+        }
+
+        /* Rhetorical Questions */
+        .questions-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2rem;
+            max-width: 1100px;
+            margin: 0 auto 4rem;
+        }
+
+        .question-card {
+            padding: 2rem 2.5rem;
+            border-left: 2px solid var(--gold-primary);
+            background: linear-gradient(135deg, rgba(212, 168, 83, 0.03), transparent);
+            transition: all 0.4s ease;
+        }
+
+        .question-card:hover {
+            background: linear-gradient(135deg, rgba(212, 168, 83, 0.08), transparent);
+            border-left-color: var(--gold-light);
+        }
+
+        .question-card p {
+            font-size: 1.15rem;
+            color: var(--text-secondary);
+            line-height: 1.8;
+            font-style: italic;
+        }
+
+        .problem-statement {
+            max-width: 900px;
+            margin: 0 auto;
+            text-align: center;
+            padding: 3rem;
+            border: 1px solid var(--border-subtle);
+            background: var(--bg-card);
+        }
+
+        .problem-statement p {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            line-height: 1.9;
+            margin-bottom: 1.5rem;
+        }
+
+        .problem-statement p:last-child {
+            margin-bottom: 0;
+        }
+
+        .highlight {
+            color: var(--gold-primary);
+        }
+
+        .emphasis {
+            font-style: italic;
+            color: var(--text-primary);
+        }
+
+        /* Manifesto Section */
+        .manifesto {
+            text-align: center;
+            padding: 5rem 4rem;
+            position: relative;
+        }
+
+        .manifesto::before,
+        .manifesto::after {
+            content: '';
+            position: absolute;
+            left: 20%;
+            right: 20%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--gold-primary), transparent);
+        }
+
+        .manifesto::before { top: 0; }
+        .manifesto::after { bottom: 0; }
+
+        .manifesto-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .manifesto-content p {
+            font-size: 1.3rem;
+            color: var(--text-primary);
+            line-height: 2;
+            margin-bottom: 1.5rem;
+        }
+
+        .manifesto-content p:last-child {
+            margin-bottom: 0;
+        }
+
+        .manifesto-content strong {
+            color: var(--gold-primary);
+            font-weight: 600;
+        }
+
+        /* Platforms Grid */
+        .platforms-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2.5rem;
+            margin-top: 3rem;
+        }
+
+        .platform-card {
+            padding: 2.5rem;
+            border: 1px solid var(--border-subtle);
+            background: var(--bg-card);
+            backdrop-filter: blur(20px);
+            transition: all 0.5s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .platform-card::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--gold-primary), var(--gold-light));
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.5s ease;
+        }
+
+        .platform-card:hover {
+            transform: translateY(-8px);
+            border-color: rgba(212, 168, 83, 0.3);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4), 0 0 40px var(--gold-glow);
+        }
+
+        .platform-card:hover::after {
+            transform: scaleX(1);
+        }
+
+        .platform-header {
+            display: flex;
+            align-items: flex-start;
+            gap: 1.25rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .platform-icon {
+            width: 52px;
+            height: 52px;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid var(--border-subtle);
+            background: rgba(212, 168, 83, 0.05);
+        }
+
+        .platform-icon svg {
+            width: 26px;
+            height: 26px;
+            color: var(--gold-primary);
+        }
+
+        .platform-titles {
+            flex: 1;
+        }
+
+        .platform-name {
+            font-family: 'Cinzel', serif;
+            font-size: 1.35rem;
+            color: var(--gold-light);
+            margin-bottom: 0.25rem;
+            letter-spacing: 0.05em;
+        }
+
+        .platform-type {
+            font-size: 0.75rem;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+        }
+
+        .platform-desc {
+            color: var(--text-secondary);
+            font-size: 1.05rem;
+            line-height: 1.85;
+            margin-bottom: 1.25rem;
+        }
+
+        .platform-audience {
+            padding: 1rem 1.25rem;
+            background: rgba(212, 168, 83, 0.05);
+            border-left: 2px solid var(--gold-primary);
+            margin-bottom: 1.5rem;
+        }
+
+        .platform-audience p {
+            font-size: 0.95rem;
+            color: var(--text-primary);
+            line-height: 1.7;
+            margin: 0;
+        }
+
+        .platform-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--gold-primary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            letter-spacing: 0.1em;
+            transition: gap 0.3s ease;
+        }
+
+        .platform-link:hover {
+            gap: 0.75rem;
+        }
+
+        .platform-link svg {
+            width: 16px;
+            height: 16px;
+            transition: transform 0.3s ease;
+        }
+
+        .platform-link:hover svg {
+            transform: translateX(4px);
+        }
+
+        /* Architecture Section */
+        .architecture-section {
+            position: relative;
+        }
+
+        .architecture-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+            margin-top: 3rem;
+        }
+
+        .architecture-visual {
+            position: relative;
+            height: 450px;
+        }
+
+        .network-diagram {
+            width: 100%;
+            height: 100%;
+        }
+
+        .architecture-text h3 {
+            font-size: 1.6rem;
+            color: var(--text-primary);
+            margin-bottom: 1.5rem;
+        }
+
+        .architecture-text p {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            line-height: 1.9;
+            margin-bottom: 1.5rem;
+        }
+
+        .architecture-text p:last-child {
+            margin-bottom: 0;
+        }
+
+        .architecture-callout {
+            padding: 1.5rem 2rem;
+            border-left: 3px solid var(--gold-primary);
+            background: rgba(212, 168, 83, 0.05);
+            margin-top: 2rem;
+        }
+
+        .architecture-callout p {
+            font-size: 1.15rem;
+            font-style: italic;
+            color: var(--text-primary);
+            margin: 0;
+        }
+
+        /* Future Section */
+        .future-section {
+            position: relative;
+        }
+
+        .future-intro {
+            max-width: 900px;
+            margin: 0 auto 4rem;
+            text-align: center;
+        }
+
+        .future-intro p {
+            font-size: 1.15rem;
+            color: var(--text-secondary);
+            line-height: 1.9;
+        }
+
+        .future-domains {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .domain-card {
+            display: grid;
+            grid-template-columns: 200px 1fr;
+            gap: 2.5rem;
+            padding: 2.5rem;
+            border: 1px solid var(--border-subtle);
+            background: var(--bg-card);
+            transition: all 0.4s ease;
+        }
+
+        .domain-card:hover {
+            border-color: rgba(212, 168, 83, 0.3);
+            background: rgba(212, 168, 83, 0.03);
+        }
+
+        .domain-title {
+            font-family: 'Cinzel', serif;
+            font-size: 1.2rem;
+            color: var(--gold-primary);
+            letter-spacing: 0.05em;
+        }
+
+        .domain-content p {
+            color: var(--text-secondary);
+            font-size: 1.05rem;
+            line-height: 1.85;
+            margin-bottom: 1rem;
+        }
+
+        .domain-content p:last-child {
+            margin-bottom: 0;
+        }
+
+        .domain-question {
+            font-style: italic;
+            color: var(--text-primary);
+        }
+
+        .future-outcome {
+            max-width: 900px;
+            margin: 4rem auto 0;
+            text-align: center;
+            padding: 2.5rem;
+            border: 1px solid var(--gold-primary);
+            background: linear-gradient(135deg, rgba(212, 168, 83, 0.08), transparent);
+        }
+
+        .future-outcome p {
+            font-size: 1.15rem;
+            color: var(--text-primary);
+            line-height: 1.9;
+        }
+
+        /* Vision Section */
+        .vision-section {
+            text-align: center;
+            padding: 8rem 4rem;
+            position: relative;
+        }
+
+        .vision-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 10%;
+            right: 10%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--border-subtle), transparent);
+        }
+
+        .vision-statement {
+            font-size: 1.5rem;
+            color: var(--text-primary);
+            max-width: 800px;
+            margin: 0 auto 3rem;
+            line-height: 1.8;
+        }
+
+        .vision-list {
+            max-width: 700px;
+            margin: 0 auto 3rem;
+            text-align: left;
+        }
+
+        .vision-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            padding: 1rem 0;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .vision-item:last-child {
+            border-bottom: none;
+        }
+
+        .vision-item::before {
+            content: '';
+            width: 8px;
+            height: 8px;
+            background: var(--gold-primary);
+            border-radius: 50%;
+            margin-top: 0.5rem;
+            flex-shrink: 0;
+        }
+
+        .vision-item p {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            line-height: 1.8;
+        }
+
+        .vision-closing {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .vision-closing p {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            line-height: 1.9;
+            margin-bottom: 1rem;
+        }
+
+        .vision-closing p:last-child {
+            margin-bottom: 0;
+        }
+
+        /* CTA Section */
+        .cta-section {
+            text-align: center;
+            padding: 6rem 4rem 8rem;
+        }
+
+        .cta-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 1rem;
+        }
+
+        /* Footer */
+        footer {
+            padding: 4rem;
+            border-top: 1px solid var(--border-subtle);
+            text-align: center;
+        }
+
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer-logo span {
+            font-family: 'Cinzel', serif;
+            font-size: 1rem;
+            letter-spacing: 0.2em;
+            color: var(--gold-primary);
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 2.5rem;
+            list-style: none;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .footer-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.85rem;
+            letter-spacing: 0.1em;
+            transition: color 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: var(--gold-primary);
+        }
+
+        .copyright {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            nav {
+                padding: 1.5rem 2rem;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            section {
+                padding: 5rem 2rem;
+            }
+
+            .questions-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .platforms-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .architecture-content {
+                grid-template-columns: 1fr;
+                gap: 3rem;
+            }
+
+            .architecture-visual {
+                order: -1;
+                height: 350px;
+            }
+
+            .domain-card {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .hero {
+                padding: 7rem 1.5rem 4rem;
+                background-position: center 70%;
+            }
+
+            .hero-cta {
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .cta-buttons {
+                flex-direction: column;
+            }
+
+            .question-card {
+                padding: 1.5rem;
+            }
+
+            .manifesto {
+                padding: 4rem 2rem;
+            }
+        }
+
+        /* Animation classes */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s ease;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .fade-in-delay-1 { transition-delay: 0.1s; }
+        .fade-in-delay-2 { transition-delay: 0.2s; }
+        .fade-in-delay-3 { transition-delay: 0.3s; }
+        .fade-in-delay-4 { transition-delay: 0.4s; }
+    </style>
+</head>
+<body>
+    <div class="bg-canvas"></div>
+    <canvas class="network-canvas" id="networkCanvas"></canvas>
+
+    <nav>
+        <a href="#" class="logo">
+            <img src="luminary-logo.svg" alt="Luminary" class="logo-icon">
+            <span class="logo-text">LUMINARY</span>
+        </a>
+        <ul class="nav-links">
+            <li><a href="#platforms">Platforms</a></li>
+            <li><a href="#architecture">Architecture</a></li>
+            <li><a href="#future">Future</a></li>
+            <li><a href="#vision">Vision</a></li>
+            <li><a href="#contact">Contact</a></li>
+        </ul>
+    </nav>
+
+    <section class="hero">
+        <div class="hero-content">
+            <div class="hero-badge">
+                <span>Intelligent Infrastructure</span>
+            </div>
+            <h1>LUMINARY NETWORK</h1>
+            <p class="hero-tagline">
+                Intelligent Infrastructure for Complex Operations
+            </p>
+            <p class="hero-statement">
+                We're building a new layer of technology.
+            </p>
+            <div class="hero-cta">
+                <a href="#platforms" class="btn btn-primary">Explore the Network</a>
+                <a href="#contact" class="btn btn-secondary">Get in Touch</a>
+            </div>
+        </div>
+        <div class="scroll-indicator">
+            <span>Discover</span>
+            <div class="scroll-line"></div>
+        </div>
+    </section>
+
+    <section class="problem-section" id="problem">
+        <div class="problem-intro fade-in">
+            <p>
+                The world runs on legacy systems. <span class="highlight">Fragmented. Technical. Isolated. Static.</span> Built for a different era, maintained by inertia. These systems persist because replacing them is impossible—so intelligence has to sit above them.
+            </p>
+            <p>
+                But the cost is real. And it's not paid by institutions with armies of lawyers and consultants. It's paid by everyone else.
+            </p>
+        </div>
+
+        <div class="questions-grid">
+            <div class="question-card fade-in">
+                <p>Why do you need lawyers to understand how public policy impacts your business?</p>
+            </div>
+            <div class="question-card fade-in fade-in-delay-1">
+                <p>Why do we let political parties choose our candidates and effectively run our elections?</p>
+            </div>
+            <div class="question-card fade-in fade-in-delay-2">
+                <p>Why does emergency healthcare depend on your insurance company to relay information from hundreds of miles away before approving the medicine you need to live?</p>
+            </div>
+            <div class="question-card fade-in fade-in-delay-3">
+                <p>Why does education have nothing to do with real-world occupations or the expectations of adult life?</p>
+            </div>
+            <div class="question-card fade-in fade-in-delay-4">
+                <p>Why do you have to know three coding languages just to create a decent website?</p>
+            </div>
+        </div>
+
+        <div class="problem-statement fade-in">
+            <p>
+                These aren't edge cases. They're the default. And they compound across every sector that runs civilization.
+            </p>
+            <p>
+                <span class="highlight">Luminary is building something radically different:</span> an intelligence layer built over the top of all of it. We don't replace legacy systems—we transcend them. We take the technical, the non-intuitive, the isolated, and the static, and we transform it into something <span class="emphasis">coherent, learnable, and alive.</span>
+            </p>
+        </div>
+    </section>
+
+    <div class="manifesto fade-in">
+        <div class="manifesto-content">
+            <p>
+                This is not technology to make the rich richer. This is not another tool for institutions that already have every advantage.
+            </p>
+            <p>
+                <strong>This is infrastructure to eliminate the tedious, the non-communicative, the overly technical barriers</strong> that keep brilliant people from building things that matter.
+            </p>
+            <p>
+                We're here to cultivate innovative, creative minds—and give them the tools to actually create.
+            </p>
+        </div>
+    </div>
+
+    <section id="platforms">
+        <div class="section-header">
+            <span class="section-label">What We're Building</span>
+            <h2 class="section-title">The Network Today</h2>
+            <p class="section-desc">
+                Four platforms. Built for people first—then scaled for institutions that share our values.
+            </p>
+        </div>
+        <div class="platforms-grid">
+            <div class="platform-card fade-in">
+                <div class="platform-header">
+                    <div class="platform-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <path d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+                        </svg>
+                    </div>
+                    <div class="platform-titles">
+                        <h3 class="platform-name">Blue Haven</h3>
+                        <p class="platform-type">Intelligence-Backed Marketplace</p>
+                    </div>
+                </div>
+                <p class="platform-desc">
+                    Most online marketplaces are noise machines. Thousands of sellers, millions of products, no curation, no trust, no consistency. Customers drown in choice. Small sellers drown in fragmentation and fees. Blue Haven inverts that. Intelligence handles the chaos—verifying sellers, optimizing pricing, ensuring quality, managing logistics. What emerges is a curated marketplace with trust built in. <span class="highlight">Costco's standards with Amazon's reach</span>, powered by intelligence that works for sellers and buyers alike.
+                </p>
+                <div class="platform-audience">
+                    <p><strong>Built for:</strong> Independent sellers who deserve a fair marketplace. Consumers who want quality without the noise. Small businesses ready to scale without getting crushed by platform fees.</p>
+                </div>
+                <a href="#" class="platform-link">
+                    Explore Blue Haven
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M5 12h14M12 5l7 7-7 7"/>
+                    </svg>
+                </a>
+            </div>
+
+            <div class="platform-card fade-in fade-in-delay-1">
+                <div class="platform-header">
+                    <div class="platform-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <path d="M3 3v18h18M7 14l4-4 4 4 5-5"/>
+                        </svg>
+                    </div>
+                    <div class="platform-titles">
+                        <h3 class="platform-name">Vestiq</h3>
+                        <p class="platform-type">Wealth Intelligence System</p>
+                    </div>
+                </div>
+                <p class="platform-desc">
+                    Capital allocation has always been fragmented—disconnected data feeds, isolated research, outdated frameworks. The wealthy have teams to synthesize it. Everyone else makes high-stakes decisions on incomplete information. Vestiq unifies it. See markets clearly, detect catalysts before they move, record what worked, refine strategy with every cycle. <span class="highlight">Wealth management becomes learnable and durable</span>—not a privilege reserved for those who can afford advisory teams.
+                </p>
+                <div class="platform-audience">
+                    <p><strong>Built for:</strong> Individual investors who deserve institutional-grade insight. First-generation wealth builders. Anyone who believes financial intelligence shouldn't be gated by net worth.</p>
+                </div>
+                <a href="#" class="platform-link">
+                    Explore Vestiq
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M5 12h14M12 5l7 7-7 7"/>
+                    </svg>
+                </a>
+            </div>
+
+            <div class="platform-card fade-in fade-in-delay-2">
+                <div class="platform-header">
+                    <div class="platform-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+                        </svg>
+                    </div>
+                    <div class="platform-titles">
+                        <h3 class="platform-name">Legal Insights</h3>
+                        <p class="platform-type">Policy Intelligence</p>
+                    </div>
+                </div>
+                <p class="platform-desc">
+                    Why should understanding policy require a legal team? Legislation and regulatory movement scatter across government databases, legal filings, and news feeds—all disconnected, all noisy. You get surprised by rules you never saw coming. Legal Insights transforms that chaos into signal. <span class="highlight">See what changed, what's coming, and what it means—before anyone else.</span> Generate the documents you need. Understand compliance without billable hours.
+                </p>
+                <div class="platform-audience">
+                    <p><strong>Built for:</strong> Entrepreneurs who shouldn't need a lawyer to start a company. Small business owners navigating regulations alone. Students learning how policy actually works. Anyone who believes legal clarity is a right, not a luxury.</p>
+                </div>
+                <a href="#" class="platform-link">
+                    Explore Legal Insights
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M5 12h14M12 5l7 7-7 7"/>
+                    </svg>
+                </a>
+            </div>
+
+            <div class="platform-card fade-in fade-in-delay-3">
+                <div class="platform-header">
+                    <div class="platform-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <path d="M8 3H5a2 2 0 00-2 2v3m18 0V5a2 2 0 00-2-2h-3m0 18h3a2 2 0 002-2v-3M3 16v3a2 2 0 002 2h3"/>
+                            <path d="M12 8v8m-4-4h8"/>
+                        </svg>
+                    </div>
+                    <div class="platform-titles">
+                        <h3 class="platform-name">Luminary Studios</h3>
+                        <p class="platform-type">Development Infrastructure</p>
+                    </div>
+                </div>
+                <p class="platform-desc">
+                    Why should creating a website require mastering three coding languages and a stack of frameworks? Modern development is fractured—tools, abstractions, and environments that don't align. Studios changes that. <span class="highlight">If you can read, you can build.</span> Code, data, agents, memory, deployment—unified in one coherent workspace. Not no-code. Coherent-code. Intelligence-assisted creation where builders stay focused on what matters.
+                </p>
+                <div class="platform-audience">
+                    <p><strong>Built for:</strong> Creators with ideas and no engineering degree. Students who want to build, not just study. Anyone who's been told "you need to learn to code first" when what they really need is to ship something that works.</p>
+                </div>
+                <a href="#" class="platform-link">
+                    Explore Studios
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M5 12h14M12 5l7 7-7 7"/>
+                    </svg>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <section id="architecture" class="architecture-section">
+        <div class="section-header">
+            <span class="section-label">How It Works</span>
+            <h2 class="section-title">The Architecture of Intelligence</h2>
+        </div>
+        <div class="architecture-content">
+            <div class="architecture-visual fade-in">
+                <svg class="network-diagram" viewBox="0 0 400 400" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <filter id="glow">
+                            <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+                            <feMerge>
+                                <feMergeNode in="coloredBlur"/>
+                                <feMergeNode in="SourceGraphic"/>
+                            </feMerge>
+                        </filter>
+                        <linearGradient id="lineGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                            <stop offset="0%" stop-color="rgba(212, 168, 83, 0.1)"/>
+                            <stop offset="50%" stop-color="rgba(212, 168, 83, 0.6)"/>
+                            <stop offset="100%" stop-color="rgba(212, 168, 83, 0.1)"/>
+                        </linearGradient>
+                    </defs>
+                    
+                    <!-- Connection lines -->
+                    <g stroke="url(#lineGrad)" stroke-width="1" filter="url(#glow)">
+                        <line x1="200" y1="200" x2="100" y2="70"/>
+                        <line x1="200" y1="200" x2="300" y2="70"/>
+                        <line x1="200" y1="200" x2="70" y2="200"/>
+                        <line x1="200" y1="200" x2="330" y2="200"/>
+                        <line x1="200" y1="200" x2="100" y2="330"/>
+                        <line x1="200" y1="200" x2="300" y2="330"/>
+                        <!-- Cross connections -->
+                        <line x1="100" y1="70" x2="300" y2="70" stroke-dasharray="4,4"/>
+                        <line x1="70" y1="200" x2="100" y2="330" stroke-dasharray="4,4"/>
+                        <line x1="330" y1="200" x2="300" y2="330" stroke-dasharray="4,4"/>
+                        <line x1="100" y1="70" x2="70" y2="200" stroke-dasharray="4,4"/>
+                        <line x1="300" y1="70" x2="330" y2="200" stroke-dasharray="4,4"/>
+                        <line x1="100" y1="330" x2="300" y2="330" stroke-dasharray="4,4"/>
+                    </g>
+                    
+                    <!-- Center node (Luminary) -->
+                    <circle cx="200" cy="200" r="40" fill="rgba(212, 168, 83, 0.1)" stroke="#D4A853" stroke-width="2" filter="url(#glow)"/>
+                    <circle cx="200" cy="200" r="24" fill="#D4A853" opacity="0.9"/>
+                    <text x="200" y="205" fill="#0A0B0F" font-family="Cinzel" font-size="8" text-anchor="middle" font-weight="600">NETWORK</text>
+                    
+                    <!-- Blue Haven - Ecommerce -->
+                    <circle cx="100" cy="70" r="32" fill="rgba(212, 168, 83, 0.08)" stroke="#D4A853" stroke-width="1.5"/>
+                    <text x="100" y="65" fill="#E8C97A" font-family="Cinzel" font-size="8" text-anchor="middle" font-weight="500">BLUE HAVEN</text>
+                    <text x="100" y="78" fill="rgba(232, 230, 227, 0.6)" font-family="Cormorant Garamond" font-size="8" text-anchor="middle" font-style="italic">Ecommerce</text>
+                    
+                    <!-- Vestiq - Financial Markets -->
+                    <circle cx="300" cy="70" r="32" fill="rgba(212, 168, 83, 0.08)" stroke="#D4A853" stroke-width="1.5"/>
+                    <text x="300" y="65" fill="#E8C97A" font-family="Cinzel" font-size="8" text-anchor="middle" font-weight="500">VESTIQ</text>
+                    <text x="300" y="78" fill="rgba(232, 230, 227, 0.6)" font-family="Cormorant Garamond" font-size="8" text-anchor="middle" font-style="italic">Financial Markets</text>
+                    
+                    <!-- Legal Insights - Public Policy -->
+                    <circle cx="70" cy="200" r="32" fill="rgba(212, 168, 83, 0.08)" stroke="#D4A853" stroke-width="1.5"/>
+                    <text x="70" y="195" fill="#E8C97A" font-family="Cinzel" font-size="7" text-anchor="middle" font-weight="500">LEGAL INSIGHTS</text>
+                    <text x="70" y="208" fill="rgba(232, 230, 227, 0.6)" font-family="Cormorant Garamond" font-size="8" text-anchor="middle" font-style="italic">Public Policy</text>
+                    
+                    <!-- Studios - Development -->
+                    <circle cx="330" cy="200" r="32" fill="rgba(212, 168, 83, 0.08)" stroke="#D4A853" stroke-width="1.5"/>
+                    <text x="330" y="195" fill="#E8C97A" font-family="Cinzel" font-size="8" text-anchor="middle" font-weight="500">STUDIOS</text>
+                    <text x="330" y="208" fill="rgba(232, 230, 227, 0.6)" font-family="Cormorant Garamond" font-size="8" text-anchor="middle" font-style="italic">Development</text>
+                    
+                    <!-- Future nodes (dimmed) -->
+                    <circle cx="100" cy="330" r="26" fill="rgba(212, 168, 83, 0.04)" stroke="rgba(212, 168, 83, 0.3)" stroke-width="1" stroke-dasharray="3,3"/>
+                    <text x="100" y="327" fill="rgba(232, 198, 122, 0.4)" font-family="Cinzel" font-size="7" text-anchor="middle">COMING</text>
+                    <text x="100" y="340" fill="rgba(232, 230, 227, 0.3)" font-family="Cormorant Garamond" font-size="7" text-anchor="middle" font-style="italic">Healthcare</text>
+                    
+                    <circle cx="300" cy="330" r="26" fill="rgba(212, 168, 83, 0.04)" stroke="rgba(212, 168, 83, 0.3)" stroke-width="1" stroke-dasharray="3,3"/>
+                    <text x="300" y="327" fill="rgba(232, 198, 122, 0.4)" font-family="Cinzel" font-size="7" text-anchor="middle">COMING</text>
+                    <text x="300" y="340" fill="rgba(232, 230, 227, 0.3)" font-family="Cormorant Garamond" font-size="7" text-anchor="middle" font-style="italic">Government</text>
+                    
+                    <!-- Data flow particles -->
+                    <circle r="3" fill="#E8C97A" opacity="0.9">
+                        <animateMotion dur="2.5s" repeatCount="indefinite" path="M200,200 L100,70"/>
+                    </circle>
+                    <circle r="3" fill="#E8C97A" opacity="0.9">
+                        <animateMotion dur="3s" repeatCount="indefinite" path="M200,200 L300,70"/>
+                    </circle>
+                    <circle r="2.5" fill="#E8C97A" opacity="0.8">
+                        <animateMotion dur="3.5s" repeatCount="indefinite" path="M100,70 L300,70"/>
+                    </circle>
+                    <circle r="2.5" fill="#E8C97A" opacity="0.8">
+                        <animateMotion dur="4s" repeatCount="indefinite" path="M70,200 L330,200"/>
+                    </circle>
+                </svg>
+            </div>
+            <div class="architecture-text fade-in">
+                <h3>Intelligence That Flows</h3>
+                <p>
+                    These aren't isolated products. They're nodes in a single intelligence network layered over fragmented legacy systems.
+                </p>
+                <p>
+                    As Blue Haven learns what builds trust in marketplace commerce, those patterns inform how Vestiq approaches capital allocation. As Legal Insights detects regulatory movement in healthcare policy, that intelligence flows into our healthcare systems. As Studios discovers what coherent development feels like, every other platform becomes easier to build on.
+                </p>
+                <p>
+                    <span class="highlight">Intelligence doesn't stay trapped in one domain</span>—it flows through the network, making every platform sharper. And everyone benefits.
+                </p>
+                <div class="architecture-callout">
+                    <p>We're not replacing what exists. We're building a thinking layer on top of it—one that works for people, not just institutions.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="future" class="future-section">
+        <div class="section-header">
+            <span class="section-label">The Long Arc</span>
+            <h2 class="section-title">Building Infrastructure for the Next Century</h2>
+        </div>
+        <div class="future-intro fade-in">
+            <p>
+                We're moving into healthcare, government, education, intellectual property, and industrial operations—sectors where technical complexity and isolated systems have created barriers that hurt ordinary people the most.
+            </p>
+        </div>
+        <div class="future-domains">
+            <div class="domain-card fade-in">
+                <h4 class="domain-title">Healthcare</h4>
+                <div class="domain-content">
+                    <p>
+                        More than policy and billing. Medical research coordination, insurance data, longitudinal patient records, and clinical workflows.
+                    </p>
+                    <p class="domain-question">
+                        Why should emergency care depend on an insurance company relaying information from far away before approving the medicine you need to live?
+                    </p>
+                    <p>
+                        Intelligence-backed systems can coordinate information in real time, across actors, with context—so patients get care, not paperwork.
+                    </p>
+                </div>
+            </div>
+            <div class="domain-card fade-in">
+                <h4 class="domain-title">Government & Civic</h4>
+                <div class="domain-content">
+                    <p>
+                        Beyond tracking legislation. Policy choices today shape commerce, healthcare, education, and capital markets tomorrow.
+                    </p>
+                    <p class="domain-question">
+                        Why do we let political parties choose our candidates and effectively run our elections, instead of giving people clear, direct insight into choices, trade-offs, and consequences?
+                    </p>
+                    <p>
+                        We are building systems that make governance more transparent, navigable, and accountable—so citizens can actually participate.
+                    </p>
+                </div>
+            </div>
+            <div class="domain-card fade-in">
+                <h4 class="domain-title">Education</h4>
+                <div class="domain-content">
+                    <p>
+                        Learning, skills, careers, alumni networks, and institutional memory.
+                    </p>
+                    <p class="domain-question">
+                        Why should education have nothing to do with real-world occupations or the expectations of adult life?
+                    </p>
+                    <p>
+                        We are building intelligence layers that connect what people learn to how they live and work—across decades. Education that actually prepares you for life.
+                    </p>
+                </div>
+            </div>
+            <div class="domain-card fade-in">
+                <h4 class="domain-title">Intellectual Property</h4>
+                <div class="domain-content">
+                    <p>
+                        Not filing problems—signal and strategy problems. Patents, filings, prior art, innovation patterns, and ownership structures.
+                    </p>
+                    <p>
+                        We are building systems so inventors and creators can protect their work with clarity and long-term leverage—without expensive IP attorneys.
+                    </p>
+                </div>
+            </div>
+            <div class="domain-card fade-in">
+                <h4 class="domain-title">Industrial Operations</h4>
+                <div class="domain-content">
+                    <p>
+                        Oceans of fragmented sensor data. Brittle supply chains.
+                    </p>
+                    <p>
+                        Intelligence-backed systems make those operations adaptive, predictive, and coordinated—creating jobs and opportunities instead of opacity.
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="future-outcome fade-in">
+            <p>
+                Each new domain adds pattern, memory, and intelligence to the network. Each new platform strengthens every other one. <span class="highlight">The outcome is not a collection of tools—it is infrastructure for how people actually get things done.</span>
+            </p>
+        </div>
+    </section>
+
+    <section id="vision" class="vision-section">
+        <div class="section-header">
+            <span class="section-label">Our Vision</span>
+            <h2 class="section-title">Infrastructure for the Rest of Us</h2>
+        </div>
+        <p class="vision-statement fade-in">
+            Luminary is building intelligence infrastructure that removes barriers instead of creating them.
+        </p>
+        <div class="vision-list fade-in">
+            <div class="vision-item">
+                <p><strong>For builders</strong> who want to create without mastering layers of abstraction or spending years learning to code.</p>
+            </div>
+            <div class="vision-item">
+                <p><strong>For entrepreneurs</strong> who shouldn't need a lawyer to start a company or understand compliance.</p>
+            </div>
+            <div class="vision-item">
+                <p><strong>For students</strong> who deserve to learn how the world actually works, not just how to pass tests.</p>
+            </div>
+            <div class="vision-item">
+                <p><strong>For individuals</strong> with ideas but no legacy leverage, no family connections, no institutional backing.</p>
+            </div>
+            <div class="vision-item">
+                <p><strong>For institutions</strong> that share our values—the ones that want coherence without gatekeeping.</p>
+            </div>
+        </div>
+        <div class="vision-closing fade-in">
+            <p>
+                When there is a coherent thinking layer above the chaos, creation becomes a matter of imagination—not permission, not technical gatekeeping, not who you know.
+            </p>
+            <p>
+                <span class="highlight">Innovation scales. The barriers that keep brilliant ideas from becoming reality dissolve.</span>
+            </p>
+            <p>
+                That's what we're building. That's why we're here.
+            </p>
+        </div>
+    </section>
+
+    <section id="contact" class="cta-section">
+        <div class="cta-buttons">
+            <a href="#" class="btn btn-secondary">Explore the Network</a>
+            <a href="#" class="btn btn-secondary">Blue Haven</a>
+            <a href="#" class="btn btn-secondary">Vestiq</a>
+            <a href="#" class="btn btn-secondary">Legal Insights</a>
+            <a href="#" class="btn btn-secondary">Luminary Studios</a>
+            <a href="#" class="btn btn-primary">Contact</a>
+        </div>
+    </section>
+
+    <footer>
+        <div class="footer-logo">
+            <img src="luminary-logo.svg" alt="Luminary" style="width: 40px; height: 40px; object-fit: contain;">
+            <span>LUMINARY AI TECHNOLOGIES</span>
+        </div>
+        <ul class="footer-links">
+            <li><a href="#">Network</a></li>
+            <li><a href="#">Blue Haven</a></li>
+            <li><a href="#">Vestiq</a></li>
+            <li><a href="#">Legal Insights</a></li>
+            <li><a href="#">Studios</a></li>
+            <li><a href="#">Contact</a></li>
+        </ul>
+        <p class="copyright">© 2025 Luminary AI Technologies Inc. All rights reserved.</p>
+    </footer>
+
+    <script>
+        // Network background animation
+        const canvas = document.getElementById('networkCanvas');
+        const ctx = canvas.getContext('2d');
+
+        function resize() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        resize();
+        window.addEventListener('resize', resize);
+
+        const particles = [];
+        const particleCount = 50;
+        const connectionDistance = 150;
+        const goldColor = { r: 212, g: 168, b: 83 };
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.vx = (Math.random() - 0.5) * 0.4;
+                this.vy = (Math.random() - 0.5) * 0.4;
+                this.radius = Math.random() * 2 + 1;
+            }
+
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+
+                if (this.x < 0 || this.x > canvas.width) this.vx *= -1;
+                if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
+            }
+
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(${goldColor.r}, ${goldColor.g}, ${goldColor.b}, 0.5)`;
+                ctx.fill();
+            }
+        }
+
+        for (let i = 0; i < particleCount; i++) {
+            particles.push(new Particle());
+        }
+
+        function connectParticles() {
+            for (let i = 0; i < particles.length; i++) {
+                for (let j = i + 1; j < particles.length; j++) {
+                    const dx = particles[i].x - particles[j].x;
+                    const dy = particles[i].y - particles[j].y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+
+                    if (distance < connectionDistance) {
+                        const opacity = (1 - distance / connectionDistance) * 0.25;
+                        ctx.beginPath();
+                        ctx.moveTo(particles[i].x, particles[i].y);
+                        ctx.lineTo(particles[j].x, particles[j].y);
+                        ctx.strokeStyle = `rgba(${goldColor.r}, ${goldColor.g}, ${goldColor.b}, ${opacity})`;
+                        ctx.lineWidth = 0.5;
+                        ctx.stroke();
+                    }
+                }
+            }
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            particles.forEach(particle => {
+                particle.update();
+                particle.draw();
+            });
+
+            connectParticles();
+            requestAnimationFrame(animate);
+        }
+
+        animate();
+
+        // Scroll animations
+        const fadeElements = document.querySelectorAll('.fade-in');
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        });
+
+        fadeElements.forEach(el => observer.observe(el));
+
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
