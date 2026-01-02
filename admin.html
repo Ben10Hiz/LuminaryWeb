@@ -1625,6 +1625,199 @@
         .image-lightbox-close { position: absolute; top: 20px; right: 20px; width: 40px; height: 40px; background: rgba(255,255,255,0.1); border: none; border-radius: 50%; color: white; font-size: 24px; cursor: pointer; }
 
         /* ===== PRESS RELEASE MODAL ===== */
+        
+        /* Email Management in Details */
+        .email-edit-container {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+        .email-input {
+            flex: 1;
+            padding: 0.5rem 0.75rem;
+            background: var(--bg-input);
+            border: 1px solid var(--border-subtle);
+            border-radius: 6px;
+            color: var(--text-primary);
+            font-size: 0.85rem;
+            font-family: inherit;
+        }
+        .email-input:focus {
+            outline: none;
+            border-color: var(--gold-primary);
+        }
+        .email-save-btn {
+            width: 36px;
+            height: 36px;
+            background: var(--gold-primary);
+            border: none;
+            border-radius: 6px;
+            color: var(--bg-deep);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+        .email-save-btn:hover {
+            transform: scale(1.05);
+        }
+        .email-save-btn svg {
+            width: 18px;
+            height: 18px;
+        }
+        .email-link {
+            color: var(--gold-primary);
+            font-size: 0.8rem;
+            text-decoration: none;
+        }
+        .email-link:hover {
+            text-decoration: underline;
+        }
+        .no-email-warning {
+            color: var(--warning);
+            font-size: 0.75rem;
+            font-style: italic;
+        }
+        
+        /* AI Drafting Card */
+        .ai-drafting-card {
+            background: linear-gradient(135deg, rgba(212, 168, 83, 0.05) 0%, var(--bg-card) 100%);
+            border: 1px solid rgba(212, 168, 83, 0.2);
+        }
+        .ai-drafting-card .detail-card-title {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--gold-primary);
+        }
+        .ai-description {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-bottom: 1rem;
+        }
+        .ai-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.5rem;
+        }
+        .ai-btn {
+            padding: 0.6rem 0.75rem;
+            background: var(--bg-deep);
+            border: 1px solid var(--border-subtle);
+            border-radius: 6px;
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+            font-family: inherit;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.4rem;
+            transition: all 0.2s ease;
+        }
+        .ai-btn:hover {
+            border-color: var(--gold-primary);
+            color: var(--gold-primary);
+            background: rgba(212, 168, 83, 0.1);
+        }
+        .ai-btn.research {
+            grid-column: span 2;
+            background: rgba(96, 165, 250, 0.1);
+            border-color: rgba(96, 165, 250, 0.3);
+            color: var(--info);
+        }
+        .ai-btn.research:hover {
+            border-color: var(--info);
+            background: rgba(96, 165, 250, 0.2);
+        }
+        .ai-btn svg {
+            width: 14px;
+            height: 14px;
+        }
+        .ai-btn.loading {
+            pointer-events: none;
+            opacity: 0.7;
+        }
+        .ai-btn.loading::after {
+            content: '';
+            width: 14px;
+            height: 14px;
+            border: 2px solid transparent;
+            border-top-color: currentColor;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+        
+        /* AI Output */
+        .ai-output {
+            margin-top: 1rem;
+            background: var(--bg-deep);
+            border-radius: 8px;
+            border: 1px solid var(--border-subtle);
+            overflow: hidden;
+        }
+        .ai-output-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.5rem 0.75rem;
+            background: rgba(212, 168, 83, 0.1);
+            border-bottom: 1px solid var(--border-subtle);
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--gold-primary);
+        }
+        .ai-output-actions {
+            display: flex;
+            gap: 0.25rem;
+        }
+        .ai-output-actions button {
+            width: 28px;
+            height: 28px;
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+        }
+        .ai-output-actions button:hover {
+            color: var(--gold-primary);
+            background: rgba(212, 168, 83, 0.1);
+        }
+        .ai-output-actions button svg {
+            width: 14px;
+            height: 14px;
+        }
+        .ai-output-content {
+            padding: 0.75rem;
+            font-size: 0.85rem;
+            line-height: 1.6;
+            color: var(--text-primary);
+            max-height: 300px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+        }
+        .ai-output-content h4 {
+            color: var(--gold-primary);
+            margin: 0.75rem 0 0.5rem;
+            font-size: 0.9rem;
+        }
+        .ai-output-content h4:first-child {
+            margin-top: 0;
+        }
+        .ai-output-content ul {
+            margin: 0.5rem 0;
+            padding-left: 1.25rem;
+        }
+        .ai-output-content li {
+            margin-bottom: 0.25rem;
+        }
+        
         .press-modal {
             position: fixed;
             top: 0;
@@ -2628,6 +2821,143 @@ media@luminary-tech.ai"></textarea>
             loadPartnerData();
         }
 
+        // ===== EMAIL MANAGEMENT =====
+        
+        async function savePartnerEmail() {
+            const emailInput = document.getElementById('partnerEmailInput');
+            const email = emailInput.value.trim();
+            
+            if (!email) {
+                alert('Please enter an email address');
+                return;
+            }
+            
+            if (!email.includes('@') || !email.includes('.')) {
+                alert('Please enter a valid email address');
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/admin/partners/${currentPartner._id}/email`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email })
+                });
+                
+                if (response.ok) {
+                    currentPartner.email = email;
+                    showSaveIndicator('saved');
+                    // Refresh the details view
+                    currentTab = 'details';
+                    renderCurrentTab();
+                } else {
+                    const result = await response.json();
+                    alert('Failed to save email: ' + result.error);
+                }
+            } catch (error) {
+                console.error('Save email error:', error);
+                alert('Error saving email');
+            }
+        }
+        
+        // ===== AI DRAFTING WITH PERPLEXITY =====
+        
+        let currentAIOutput = '';
+        
+        async function generateAIDraft(type) {
+            if (!currentPartner) return;
+            
+            const btn = event.target.closest('.ai-btn');
+            btn.classList.add('loading');
+            
+            const outputContainer = document.getElementById('aiOutputContainer');
+            const outputContent = document.getElementById('aiOutputContent');
+            
+            outputContainer.style.display = 'block';
+            outputContent.innerHTML = '<div style="text-align: center; padding: 2rem; color: var(--text-muted);"><div class="press-sending-spinner" style="margin: 0 auto 1rem;"></div>Generating with AI...</div>';
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/admin/ai/draft`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        type,
+                        partner: {
+                            name: currentPartner.recipientName,
+                            organization: currentPartner.organizationName || currentPartner.universityName,
+                            type: currentPartner.recipientType,
+                            category: currentPartner.category || currentPartner.focus,
+                            location: currentPartner.location || currentPartner.state,
+                            status: currentPartner.status,
+                            messageHistory: (currentPartner.messages || []).slice(-3).map(m => ({
+                                from: m.fromLuminary ? 'Luminary' : 'Partner',
+                                content: m.content?.substring(0, 200)
+                            }))
+                        }
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok && result.content) {
+                    currentAIOutput = result.content;
+                    outputContent.innerHTML = formatAIOutput(result.content);
+                } else {
+                    outputContent.innerHTML = `<div style="color: var(--error);">Error: ${result.error || 'Failed to generate content'}</div>`;
+                }
+            } catch (error) {
+                console.error('AI draft error:', error);
+                outputContent.innerHTML = `<div style="color: var(--error);">Error connecting to AI service</div>`;
+            } finally {
+                btn.classList.remove('loading');
+            }
+        }
+        
+        function formatAIOutput(content) {
+            // Convert markdown-style formatting to HTML
+            let html = escapeHtml(content);
+            
+            // Headers
+            html = html.replace(/^### (.+)$/gm, '<h4>$1</h4>');
+            html = html.replace(/^## (.+)$/gm, '<h4>$1</h4>');
+            
+            // Bold
+            html = html.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+            
+            // Line breaks
+            html = html.replace(/\n\n/g, '</p><p>');
+            html = '<p>' + html + '</p>';
+            
+            return html;
+        }
+        
+        function copyAIOutput() {
+            navigator.clipboard.writeText(currentAIOutput).then(() => {
+                showSaveIndicator('saved');
+            });
+        }
+        
+        function useAIOutput() {
+            const composeEditor = document.getElementById('composeEditor');
+            if (composeEditor) {
+                composeEditor.value = currentAIOutput;
+                composeEditor.focus();
+                // Switch to conversation tab
+                document.querySelector('.detail-tab[data-tab="conversation"]')?.click();
+            }
+        }
+        
+        function closeAIOutput() {
+            document.getElementById('aiOutputContainer').style.display = 'none';
+            currentAIOutput = '';
+        }
+        
         // ===== PRESS RELEASE FUNCTIONALITY =====
         
         let pressRecipients = [];
@@ -4009,11 +4339,12 @@ Please let us know if you have other questions.
         function renderDetails(container) {
             const p = currentPartner;
             const isMedia = p.recipientType === 'media';
+            const partnerEmail = p.email || p.contactEmail || '';
 
             container.innerHTML = `
                 <div class="details-grid">
                     <div class="detail-card">
-                        <div class="detail-card-title">Information</div>
+                        <div class="detail-card-title">Contact Information</div>
                         <div class="detail-row">
                             <span class="detail-row-label">Access Key</span>
                             <span class="detail-row-value"><span class="key-display">${p.id}</span></span>
@@ -4022,19 +4353,42 @@ Please let us know if you have other questions.
                             <span class="detail-row-label">Type</span>
                             <span class="detail-row-value">${isMedia ? 'Media' : 'University'}</span>
                         </div>
+                        <div class="detail-row email-row">
+                            <span class="detail-row-label">Email</span>
+                            <span class="detail-row-value">
+                                <div class="email-edit-container">
+                                    <input type="email" 
+                                           id="partnerEmailInput" 
+                                           class="email-input" 
+                                           value="${escapeHtml(partnerEmail)}" 
+                                           placeholder="Enter email address">
+                                    <button class="email-save-btn" onclick="savePartnerEmail()" title="Save email">
+                                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                                    </button>
+                                </div>
+                                ${partnerEmail ? 
+                                    `<a href="mailto:${escapeHtml(partnerEmail)}" class="email-link">${escapeHtml(partnerEmail)}</a>` : 
+                                    `<span class="no-email-warning">No email - cannot send press releases</span>`
+                                }
+                            </span>
+                        </div>
                         ${!isMedia ? `
                             <div class="detail-row">
                                 <span class="detail-row-label">University</span>
-                                <span class="detail-row-value">${p.universityName || 'N/A'}</span>
+                                <span class="detail-row-value">${escapeHtml(p.universityName || 'N/A')}</span>
                             </div>
                             <div class="detail-row">
                                 <span class="detail-row-label">State</span>
-                                <span class="detail-row-value">${p.state || 'N/A'}</span>
+                                <span class="detail-row-value">${escapeHtml(p.state || 'N/A')}</span>
                             </div>
                         ` : `
                             <div class="detail-row">
-                                <span class="detail-row-label">Focus</span>
-                                <span class="detail-row-value">${p.focus || 'N/A'}</span>
+                                <span class="detail-row-label">Category</span>
+                                <span class="detail-row-value">${escapeHtml(p.category || p.focus || 'N/A')}</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-row-label">Location</span>
+                                <span class="detail-row-value">${escapeHtml(p.location || 'N/A')}</span>
                             </div>
                         `}
                         <div class="detail-row">
@@ -4042,8 +4396,52 @@ Please let us know if you have other questions.
                             <span class="detail-row-value"><span class="status-indicator ${p.status}">${p.status}</span></span>
                         </div>
                     </div>
+                    
+                    <div class="detail-card ai-drafting-card">
+                        <div class="detail-card-title">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="18" height="18"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>
+                            AI Assistant
+                        </div>
+                        <p class="ai-description">Generate personalized outreach using AI research</p>
+                        <div class="ai-actions">
+                            <button class="ai-btn" onclick="generateAIDraft('pitch')">
+                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                                Draft Pitch
+                            </button>
+                            <button class="ai-btn" onclick="generateAIDraft('followup')">
+                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"/></svg>
+                                Follow-up
+                            </button>
+                            <button class="ai-btn" onclick="generateAIDraft('contract')">
+                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                                Partnership Agreement
+                            </button>
+                            <button class="ai-btn research" onclick="generateAIDraft('research')">
+                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                                Research Partner
+                            </button>
+                        </div>
+                        <div class="ai-output" id="aiOutputContainer" style="display: none;">
+                            <div class="ai-output-header">
+                                <span>AI Generated Content</span>
+                                <div class="ai-output-actions">
+                                    <button onclick="copyAIOutput()" title="Copy to clipboard">
+                                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                                    </button>
+                                    <button onclick="useAIOutput()" title="Use in message">
+                                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>
+                                    </button>
+                                    <button onclick="closeAIOutput()" title="Close">
+                                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="ai-output-content" id="aiOutputContent"></div>
+                        </div>
+                    </div>
+                    
                     <div class="detail-card">
-                        <div class="detail-card-title">Colors</div>
+                        <div class="detail-card-title">Branding</div>
                         <div class="detail-row">
                             <span class="detail-row-label">Primary</span>
                             <span class="detail-row-value"><div class="color-swatch-row"><div class="color-swatch" style="background:${p.colors?.primary || '#003366'}"></div>${p.colors?.primary || '#003366'}</div></span>
@@ -4053,15 +4451,16 @@ Please let us know if you have other questions.
                             <span class="detail-row-value"><div class="color-swatch-row"><div class="color-swatch" style="background:${p.colors?.secondary || '#D4A853'}"></div>${p.colors?.secondary || '#D4A853'}</div></span>
                         </div>
                     </div>
+                    
                     <div class="detail-card">
-                        <div class="detail-card-title">Contacts</div>
+                        <div class="detail-card-title">Additional Contacts</div>
                         ${(p.contacts || []).map(c => `
                             <div class="contact-card">
-                                <div class="contact-name">${c.name || 'N/A'}</div>
-                                <div class="contact-title">${c.title || c.type || ''}</div>
-                                <div class="contact-email">${c.email || ''}</div>
+                                <div class="contact-name">${escapeHtml(c.name || 'N/A')}</div>
+                                <div class="contact-title">${escapeHtml(c.title || c.type || '')}</div>
+                                <div class="contact-email">${escapeHtml(c.email || '')}</div>
                             </div>
-                        `).join('') || '<p style="color:var(--text-muted)">No contacts</p>'}
+                        `).join('') || '<p style="color:var(--text-muted)">No additional contacts</p>'}
                     </div>
                 </div>
             `;
