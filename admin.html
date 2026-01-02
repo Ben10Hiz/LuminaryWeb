@@ -1,0 +1,1672 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Luminary | Communications Command Center</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-deep: #0a0a0f;
+            --bg-card: #12121a;
+            --bg-elevated: #1a1a24;
+            --bg-input: #0d0d12;
+            --gold-primary: #D4A853;
+            --gold-light: #E8C875;
+            --gold-dark: #B8923F;
+            --text-primary: #F5F5F5;
+            --text-secondary: #A0A0A0;
+            --text-muted: #666;
+            --border-subtle: rgba(212, 168, 83, 0.2);
+            --border-strong: rgba(212, 168, 83, 0.4);
+            --success: #4ade80;
+            --success-bg: rgba(74, 222, 128, 0.1);
+            --warning: #fbbf24;
+            --warning-bg: rgba(251, 191, 36, 0.1);
+            --error: #f87171;
+            --error-bg: rgba(248, 113, 113, 0.1);
+            --info: #60a5fa;
+            --info-bg: rgba(96, 165, 250, 0.1);
+            --media-accent: #FF6B35;
+            --media-bg: rgba(255, 107, 53, 0.1);
+            --university-accent: #D4A853;
+            --university-bg: rgba(212, 168, 83, 0.1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: 'Cormorant Garamond', Georgia, serif; 
+            background: var(--bg-deep); 
+            color: var(--text-primary); 
+            min-height: 100vh;
+            font-size: 16px;
+            line-height: 1.6;
+        }
+
+        /* Three-Panel Layout */
+        .app-container { 
+            display: grid; 
+            grid-template-columns: 260px 380px 1fr; 
+            height: 100vh; 
+            overflow: hidden;
+        }
+
+        /* Left Sidebar - Navigation */
+        .sidebar {
+            background: var(--bg-card);
+            border-right: 1px solid var(--border-subtle);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .sidebar-header {
+            padding: 1.25rem;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .logo-row {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            margin-bottom: 0.35rem;
+        }
+
+        .logo-row svg { height: 24px; width: 24px; color: var(--gold-primary); }
+
+        .logo-text {
+            font-family: 'Cinzel', serif;
+            font-size: 1rem;
+            color: var(--gold-primary);
+            letter-spacing: 0.15em;
+        }
+
+        .logo-subtitle {
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .sidebar-nav { flex: 1; overflow-y: auto; padding: 0.75rem 0; }
+
+        .nav-group { margin-bottom: 1.25rem; }
+
+        .nav-group-title {
+            font-family: 'Cinzel', serif;
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            color: var(--text-muted);
+            padding: 0.5rem 1.25rem;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 0.65rem;
+            padding: 0.6rem 1.25rem;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.15s ease;
+            border-left: 2px solid transparent;
+            font-size: 0.9rem;
+        }
+
+        .nav-item:hover { background: rgba(255,255,255,0.02); color: var(--text-primary); }
+        .nav-item.active { 
+            background: var(--university-bg); 
+            color: var(--gold-primary); 
+            border-left-color: var(--gold-primary); 
+        }
+
+        .nav-item svg { width: 18px; height: 18px; opacity: 0.7; flex-shrink: 0; }
+        .nav-item.active svg { opacity: 1; }
+
+        .nav-badge {
+            margin-left: auto;
+            background: var(--gold-primary);
+            color: var(--bg-deep);
+            font-size: 0.65rem;
+            font-weight: 600;
+            padding: 0.1rem 0.45rem;
+            border-radius: 8px;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .nav-badge.media { background: var(--media-accent); }
+        .nav-badge.success { background: var(--success); }
+        .nav-badge.warning { background: var(--warning); color: var(--bg-deep); }
+        .nav-badge.unread { background: var(--error); animation: pulse 2s infinite; }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+
+        /* Middle Panel - Partner List */
+        .list-panel {
+            background: var(--bg-deep);
+            border-right: 1px solid var(--border-subtle);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .list-header {
+            padding: 1rem 1.25rem;
+            border-bottom: 1px solid var(--border-subtle);
+            background: var(--bg-card);
+        }
+
+        .list-header-title {
+            font-family: 'Cinzel', serif;
+            font-size: 0.95rem;
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .list-search {
+            display: flex;
+            align-items: center;
+            background: var(--bg-input);
+            border: 1px solid var(--border-subtle);
+            border-radius: 6px;
+            padding: 0.5rem 0.75rem;
+            gap: 0.5rem;
+        }
+
+        .list-search svg { width: 16px; height: 16px; color: var(--text-muted); flex-shrink: 0; }
+
+        .list-search input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: var(--text-primary);
+            font-family: inherit;
+            font-size: 0.85rem;
+            outline: none;
+        }
+
+        .list-search input::placeholder { color: var(--text-muted); }
+
+        .list-filters {
+            display: flex;
+            gap: 0.5rem;
+            padding: 0.75rem 1.25rem;
+            border-bottom: 1px solid rgba(255,255,255,0.03);
+            background: var(--bg-card);
+        }
+
+        .filter-chip {
+            padding: 0.35rem 0.7rem;
+            background: transparent;
+            border: 1px solid var(--border-subtle);
+            border-radius: 4px;
+            color: var(--text-secondary);
+            font-family: inherit;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .filter-chip:hover { border-color: var(--gold-primary); color: var(--text-primary); }
+        .filter-chip.active { background: var(--gold-primary); border-color: var(--gold-primary); color: var(--bg-deep); }
+
+        .list-content { flex: 1; overflow-y: auto; }
+
+        .partner-item {
+            padding: 1rem 1.25rem;
+            border-bottom: 1px solid rgba(255,255,255,0.03);
+            cursor: pointer;
+            transition: background 0.15s ease;
+            position: relative;
+        }
+
+        .partner-item:hover { background: rgba(255,255,255,0.02); }
+        .partner-item.active { background: var(--university-bg); }
+        .partner-item.unread::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: var(--gold-primary);
+        }
+
+        .partner-item-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            margin-bottom: 0.35rem;
+        }
+
+        .partner-item-name {
+            font-weight: 500;
+            font-size: 0.9rem;
+            color: var(--text-primary);
+            line-height: 1.3;
+        }
+
+        .partner-item-time {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            white-space: nowrap;
+            margin-left: 0.5rem;
+        }
+
+        .partner-item-meta {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.35rem;
+        }
+
+        .type-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        .type-dot.university { background: var(--gold-primary); }
+        .type-dot.media { background: var(--media-accent); }
+
+        .partner-item-detail {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        .partner-item-preview {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .status-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            font-size: 0.7rem;
+            padding: 0.15rem 0.4rem;
+            border-radius: 3px;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+        }
+
+        .status-indicator.pending { background: var(--warning-bg); color: var(--warning); }
+        .status-indicator.viewed { background: var(--info-bg); color: var(--info); }
+        .status-indicator.responded { background: var(--success-bg); color: var(--success); }
+        .status-indicator.accepted { background: var(--success-bg); color: var(--success); }
+
+        /* Right Panel - Conversation Detail */
+        .detail-panel {
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            background: var(--bg-deep);
+        }
+
+        .detail-header {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid var(--border-subtle);
+            background: var(--bg-card);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .detail-header-info h2 {
+            font-family: 'Cinzel', serif;
+            font-size: 1.1rem;
+            color: var(--text-primary);
+            margin-bottom: 0.2rem;
+        }
+
+        .detail-header-info p {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        .detail-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .action-btn {
+            padding: 0.45rem 0.85rem;
+            background: transparent;
+            border: 1px solid var(--border-subtle);
+            border-radius: 4px;
+            color: var(--text-secondary);
+            font-family: inherit;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+        }
+
+        .action-btn:hover { border-color: var(--gold-primary); color: var(--gold-primary); }
+        .action-btn svg { width: 14px; height: 14px; }
+
+        .action-btn.primary {
+            background: var(--gold-primary);
+            border-color: var(--gold-primary);
+            color: var(--bg-deep);
+        }
+
+        .action-btn.primary:hover { background: var(--gold-light); }
+
+        .action-btn.danger { border-color: var(--error); color: var(--error); }
+        .action-btn.danger:hover { background: var(--error-bg); }
+
+        /* Tabs */
+        .detail-tabs {
+            display: flex;
+            border-bottom: 1px solid var(--border-subtle);
+            background: var(--bg-card);
+        }
+
+        .detail-tab {
+            padding: 0.85rem 1.25rem;
+            background: transparent;
+            border: none;
+            border-bottom: 2px solid transparent;
+            color: var(--text-secondary);
+            font-family: 'Cinzel', serif;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .detail-tab:hover { color: var(--text-primary); }
+        .detail-tab.active { color: var(--gold-primary); border-bottom-color: var(--gold-primary); }
+
+        /* Conversation Thread */
+        .detail-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1.5rem;
+        }
+
+        .message-thread { display: flex; flex-direction: column; gap: 1.25rem; }
+
+        .message-item {
+            max-width: 85%;
+            position: relative;
+        }
+
+        .message-item.outbound { align-self: flex-start; }
+        .message-item.inbound { align-self: flex-end; }
+
+        .message-bubble {
+            padding: 1rem 1.25rem;
+            border-radius: 12px;
+            position: relative;
+        }
+
+        .message-item.outbound .message-bubble {
+            background: linear-gradient(135deg, rgba(212, 168, 83, 0.15) 0%, rgba(212, 168, 83, 0.05) 100%);
+            border: 1px solid rgba(212, 168, 83, 0.25);
+            border-radius: 12px 12px 12px 2px;
+        }
+
+        .message-item.inbound .message-bubble {
+            background: var(--bg-elevated);
+            border: 1px solid var(--border-subtle);
+            border-radius: 12px 12px 2px 12px;
+        }
+
+        .message-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+        }
+
+        .message-sender {
+            font-family: 'Cinzel', serif;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--gold-primary);
+        }
+
+        .message-item.inbound .message-sender { color: var(--text-secondary); }
+
+        .message-time {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+        }
+
+        .message-body {
+            font-size: 0.9rem;
+            line-height: 1.7;
+            color: var(--text-primary);
+        }
+
+        .message-body p { margin-bottom: 0.75rem; }
+        .message-body p:last-child { margin-bottom: 0; }
+        .message-body strong { color: var(--gold-light); }
+
+        .message-actions {
+            margin-top: 0.75rem;
+            padding-top: 0.75rem;
+            border-top: 1px solid rgba(255,255,255,0.05);
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .message-action-btn {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            background: none;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .message-action-btn:hover { color: var(--gold-primary); }
+        .message-action-btn svg { width: 12px; height: 12px; }
+
+        /* Compose Area */
+        .compose-area {
+            padding: 1.25rem 1.5rem;
+            border-top: 1px solid var(--border-subtle);
+            background: var(--bg-card);
+        }
+
+        .compose-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 0.75rem;
+        }
+
+        .compose-label {
+            font-family: 'Cinzel', serif;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-secondary);
+        }
+
+        .compose-tools {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .tool-btn {
+            width: 28px;
+            height: 28px;
+            background: var(--bg-elevated);
+            border: 1px solid var(--border-subtle);
+            border-radius: 4px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.15s ease;
+        }
+
+        .tool-btn:hover { border-color: var(--gold-primary); color: var(--gold-primary); }
+        .tool-btn svg { width: 14px; height: 14px; }
+
+        .compose-editor {
+            width: 100%;
+            min-height: 100px;
+            max-height: 200px;
+            padding: 0.85rem 1rem;
+            background: var(--bg-input);
+            border: 1px solid var(--border-subtle);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-family: inherit;
+            font-size: 0.9rem;
+            line-height: 1.6;
+            resize: vertical;
+            transition: border-color 0.15s ease;
+        }
+
+        .compose-editor:focus { outline: none; border-color: var(--gold-primary); }
+        .compose-editor::placeholder { color: var(--text-muted); }
+
+        .compose-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 0.85rem;
+        }
+
+        .compose-info {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .compose-buttons { display: flex; gap: 0.5rem; }
+
+        /* Empty State */
+        .empty-state {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .empty-state svg { width: 48px; height: 48px; margin-bottom: 1rem; opacity: 0.3; }
+        .empty-state h3 { font-family: 'Cinzel', serif; font-size: 1rem; margin-bottom: 0.5rem; color: var(--text-secondary); }
+        .empty-state p { font-size: 0.85rem; }
+
+        /* Template Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.7);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.2s ease;
+        }
+
+        .modal-overlay.active { opacity: 1; visibility: visible; }
+
+        .modal {
+            width: 90%;
+            max-width: 700px;
+            max-height: 85vh;
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            transform: translateY(20px);
+            transition: transform 0.2s ease;
+        }
+
+        .modal-overlay.active .modal { transform: translateY(0); }
+
+        .modal-header {
+            padding: 1.25rem 1.5rem;
+            border-bottom: 1px solid var(--border-subtle);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .modal-header h3 {
+            font-family: 'Cinzel', serif;
+            font-size: 1.1rem;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 1.5rem;
+            cursor: pointer;
+            line-height: 1;
+        }
+
+        .modal-close:hover { color: var(--text-primary); }
+
+        .modal-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1.5rem;
+        }
+
+        .modal-footer {
+            padding: 1rem 1.5rem;
+            border-top: 1px solid var(--border-subtle);
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.75rem;
+        }
+
+        /* Form Elements */
+        .form-group { margin-bottom: 1.25rem; }
+
+        .form-label {
+            display: block;
+            font-family: 'Cinzel', serif;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+        }
+
+        .form-input, .form-select, .form-textarea {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            background: var(--bg-input);
+            border: 1px solid var(--border-subtle);
+            border-radius: 6px;
+            color: var(--text-primary);
+            font-family: inherit;
+            font-size: 0.9rem;
+            transition: border-color 0.15s ease;
+        }
+
+        .form-input:focus, .form-select:focus, .form-textarea:focus {
+            outline: none;
+            border-color: var(--gold-primary);
+        }
+
+        .form-textarea {
+            min-height: 250px;
+            line-height: 1.7;
+            resize: vertical;
+        }
+
+        .form-help {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 0.35rem;
+        }
+
+        .variable-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 0.75rem;
+        }
+
+        .variable-chip {
+            padding: 0.3rem 0.6rem;
+            background: var(--bg-elevated);
+            border: 1px solid var(--border-subtle);
+            border-radius: 4px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            color: var(--gold-primary);
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .variable-chip:hover { background: var(--university-bg); border-color: var(--gold-primary); }
+
+        /* Partner Details Panel */
+        .details-grid {
+            display: grid;
+            gap: 1.25rem;
+        }
+
+        .detail-card {
+            background: var(--bg-elevated);
+            border: 1px solid var(--border-subtle);
+            border-radius: 8px;
+            padding: 1.25rem;
+        }
+
+        .detail-card-title {
+            font-family: 'Cinzel', serif;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--gold-primary);
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            padding: 0.5rem 0;
+            font-size: 0.85rem;
+        }
+
+        .detail-row-label { color: var(--text-secondary); }
+        .detail-row-value { color: var(--text-primary); text-align: right; max-width: 60%; }
+
+        .key-display {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            background: var(--bg-input);
+            padding: 0.3rem 0.5rem;
+            border-radius: 4px;
+            letter-spacing: 0.05em;
+        }
+
+        .color-swatch-row {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .color-swatch {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .contact-card {
+            padding: 0.75rem 0;
+            border-bottom: 1px solid rgba(255,255,255,0.03);
+        }
+
+        .contact-card:last-child { border-bottom: none; padding-bottom: 0; }
+
+        .contact-name { font-weight: 500; margin-bottom: 0.2rem; }
+        .contact-title { font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 0.15rem; }
+        .contact-email { font-size: 0.8rem; color: var(--gold-primary); }
+
+        /* Scrollbars */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--border-subtle); border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--gold-dark); }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .app-container { grid-template-columns: 220px 320px 1fr; }
+        }
+
+        @media (max-width: 900px) {
+            .app-container { grid-template-columns: 1fr; }
+            .sidebar, .list-panel { display: none; }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Left Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo-row">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+                    <span class="logo-text">LUMINARY</span>
+                </div>
+                <div class="logo-subtitle">Communications Center</div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <div class="nav-group">
+                    <div class="nav-group-title">Inbox</div>
+                    <div class="nav-item active" data-view="all">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"/></svg>
+                        All Partners
+                        <span class="nav-badge" id="navAllCount">438</span>
+                    </div>
+                    <div class="nav-item" data-view="unread">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+                        Needs Response
+                        <span class="nav-badge unread" id="navUnreadCount">0</span>
+                    </div>
+                </div>
+
+                <div class="nav-group">
+                    <div class="nav-group-title">Partners</div>
+                    <div class="nav-item" data-view="universities">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+                        Universities
+                        <span class="nav-badge" id="navUniCount">171</span>
+                    </div>
+                    <div class="nav-item" data-view="media">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"/></svg>
+                        Media Outlets
+                        <span class="nav-badge media" id="navMediaCount">267</span>
+                    </div>
+                </div>
+
+                <div class="nav-group">
+                    <div class="nav-group-title">Status</div>
+                    <div class="nav-item" data-view="responded">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                        Responded
+                        <span class="nav-badge success" id="navRespondedCount">0</span>
+                    </div>
+                    <div class="nav-item" data-view="pending">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                        Pending
+                        <span class="nav-badge warning" id="navPendingCount">438</span>
+                    </div>
+                </div>
+
+                <div class="nav-group">
+                    <div class="nav-group-title">Settings</div>
+                    <div class="nav-item" data-action="templates">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                        Message Templates
+                    </div>
+                    <div class="nav-item" data-action="export">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                        Export Data
+                    </div>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- Middle Panel - Partner List -->
+        <section class="list-panel">
+            <div class="list-header">
+                <div class="list-header-title">
+                    <span id="listTitle">All Partners</span>
+                    <span style="font-size: 0.8rem; color: var(--text-muted);" id="listCount">(438)</span>
+                </div>
+                <div class="list-search">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                    <input type="text" id="searchInput" placeholder="Search partners...">
+                </div>
+            </div>
+
+            <div class="list-filters">
+                <button class="filter-chip active" data-filter="all">All</button>
+                <button class="filter-chip" data-filter="unread">Unread</button>
+                <button class="filter-chip" data-filter="responded">Responded</button>
+            </div>
+
+            <div class="list-content" id="partnerList">
+                <!-- Partner items populated by JS -->
+            </div>
+        </section>
+
+        <!-- Right Panel - Detail View -->
+        <section class="detail-panel" id="detailPanel">
+            <div class="empty-state" id="emptyState">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+                <h3>Select a Partner</h3>
+                <p>Choose a partner from the list to view and manage your conversation</p>
+            </div>
+
+            <div id="conversationView" style="display: none; flex-direction: column; height: 100%;">
+                <div class="detail-header">
+                    <div class="detail-header-info">
+                        <h2 id="detailName">Partner Name</h2>
+                        <p id="detailMeta">Details</p>
+                    </div>
+                    <div class="detail-actions">
+                        <button class="action-btn" id="btnEditTemplate" title="Edit outbound message">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                            Edit Template
+                        </button>
+                        <button class="action-btn" id="btnCopyKey" title="Copy partner key">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                            Copy Key
+                        </button>
+                        <button class="action-btn" id="btnMarkStatus">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                            Mark Viewed
+                        </button>
+                    </div>
+                </div>
+
+                <div class="detail-tabs">
+                    <button class="detail-tab active" data-tab="conversation">Conversation</button>
+                    <button class="detail-tab" data-tab="details">Partner Details</button>
+                </div>
+
+                <div class="detail-content" id="detailContent">
+                    <!-- Tab content -->
+                </div>
+
+                <div class="compose-area" id="composeArea">
+                    <div class="compose-header">
+                        <span class="compose-label">Your Response</span>
+                        <div class="compose-tools">
+                            <button class="tool-btn" id="btnInsertTemplate" title="Insert template">
+                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                            </button>
+                            <button class="tool-btn" id="btnInsertVariable" title="Insert variable">
+                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14"/></svg>
+                            </button>
+                        </div>
+                    </div>
+                    <textarea class="compose-editor" id="composeEditor" placeholder="Write your response..."></textarea>
+                    <div class="compose-footer">
+                        <span class="compose-info">Press Ctrl+Enter to send</span>
+                        <div class="compose-buttons">
+                            <button class="action-btn" id="btnSaveDraft">Save Draft</button>
+                            <button class="action-btn primary" id="btnSendMessage">Send Message</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Template Editor Modal -->
+    <div class="modal-overlay" id="templateModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 id="templateModalTitle">Edit Outbound Message</h3>
+                <button class="modal-close" onclick="closeTemplateModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">Template Type</label>
+                    <select class="form-select" id="templateType">
+                        <option value="proposal">University Partnership Proposal</option>
+                        <option value="pitch">Media Press Kit</option>
+                        <option value="followup">Follow-up Message</option>
+                        <option value="reminder">Reminder</option>
+                        <option value="thankyou">Thank You Response</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Message Content</label>
+                    <textarea class="form-textarea" id="templateEditor" placeholder="Enter your message template..."></textarea>
+                    <p class="form-help">Use variables like {{partnerName}}, {{schoolName}}, {{outletName}} for personalization</p>
+                    <div class="variable-chips">
+                        <span class="variable-chip" data-var="{{partnerName}}">{{partnerName}}</span>
+                        <span class="variable-chip" data-var="{{schoolName}}">{{schoolName}}</span>
+                        <span class="variable-chip" data-var="{{universityName}}">{{universityName}}</span>
+                        <span class="variable-chip" data-var="{{outletName}}">{{outletName}}</span>
+                        <span class="variable-chip" data-var="{{focus}}">{{focus}}</span>
+                        <span class="variable-chip" data-var="{{state}}">{{state}}</span>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="action-btn" onclick="closeTemplateModal()">Cancel</button>
+                <button class="action-btn" onclick="resetTemplate()">Reset to Default</button>
+                <button class="action-btn primary" onclick="saveTemplate()">Save Template</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Reply Templates Modal -->
+    <div class="modal-overlay" id="quickReplyModal">
+        <div class="modal" style="max-width: 500px;">
+            <div class="modal-header">
+                <h3>Insert Quick Reply</h3>
+                <button class="modal-close" onclick="closeQuickReplyModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                    <button class="action-btn" style="justify-content: flex-start; padding: 1rem;" onclick="insertQuickReply('followup')">
+                        <strong>Follow-up</strong> — Check in on their interest
+                    </button>
+                    <button class="action-btn" style="justify-content: flex-start; padding: 1rem;" onclick="insertQuickReply('schedule')">
+                        <strong>Schedule Call</strong> — Propose a meeting time
+                    </button>
+                    <button class="action-btn" style="justify-content: flex-start; padding: 1rem;" onclick="insertQuickReply('info')">
+                        <strong>More Info</strong> — Share additional details
+                    </button>
+                    <button class="action-btn" style="justify-content: flex-start; padding: 1rem;" onclick="insertQuickReply('thankyou')">
+                        <strong>Thank You</strong> — Express appreciation
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ===== STATE =====
+        let allPartners = {};
+        let currentView = 'all';
+        let currentFilter = 'all';
+        let currentPartner = null;
+        let currentTab = 'conversation';
+
+        // ===== MESSAGE TEMPLATES =====
+        const templates = {
+            proposal: `Dear {{schoolName}},
+
+We are reaching out to introduce Luminary AI Technologies and explore a strategic partnership with {{universityName}}.
+
+Luminary is building intelligent infrastructure for complex operations—technology designed to make fragmented, legacy systems coherent and accessible. We believe academic institutions, particularly leading business schools like yours, are natural partners in this mission.
+
+What We're Proposing:
+
+• Vestiq Access for Students & Faculty — Our wealth intelligence platform provides transparent, thesis-driven investment analysis. We believe business students deserve tools that teach them how to think about markets, not just what to trade.
+
+• Legal Insights Integration — Policy intelligence that tracks regulatory changes relevant to business operations, entrepreneurship, and compliance education.
+
+• Luminary Studios for Student Projects — Our development infrastructure allows students to build real applications without needing deep technical expertise.
+
+• Research Collaboration — Joint initiatives exploring AI infrastructure, market intelligence, and the future of business technology.
+
+• Talent Pipeline — We're actively hiring and want to connect with {{universityName}}'s graduating students.
+
+Why We're Different:
+
+We have taken zero institutional funding. No Silicon Valley money. No hedge fund backing. We've spent years building quietly because we wanted to remain free to build technology for people—not just institutions.
+
+We would welcome the opportunity to discuss this further at your convenience.
+
+— Luminary AI Technologies
+"Technology for the people. Not power."`,
+
+            pitch: `Thank you for connecting with us. Below is background on Luminary for your consideration.
+
+THE COMPANY
+
+Luminary AI Technologies is building intelligent infrastructure for complex operations. We're a Delaware C-corp creating technology designed to challenge and replace inefficient legacy systems across healthcare, government, education, and finance.
+
+Our tagline: "Technology for the people. Not power."
+
+THE STORY
+
+The Outsider Angle: We have taken zero institutional funding—no Silicon Valley VC, no hedge fund backing, no big bank investment. We've spent years building quietly, bootstrapped, because we wanted complete independence.
+
+The Mission Angle: Our thesis is that most institutional dysfunction—from healthcare authorization delays to government administrative burden to investment opacity—stems from legacy technology and deliberate complexity that benefits incumbents. We're building platforms that make these systems transparent and accessible to individuals.
+
+OUR PLATFORMS
+
+• Vestiq — Wealth intelligence platform providing transparent, thesis-driven investment analysis. Think "Bloomberg Terminal for regular people."
+
+• Legal Insights — Policy intelligence tracking regulatory changes. Helping citizens understand how laws actually affect them.
+
+• Blue Haven — E-commerce and marketplace intelligence for entrepreneurs and small businesses.
+
+• Luminary Studios — Development infrastructure that lets people build software the way they think, not the way programmers code.
+
+FOUNDER AVAILABILITY
+
+Our founder is available for interviews, background conversations, or commentary on: AI infrastructure, fintech accessibility, govtech reform, the future of software development, and building companies outside traditional Silicon Valley funding.
+
+ASSETS AVAILABLE
+
+• Company background document
+• Founder bio and high-res photos
+• Platform screenshots and demos
+• Data access for stories (case by case)
+
+— Luminary AI Technologies
+Indianapolis, IN | luminary-tech.ai`,
+
+            followup: `Following up on our previous message. We'd love to hear your thoughts and answer any questions you might have.
+
+Is there a convenient time this week or next for a brief call? We're flexible and happy to work around your schedule.
+
+Looking forward to connecting.
+
+— Luminary AI Technologies`,
+
+            reminder: `Just a friendly reminder about our partnership proposal. We understand you're busy, and we wanted to make sure our message didn't get lost in your inbox.
+
+If you have any questions or would like to discuss further, please don't hesitate to reach out.
+
+— Luminary AI Technologies`,
+
+            thankyou: `Thank you for your interest in Luminary. We're excited about the possibility of working together.
+
+We'll follow up shortly with next steps. In the meantime, please don't hesitate to reach out if you have any questions.
+
+— Luminary AI Technologies`,
+
+            schedule: `Thank you for your response. We'd love to schedule a call to discuss this further.
+
+Would any of the following times work for you?
+• [Day], [Date] at [Time]
+• [Day], [Date] at [Time]
+• [Day], [Date] at [Time]
+
+If none of these work, please suggest a time that's more convenient for you.
+
+— Luminary AI Technologies`,
+
+            info: `Thank you for your interest. Here's some additional information that might be helpful:
+
+[Add specific information relevant to their inquiry]
+
+Please let us know if you have any other questions. We're happy to provide more details on any aspect of our platform or partnership proposal.
+
+— Luminary AI Technologies`
+        };
+
+        // ===== DATA LOADING =====
+        async function loadPartnerData() {
+            try {
+                const response = await fetch('partner-keys.json');
+                allPartners = await response.json();
+            } catch (error) {
+                console.log('Loading sample data...');
+                allPartners = generateSampleData();
+            }
+            
+            updateCounts();
+            renderPartnerList();
+        }
+
+        function generateSampleData() {
+            return {
+                'JDXNCILWKG4DRGH': { id: 'JDXNCILWKG4DRGH', recipientName: 'Haas School of Business at UC Berkeley', universityName: 'University of California, Berkeley', schoolName: 'Haas School of Business', state: 'CA', recipientType: 'university', contacts: [{ name: 'Jennifer Chatman', title: 'Dean', email: 'chatman@berkeley.edu' }], colors: { primary: '#003262', secondary: '#FDB515' }, status: 'pending', messages: [], lastActivity: new Date().toISOString() },
+                'AXB4ZQG5N6RMRJG': { id: 'AXB4ZQG5N6RMRJG', recipientName: 'Harvard Business School', universityName: 'Harvard University', schoolName: 'Harvard Business School', state: 'MA', recipientType: 'university', contacts: [{ name: 'MBA Programs', title: 'Admissions', email: 'mba@hbs.edu' }], colors: { primary: '#A51C30', secondary: '#000000' }, status: 'viewed', messages: [], lastActivity: new Date().toISOString() },
+                '4CSPEKIRL7QFASK': { id: '4CSPEKIRL7QFASK', recipientName: 'Booth School of Business at University of Chicago', universityName: 'University of Chicago', schoolName: 'Booth School of Business', state: 'IL', recipientType: 'university', contacts: [{ name: 'Donna Swinford', title: 'Associate Dean', email: 'donna.swinford@chicagobooth.edu' }], colors: { primary: '#800000', secondary: '#FFFFFF' }, status: 'pending', messages: [], lastActivity: new Date().toISOString() },
+                '1XQJZQA1G2P2C6Q': { id: '1XQJZQA1G2P2C6Q', recipientName: 'TechCrunch', outletName: 'TechCrunch', focus: 'Startups, venture, tech news', recipientType: 'media', contacts: [{ name: 'Tips inbox', type: 'Tips', email: 'tips@techcrunch.com' }], colors: { primary: '#0A9E01', secondary: '#000000' }, status: 'pending', messages: [], lastActivity: new Date().toISOString() },
+                '1Z54M8SMG4XV61T': { id: '1Z54M8SMG4XV61T', recipientName: 'The Verge', outletName: 'The Verge', focus: 'Consumer tech, internet culture', recipientType: 'media', contacts: [{ name: 'Tips inbox', type: 'Tips', email: 'tips@theverge.com' }], colors: { primary: '#FA4B2A', secondary: '#000000' }, status: 'responded', messages: [{ content: 'Interested in learning more about your platform. Can you tell us more about the founding story?', fromLuminary: false, date: new Date(Date.now() - 86400000).toISOString() }], lastActivity: new Date().toISOString() },
+                '1B1752QVYHDGYF0': { id: '1B1752QVYHDGYF0', recipientName: 'VentureBeat', outletName: 'VentureBeat', focus: 'AI, enterprise tech, startups', recipientType: 'media', contacts: [{ name: 'General tips', type: 'Tips', email: 'tips@venturebeat.com' }], colors: { primary: '#C73A3D', secondary: '#1E1E1E' }, status: 'pending', messages: [], lastActivity: new Date().toISOString() },
+            };
+        }
+
+        // ===== COUNTS & STATS =====
+        function updateCounts() {
+            const partners = Object.values(allPartners);
+            const universities = partners.filter(p => p.recipientType === 'university');
+            const media = partners.filter(p => p.recipientType === 'media');
+            const responded = partners.filter(p => p.status === 'responded' || (p.messages && p.messages.some(m => !m.fromLuminary)));
+            const pending = partners.filter(p => p.status === 'pending');
+            const unread = partners.filter(p => p.messages && p.messages.some(m => !m.fromLuminary && !m.read));
+
+            document.getElementById('navAllCount').textContent = partners.length;
+            document.getElementById('navUniCount').textContent = universities.length;
+            document.getElementById('navMediaCount').textContent = media.length;
+            document.getElementById('navRespondedCount').textContent = responded.length;
+            document.getElementById('navPendingCount').textContent = pending.length;
+            document.getElementById('navUnreadCount').textContent = unread.length;
+        }
+
+        // ===== PARTNER LIST =====
+        function renderPartnerList() {
+            const container = document.getElementById('partnerList');
+            let partners = Object.values(allPartners);
+
+            // Apply view filter
+            if (currentView === 'universities') {
+                partners = partners.filter(p => p.recipientType === 'university');
+            } else if (currentView === 'media') {
+                partners = partners.filter(p => p.recipientType === 'media');
+            } else if (currentView === 'responded') {
+                partners = partners.filter(p => p.status === 'responded' || p.status === 'accepted');
+            } else if (currentView === 'pending') {
+                partners = partners.filter(p => p.status === 'pending');
+            } else if (currentView === 'unread') {
+                partners = partners.filter(p => p.messages && p.messages.some(m => !m.fromLuminary && !m.read));
+            }
+
+            // Apply status filter
+            if (currentFilter === 'unread') {
+                partners = partners.filter(p => p.messages && p.messages.some(m => !m.fromLuminary && !m.read));
+            } else if (currentFilter === 'responded') {
+                partners = partners.filter(p => p.status === 'responded' || p.status === 'accepted');
+            }
+
+            // Apply search
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            if (searchTerm) {
+                partners = partners.filter(p => 
+                    p.recipientName.toLowerCase().includes(searchTerm) ||
+                    (p.universityName && p.universityName.toLowerCase().includes(searchTerm)) ||
+                    (p.outletName && p.outletName.toLowerCase().includes(searchTerm)) ||
+                    (p.focus && p.focus.toLowerCase().includes(searchTerm)) ||
+                    (p.state && p.state.toLowerCase().includes(searchTerm))
+                );
+            }
+
+            // Sort: responded first, then by last activity
+            partners.sort((a, b) => {
+                const aHasUnread = a.messages && a.messages.some(m => !m.fromLuminary && !m.read);
+                const bHasUnread = b.messages && b.messages.some(m => !m.fromLuminary && !m.read);
+                if (aHasUnread && !bHasUnread) return -1;
+                if (!aHasUnread && bHasUnread) return 1;
+                return new Date(b.lastActivity || 0) - new Date(a.lastActivity || 0);
+            });
+
+            // Update list count
+            document.getElementById('listCount').textContent = `(${partners.length})`;
+
+            container.innerHTML = partners.slice(0, 100).map(p => {
+                const isMedia = p.recipientType === 'media';
+                const hasUnread = p.messages && p.messages.some(m => !m.fromLuminary && !m.read);
+                const lastMessage = p.messages && p.messages.length > 0 ? p.messages[p.messages.length - 1] : null;
+                
+                return `
+                    <div class="partner-item ${currentPartner?.id === p.id ? 'active' : ''} ${hasUnread ? 'unread' : ''}" 
+                         onclick="selectPartner('${p.id}')">
+                        <div class="partner-item-header">
+                            <span class="partner-item-name">${p.recipientName}</span>
+                            <span class="partner-item-time">${formatRelativeTime(p.lastActivity)}</span>
+                        </div>
+                        <div class="partner-item-meta">
+                            <span class="type-dot ${p.recipientType}"></span>
+                            <span class="partner-item-detail">${isMedia ? (p.focus || '').substring(0, 30) : p.state || ''}</span>
+                            <span class="status-indicator ${p.status}">${capitalizeFirst(p.status)}</span>
+                        </div>
+                        <div class="partner-item-preview">
+                            ${lastMessage ? (lastMessage.fromLuminary ? 'You: ' : '') + lastMessage.content.substring(0, 60) + '...' : 'No messages yet'}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // ===== PARTNER SELECTION =====
+        function selectPartner(partnerId) {
+            currentPartner = allPartners[partnerId];
+            if (!currentPartner) return;
+
+            // Update list selection
+            document.querySelectorAll('.partner-item').forEach(item => item.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+
+            // Show conversation view
+            document.getElementById('emptyState').style.display = 'none';
+            document.getElementById('conversationView').style.display = 'flex';
+
+            // Update header
+            document.getElementById('detailName').textContent = currentPartner.recipientName;
+            document.getElementById('detailMeta').textContent = currentPartner.recipientType === 'university'
+                ? `${currentPartner.universityName || ''} • ${currentPartner.state || ''}`
+                : currentPartner.focus || '';
+
+            // Update status button
+            updateStatusButton();
+
+            // Render current tab
+            renderCurrentTab();
+        }
+
+        function updateStatusButton() {
+            const btn = document.getElementById('btnMarkStatus');
+            const status = currentPartner.status;
+            
+            if (status === 'pending') {
+                btn.innerHTML = '<svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg> Mark Viewed';
+            } else if (status === 'viewed') {
+                btn.innerHTML = '<svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg> Mark Responded';
+            } else {
+                btn.innerHTML = '<svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg> Accepted';
+                btn.disabled = true;
+            }
+        }
+
+        // ===== TAB RENDERING =====
+        function renderCurrentTab() {
+            const content = document.getElementById('detailContent');
+            const composeArea = document.getElementById('composeArea');
+
+            if (currentTab === 'conversation') {
+                composeArea.style.display = 'block';
+                renderConversation(content);
+            } else {
+                composeArea.style.display = 'none';
+                renderDetails(content);
+            }
+        }
+
+        function renderConversation(container) {
+            const isMedia = currentPartner.recipientType === 'media';
+            const templateContent = processTemplate(isMedia ? templates.pitch : templates.proposal, currentPartner);
+            const messages = currentPartner.messages || [];
+
+            let html = '<div class="message-thread">';
+
+            // Initial outbound message (proposal/pitch)
+            html += `
+                <div class="message-item outbound">
+                    <div class="message-bubble">
+                        <div class="message-header">
+                            <span class="message-sender">Luminary</span>
+                            <span class="message-time">Initial Outreach</span>
+                        </div>
+                        <div class="message-body">${formatMessageContent(templateContent)}</div>
+                        <div class="message-actions">
+                            <button class="message-action-btn" onclick="openTemplateModal()">
+                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                                Edit Template
+                            </button>
+                            <button class="message-action-btn" onclick="copyToClipboard(\`${escapeForJs(templateContent)}\`)">
+                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                                Copy
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            // Subsequent messages
+            messages.forEach((msg, idx) => {
+                html += `
+                    <div class="message-item ${msg.fromLuminary ? 'outbound' : 'inbound'}">
+                        <div class="message-bubble">
+                            <div class="message-header">
+                                <span class="message-sender">${msg.fromLuminary ? 'Luminary' : currentPartner.recipientName}</span>
+                                <span class="message-time">${formatDate(msg.date)}</span>
+                            </div>
+                            <div class="message-body">${formatMessageContent(msg.content)}</div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            html += '</div>';
+            container.innerHTML = html;
+
+            // Scroll to bottom
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function renderDetails(container) {
+            const p = currentPartner;
+            const isMedia = p.recipientType === 'media';
+
+            container.innerHTML = `
+                <div class="details-grid">
+                    <div class="detail-card">
+                        <div class="detail-card-title">Partner Information</div>
+                        <div class="detail-row">
+                            <span class="detail-row-label">Access Key</span>
+                            <span class="detail-row-value"><span class="key-display">${p.id}</span></span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-row-label">Type</span>
+                            <span class="detail-row-value">${isMedia ? 'Media Outlet' : 'University'}</span>
+                        </div>
+                        ${isMedia ? `
+                            <div class="detail-row">
+                                <span class="detail-row-label">Focus</span>
+                                <span class="detail-row-value">${p.focus || 'N/A'}</span>
+                            </div>
+                        ` : `
+                            <div class="detail-row">
+                                <span class="detail-row-label">University</span>
+                                <span class="detail-row-value">${p.universityName || 'N/A'}</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-row-label">State</span>
+                                <span class="detail-row-value">${p.state || 'N/A'}</span>
+                            </div>
+                        `}
+                        <div class="detail-row">
+                            <span class="detail-row-label">Status</span>
+                            <span class="detail-row-value"><span class="status-indicator ${p.status}">${capitalizeFirst(p.status)}</span></span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-row-label">Messages</span>
+                            <span class="detail-row-value">${(p.messages || []).length}</span>
+                        </div>
+                    </div>
+
+                    <div class="detail-card">
+                        <div class="detail-card-title">Brand Colors</div>
+                        <div class="detail-row">
+                            <span class="detail-row-label">Primary</span>
+                            <span class="detail-row-value">
+                                <div class="color-swatch-row">
+                                    <div class="color-swatch" style="background: ${p.colors?.primary || '#003366'}"></div>
+                                    ${p.colors?.primary || '#003366'}
+                                </div>
+                            </span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-row-label">Secondary</span>
+                            <span class="detail-row-value">
+                                <div class="color-swatch-row">
+                                    <div class="color-swatch" style="background: ${p.colors?.secondary || '#D4A853'}"></div>
+                                    ${p.colors?.secondary || '#D4A853'}
+                                </div>
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="detail-card">
+                        <div class="detail-card-title">Contacts</div>
+                        ${(p.contacts || []).map(c => `
+                            <div class="contact-card">
+                                <div class="contact-name">${c.name || 'N/A'}</div>
+                                <div class="contact-title">${c.title || c.type || ''}</div>
+                                <div class="contact-email">${c.email || ''}</div>
+                            </div>
+                        `).join('') || '<p style="color: var(--text-muted);">No contacts available</p>'}
+                    </div>
+                </div>
+            `;
+        }
+
+        // ===== MESSAGE HANDLING =====
+        function sendMessage() {
+            const content = document.getElementById('composeEditor').value.trim();
+            if (!content || !currentPartner) return;
+
+            if (!currentPartner.messages) currentPartner.messages = [];
+
+            currentPartner.messages.push({
+                content: content,
+                fromLuminary: true,
+                date: new Date().toISOString()
+            });
+
+            currentPartner.lastActivity = new Date().toISOString();
+            currentPartner.status = 'responded';
+
+            // Clear compose
+            document.getElementById('composeEditor').value = '';
+
+            // Re-render
+            renderCurrentTab();
+            renderPartnerList();
+            updateCounts();
+
+            alert('Message sent successfully!');
+        }
+
+        // ===== TEMPLATE FUNCTIONS =====
+        function processTemplate(template, partner) {
+            return template
+                .replace(/\{\{partnerName\}\}/g, partner.recipientName || '')
+                .replace(/\{\{schoolName\}\}/g, partner.schoolName || partner.recipientName || '')
+                .replace(/\{\{universityName\}\}/g, partner.universityName || '')
+                .replace(/\{\{outletName\}\}/g, partner.outletName || partner.recipientName || '')
+                .replace(/\{\{focus\}\}/g, partner.focus || '')
+                .replace(/\{\{state\}\}/g, partner.state || '');
+        }
+
+        function openTemplateModal() {
+            const isMedia = currentPartner?.recipientType === 'media';
+            document.getElementById('templateType').value = isMedia ? 'pitch' : 'proposal';
+            document.getElementById('templateEditor').value = isMedia ? templates.pitch : templates.proposal;
+            document.getElementById('templateModalTitle').textContent = `Edit ${isMedia ? 'Media Press Kit' : 'University Proposal'}`;
+            document.getElementById('templateModal').classList.add('active');
+        }
+
+        function closeTemplateModal() {
+            document.getElementById('templateModal').classList.remove('active');
+        }
+
+        function saveTemplate() {
+            const type = document.getElementById('templateType').value;
+            const content = document.getElementById('templateEditor').value;
+            templates[type] = content;
+            closeTemplateModal();
+            if (currentPartner) renderCurrentTab();
+            alert('Template saved!');
+        }
+
+        function resetTemplate() {
+            const type = document.getElementById('templateType').value;
+            // Reset would reload from defaults - for now just show message
+            alert('Template reset to default (in production, this would reload from server)');
+        }
+
+        // ===== QUICK REPLY =====
+        function openQuickReplyModal() {
+            document.getElementById('quickReplyModal').classList.add('active');
+        }
+
+        function closeQuickReplyModal() {
+            document.getElementById('quickReplyModal').classList.remove('active');
+        }
+
+        function insertQuickReply(type) {
+            const template = templates[type] || '';
+            const processed = currentPartner ? processTemplate(template, currentPartner) : template;
+            document.getElementById('composeEditor').value = processed;
+            closeQuickReplyModal();
+        }
+
+        // ===== UTILITIES =====
+        function capitalizeFirst(str) {
+            return str ? str.charAt(0).toUpperCase() + str.slice(1) : '';
+        }
+
+        function formatDate(dateStr) {
+            if (!dateStr) return '';
+            return new Date(dateStr).toLocaleDateString('en-US', { 
+                month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit'
+            });
+        }
+
+        function formatRelativeTime(dateStr) {
+            if (!dateStr) return '';
+            const date = new Date(dateStr);
+            const now = new Date();
+            const diffMs = now - date;
+            const diffMins = Math.floor(diffMs / 60000);
+            const diffHours = Math.floor(diffMs / 3600000);
+            const diffDays = Math.floor(diffMs / 86400000);
+
+            if (diffMins < 60) return `${diffMins}m`;
+            if (diffHours < 24) return `${diffHours}h`;
+            if (diffDays < 7) return `${diffDays}d`;
+            return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        }
+
+        function formatMessageContent(text) {
+            return text.replace(/\n\n/g, '</p><p>').replace(/\n/g, '<br>');
+        }
+
+        function escapeForJs(str) {
+            return str.replace(/`/g, '\\`').replace(/\$/g, '\\$');
+        }
+
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                alert('Copied to clipboard!');
+            });
+        }
+
+        function copyPartnerKey() {
+            if (currentPartner) {
+                copyToClipboard(currentPartner.id);
+            }
+        }
+
+        function markStatus() {
+            if (!currentPartner) return;
+            
+            if (currentPartner.status === 'pending') {
+                currentPartner.status = 'viewed';
+            } else if (currentPartner.status === 'viewed') {
+                currentPartner.status = 'responded';
+            }
+            
+            updateStatusButton();
+            renderPartnerList();
+            updateCounts();
+        }
+
+        function exportData() {
+            const dataStr = JSON.stringify(allPartners, null, 2);
+            const blob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `luminary-communications-${new Date().toISOString().split('T')[0]}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        // ===== EVENT LISTENERS =====
+        document.addEventListener('DOMContentLoaded', () => {
+            loadPartnerData();
+
+            // Navigation
+            document.querySelectorAll('.nav-item[data-view]').forEach(item => {
+                item.addEventListener('click', () => {
+                    document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+                    item.classList.add('active');
+                    currentView = item.dataset.view;
+                    document.getElementById('listTitle').textContent = item.textContent.trim().split(/\d/)[0].trim();
+                    renderPartnerList();
+                });
+            });
+
+            // Actions
+            document.querySelectorAll('.nav-item[data-action]').forEach(item => {
+                item.addEventListener('click', () => {
+                    const action = item.dataset.action;
+                    if (action === 'templates') openTemplateModal();
+                    if (action === 'export') exportData();
+                });
+            });
+
+            // Filters
+            document.querySelectorAll('.filter-chip').forEach(chip => {
+                chip.addEventListener('click', () => {
+                    document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+                    chip.classList.add('active');
+                    currentFilter = chip.dataset.filter;
+                    renderPartnerList();
+                });
+            });
+
+            // Tabs
+            document.querySelectorAll('.detail-tab').forEach(tab => {
+                tab.addEventListener('click', () => {
+                    document.querySelectorAll('.detail-tab').forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                    currentTab = tab.dataset.tab;
+                    renderCurrentTab();
+                });
+            });
+
+            // Search
+            document.getElementById('searchInput').addEventListener('input', renderPartnerList);
+
+            // Compose shortcuts
+            document.getElementById('composeEditor').addEventListener('keydown', (e) => {
+                if (e.ctrlKey && e.key === 'Enter') {
+                    sendMessage();
+                }
+            });
+
+            // Action buttons
+            document.getElementById('btnEditTemplate').addEventListener('click', openTemplateModal);
+            document.getElementById('btnCopyKey').addEventListener('click', copyPartnerKey);
+            document.getElementById('btnMarkStatus').addEventListener('click', markStatus);
+            document.getElementById('btnInsertTemplate').addEventListener('click', openQuickReplyModal);
+            document.getElementById('btnSendMessage').addEventListener('click', sendMessage);
+
+            // Variable chips
+            document.querySelectorAll('.variable-chip').forEach(chip => {
+                chip.addEventListener('click', () => {
+                    const textarea = document.getElementById('templateEditor');
+                    const start = textarea.selectionStart;
+                    const end = textarea.selectionEnd;
+                    const text = textarea.value;
+                    textarea.value = text.substring(0, start) + chip.dataset.var + text.substring(end);
+                    textarea.focus();
+                    textarea.setSelectionRange(start + chip.dataset.var.length, start + chip.dataset.var.length);
+                });
+            });
+
+            // Template type change
+            document.getElementById('templateType').addEventListener('change', (e) => {
+                document.getElementById('templateEditor').value = templates[e.target.value] || '';
+            });
+
+            // Keyboard shortcuts
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    closeTemplateModal();
+                    closeQuickReplyModal();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
