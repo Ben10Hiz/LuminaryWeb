@@ -244,9 +244,310 @@
         .dialogue-panel.media-partner .dialogue-header-info h3::after { content: '📰'; margin-left: 0.5rem; font-size: 0.9em; }
         .dialogue-panel.university-partner .dialogue-header-info h3::after { content: '🎓'; margin-left: 0.5rem; font-size: 0.9em; }
 
+        /* Session Indicator Bar */
+        .session-indicator {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(135deg, rgba(26, 26, 46, 0.98) 0%, rgba(15, 15, 30, 0.98) 100%);
+            border-bottom: 1px solid var(--gold);
+            padding: 0.75rem 2rem;
+            z-index: 9999;
+            transform: translateY(-100%);
+            opacity: 0;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+        .session-indicator.visible {
+            transform: translateY(0);
+            opacity: 1;
+        }
+        .session-indicator-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+        }
+        .session-indicator-text {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+        .session-indicator-text svg {
+            color: var(--gold);
+        }
+        .session-indicator-text strong {
+            color: var(--gold);
+            font-weight: 600;
+        }
+        .session-indicator-actions {
+            display: flex;
+            gap: 0.75rem;
+        }
+        .session-btn {
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: none;
+        }
+        .session-btn.open {
+            background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
+            color: var(--bg-dark);
+        }
+        .session-btn.open:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(212, 175, 55, 0.3);
+        }
+        .session-btn.signout {
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+        }
+        .session-btn.signout:hover {
+            border-color: #e74c3c;
+            color: #e74c3c;
+        }
+        
+        /* Sign out in dialogue */
+        .dialogue-signout {
+            padding: 0.5rem 1rem;
+            background: transparent;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+        .dialogue-signout:hover {
+            border-color: #e74c3c;
+            color: #e74c3c;
+        }
+        .dialogue-header-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        /* File upload and preview */
+        .dialogue-input-row {
+            display: flex;
+            gap: 0.5rem;
+            align-items: flex-end;
+        }
+        .dialogue-input-row .dialogue-response-input {
+            flex: 1;
+        }
+        .btn-attach {
+            width: 44px;
+            height: 44px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            background: transparent;
+            color: var(--text-muted);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            flex-shrink: 0;
+        }
+        .btn-attach:hover {
+            border-color: var(--gold);
+            color: var(--gold);
+            background: rgba(212, 175, 55, 0.1);
+        }
+        .file-preview-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            padding: 0;
+            max-height: 120px;
+            overflow-y: auto;
+        }
+        .file-preview-container:empty {
+            display: none;
+        }
+        .file-preview-item {
+            position: relative;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.8rem;
+            max-width: 200px;
+        }
+        .file-preview-item img {
+            width: 40px;
+            height: 40px;
+            object-fit: cover;
+            border-radius: 4px;
+        }
+        .file-preview-item .file-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--bg-deep);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--gold);
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+        .file-preview-info {
+            flex: 1;
+            min-width: 0;
+        }
+        .file-preview-name {
+            color: var(--text-light);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .file-preview-size {
+            color: var(--text-muted);
+            font-size: 0.7rem;
+        }
+        .file-preview-remove {
+            position: absolute;
+            top: -6px;
+            right: -6px;
+            width: 18px;
+            height: 18px;
+            background: #e74c3c;
+            border: none;
+            border-radius: 50%;
+            color: white;
+            font-size: 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        /* Message attachments */
+        .message-attachments {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 0.75rem;
+            padding-top: 0.75rem;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+        .message-attachment {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 0.75rem;
+            background: rgba(0,0,0,0.2);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            color: inherit;
+        }
+        .message-attachment:hover {
+            background: rgba(212, 175, 55, 0.2);
+        }
+        .message-attachment-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--bg-card);
+            color: var(--gold);
+            font-size: 0.65rem;
+            font-weight: 600;
+        }
+        .message-attachment-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 4px;
+        }
+        .message-attachment-info {
+            font-size: 0.8rem;
+        }
+        .message-attachment-name {
+            color: var(--text-light);
+            max-width: 150px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .message-attachment-size {
+            color: var(--text-muted);
+            font-size: 0.7rem;
+        }
+        
+        /* Image lightbox */
+        .image-lightbox {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.95);
+            z-index: 10000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        .image-lightbox.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        .image-lightbox img {
+            max-width: 90vw;
+            max-height: 90vh;
+            object-fit: contain;
+            border-radius: 8px;
+        }
+        .image-lightbox-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 40px;
+            height: 40px;
+            background: rgba(255,255,255,0.1);
+            border: none;
+            border-radius: 50%;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+        }
+        
+        /* Adjust body padding when session bar is visible */
+        body.has-session {
+            padding-top: 52px;
+        }
+
         @media (max-width: 600px) {
             .dialogue-panel { width: 100vw; }
             .dialogue-message { max-width: 95%; }
+            .session-indicator { padding: 0.5rem 1rem; }
+            .session-indicator-content { flex-direction: column; gap: 0.5rem; }
+            .session-indicator-text { font-size: 0.8rem; }
         }
     </style>
 </head>
@@ -534,13 +835,32 @@
                 <h3>Partnership Dialogue <span class="dialogue-type-badge" id="dialogueTypeBadge"></span></h3>
                 <p class="dialogue-recipient" id="dialogueRecipient">Loading...</p>
             </div>
-            <button class="dialogue-close" onclick="closeDialogue()">&times;</button>
+            <div class="dialogue-header-actions">
+                <button class="dialogue-signout" onclick="signOutPartner()" title="Sign out">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                        <polyline points="16 17 21 12 16 7"></polyline>
+                        <line x1="21" y1="12" x2="9" y2="12"></line>
+                    </svg>
+                    Sign Out
+                </button>
+                <button class="dialogue-close" onclick="closeDialogue()">&times;</button>
+            </div>
         </div>
         <div class="dialogue-messages" id="dialogueMessages">
             <!-- Messages load here -->
         </div>
         <div class="dialogue-actions">
-            <textarea class="dialogue-response-input" id="responseInput" placeholder="Write your response..."></textarea>
+            <div class="dialogue-input-row">
+                <textarea class="dialogue-response-input" id="responseInput" placeholder="Write your response..."></textarea>
+                <input type="file" id="fileInput" multiple accept="image/*,.pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt" style="display: none;" onchange="handleFileSelect(event)">
+                <button class="btn-attach" onclick="document.getElementById('fileInput').click()" title="Attach files">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path>
+                    </svg>
+                </button>
+            </div>
+            <div class="file-preview-container" id="filePreviewContainer"></div>
             <div class="dialogue-btn-group">
                 <button class="btn btn-accept" id="primaryActionBtn" onclick="primaryAction()">Accept Proposal</button>
                 <button class="btn btn-primary" onclick="sendResponse()">Send Response</button>
@@ -593,6 +913,141 @@
         
         // Configuration - Live API endpoint
         const API_BASE = 'https://exciting-vitality-production-431a.up.railway.app';
+        
+        // Session persistence (90 days)
+        const SESSION_KEY = 'luminary_partner_session';
+        const SESSION_DURATION = 90 * 24 * 60 * 60 * 1000; // 90 days in ms
+        
+        // Check for existing session on page load
+        function checkPartnerSession() {
+            try {
+                const session = localStorage.getItem(SESSION_KEY);
+                if (!session) return null;
+                
+                const data = JSON.parse(session);
+                
+                // Check if session is expired
+                if (data.expiresAt && Date.now() > data.expiresAt) {
+                    clearPartnerSession();
+                    return null;
+                }
+                
+                return data;
+            } catch (e) {
+                clearPartnerSession();
+                return null;
+            }
+        }
+        
+        // Save partner session
+        function savePartnerSession(key, partnerData) {
+            const session = {
+                key: key,
+                partnerName: partnerData.recipientName,
+                partnerType: partnerData.partnerType || partnerData.recipientType,
+                validatedAt: Date.now(),
+                expiresAt: Date.now() + SESSION_DURATION
+            };
+            localStorage.setItem(SESSION_KEY, JSON.stringify(session));
+        }
+        
+        // Clear partner session
+        function clearPartnerSession() {
+            localStorage.removeItem(SESSION_KEY);
+            currentDialogue = null;
+            currentKey = null;
+        }
+        
+        // Auto-restore session on page load
+        async function restoreSession() {
+            const session = checkPartnerSession();
+            if (!session) return false;
+            
+            try {
+                // Re-validate the key with API
+                const response = await fetch(`${API_BASE}/api/validate-key`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ key: session.key })
+                });
+                
+                if (!response.ok) {
+                    clearPartnerSession();
+                    return false;
+                }
+                
+                const data = await response.json();
+                
+                // Set up dialogue data
+                data.partnerType = data.recipientType || (data.outletName ? 'media' : 'university');
+                
+                if (data.partnerType === 'media') {
+                    data.proposal = generateMediaPitch(data);
+                    if (!data.colors) data.colors = { primary: '#1A1A2E', secondary: '#E94560' };
+                } else {
+                    data.proposal = generateProposal(data);
+                    if (!data.colors) data.colors = { primary: '#003366', secondary: '#D4A853' };
+                }
+                
+                currentDialogue = data;
+                currentKey = session.key;
+                
+                // Show welcome back indicator
+                showSessionIndicator(session.partnerName);
+                
+                return true;
+            } catch (e) {
+                console.error('Session restore failed:', e);
+                clearPartnerSession();
+                return false;
+            }
+        }
+        
+        // Show session indicator bar
+        function showSessionIndicator(partnerName) {
+            // Create indicator if it doesn't exist
+            let indicator = document.getElementById('sessionIndicator');
+            if (!indicator) {
+                indicator = document.createElement('div');
+                indicator.id = 'sessionIndicator';
+                indicator.className = 'session-indicator';
+                indicator.innerHTML = `
+                    <div class="session-indicator-content">
+                        <span class="session-indicator-text">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="12" cy="7" r="4"></circle>
+                            </svg>
+                            Signed in as <strong id="sessionPartnerName"></strong>
+                        </span>
+                        <div class="session-indicator-actions">
+                            <button class="session-btn open" onclick="openDialogue()">Open Channel</button>
+                            <button class="session-btn signout" onclick="signOutPartner()">Sign Out</button>
+                        </div>
+                    </div>
+                `;
+                document.body.appendChild(indicator);
+            }
+            
+            document.getElementById('sessionPartnerName').textContent = partnerName;
+            indicator.classList.add('visible');
+        }
+        
+        // Hide session indicator
+        function hideSessionIndicator() {
+            const indicator = document.getElementById('sessionIndicator');
+            if (indicator) {
+                indicator.classList.remove('visible');
+            }
+        }
+        
+        // Sign out partner
+        function signOutPartner() {
+            clearPartnerSession();
+            hideSessionIndicator();
+            closeDialogue();
+            showNotification('You have been signed out.');
+        }
         
         // Shared storage key - MUST match admin dashboard
         const STORAGE_KEY = 'luminary_partners_data';
@@ -1003,9 +1458,14 @@
                 currentDialogue = data;
                 currentKey = key;
                 
+                // Save session for persistence
+                savePartnerSession(key, data);
+                document.body.classList.add('has-session');
+                
                 setTimeout(() => {
                     closeKeyModal();
                     openDialogue();
+                    showSessionIndicator(data.recipientName);
                 }, 800);
 
             } catch (error) {
@@ -1083,6 +1543,17 @@
                     const msgEl = document.createElement('div');
                     msgEl.className = `dialogue-message ${msg.fromLuminary ? 'from-luminary' : 'from-recipient'}`;
                     const senderName = msg.fromLuminary ? 'LUMINARY' : (currentDialogue.outletName || currentDialogue.schoolName || currentDialogue.recipientName).toUpperCase();
+                    
+                    // Render attachments if present
+                    let attachmentsHtml = '';
+                    if (msg.attachments && msg.attachments.length > 0) {
+                        attachmentsHtml = `
+                            <div class="message-attachments">
+                                ${msg.attachments.map(att => renderAttachment(att)).join('')}
+                            </div>
+                        `;
+                    }
+                    
                     msgEl.innerHTML = `
                         <div class="dialogue-message-header">
                             <span class="dialogue-message-sender">${senderName}</span>
@@ -1090,6 +1561,7 @@
                         </div>
                         <div class="dialogue-message-content">
                             <p>${escapeHtml(msg.content)}</p>
+                            ${attachmentsHtml}
                         </div>
                     `;
                     container.appendChild(msgEl);
@@ -1098,6 +1570,37 @@
             
             // Scroll to bottom
             container.scrollTop = container.scrollHeight;
+        }
+        
+        function renderAttachment(att) {
+            const isImage = att.type && att.type.startsWith('image/');
+            const ext = getFileExtension(att.name);
+            const size = formatFileSize(att.size);
+            const url = att.url || att.data; // Use URL if available, otherwise base64 data
+            
+            if (isImage) {
+                return `
+                    <div class="message-attachment" onclick="openLightbox('${url}')">
+                        <div class="message-attachment-icon">
+                            <img src="${url}" alt="${escapeHtml(att.name)}">
+                        </div>
+                        <div class="message-attachment-info">
+                            <div class="message-attachment-name">${escapeHtml(att.name)}</div>
+                            <div class="message-attachment-size">${size}</div>
+                        </div>
+                    </div>
+                `;
+            } else {
+                return `
+                    <a class="message-attachment" href="${url}" download="${escapeHtml(att.name)}" target="_blank">
+                        <div class="message-attachment-icon">${ext}</div>
+                        <div class="message-attachment-info">
+                            <div class="message-attachment-name">${escapeHtml(att.name)}</div>
+                            <div class="message-attachment-size">${size}</div>
+                        </div>
+                    </a>
+                `;
+            }
         }
 
         function formatDate(dateStr) {
@@ -1111,13 +1614,176 @@
             return div.innerHTML;
         }
 
+        // ===== FILE HANDLING =====
+        let pendingFiles = [];
+        const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+        const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'application/pdf', 
+            'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+            'application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            'application/vnd.ms-powerpoint', 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+            'text/plain'];
+        
+        function handleFileSelect(event) {
+            const files = Array.from(event.target.files);
+            
+            files.forEach(file => {
+                // Validate size
+                if (file.size > MAX_FILE_SIZE) {
+                    showNotification(`File "${file.name}" is too large. Maximum size is 10MB.`, true);
+                    return;
+                }
+                
+                // Validate type (be flexible)
+                const isAllowed = ALLOWED_TYPES.includes(file.type) || 
+                    file.name.match(/\.(jpg|jpeg|png|gif|webp|pdf|doc|docx|xls|xlsx|ppt|pptx|txt)$/i);
+                
+                if (!isAllowed) {
+                    showNotification(`File type not supported: ${file.name}`, true);
+                    return;
+                }
+                
+                // Add to pending files
+                pendingFiles.push(file);
+            });
+            
+            renderFilePreview();
+            event.target.value = ''; // Reset input
+        }
+        
+        function renderFilePreview() {
+            const container = document.getElementById('filePreviewContainer');
+            container.innerHTML = pendingFiles.map((file, index) => {
+                const isImage = file.type.startsWith('image/');
+                const ext = file.name.split('.').pop().toUpperCase();
+                const size = formatFileSize(file.size);
+                
+                return `
+                    <div class="file-preview-item">
+                        ${isImage ? `<img src="${URL.createObjectURL(file)}" alt="${escapeHtml(file.name)}">` 
+                                  : `<div class="file-icon">${ext}</div>`}
+                        <div class="file-preview-info">
+                            <div class="file-preview-name">${escapeHtml(file.name)}</div>
+                            <div class="file-preview-size">${size}</div>
+                        </div>
+                        <button class="file-preview-remove" onclick="removeFile(${index})">&times;</button>
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        function removeFile(index) {
+            pendingFiles.splice(index, 1);
+            renderFilePreview();
+        }
+        
+        function formatFileSize(bytes) {
+            if (bytes < 1024) return bytes + ' B';
+            if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+            return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+        }
+        
+        function getFileExtension(filename) {
+            return filename.split('.').pop().toUpperCase();
+        }
+        
+        async function uploadFiles(files) {
+            if (!files.length) return [];
+            
+            const uploadedFiles = [];
+            
+            for (const file of files) {
+                try {
+                    // Convert file to base64
+                    const base64 = await fileToBase64(file);
+                    
+                    // Upload to API
+                    const response = await fetch(`${API_BASE}/api/files/upload`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            key: currentKey,
+                            filename: file.name,
+                            contentType: file.type,
+                            data: base64,
+                            size: file.size
+                        })
+                    });
+                    
+                    if (!response.ok) throw new Error('Upload failed');
+                    
+                    const result = await response.json();
+                    uploadedFiles.push({
+                        id: result.fileId,
+                        name: file.name,
+                        type: file.type,
+                        size: file.size,
+                        url: result.url
+                    });
+                } catch (error) {
+                    console.error('File upload error:', error);
+                    // For now, store as base64 in message (temporary until R2 is set up)
+                    const base64 = await fileToBase64(file);
+                    uploadedFiles.push({
+                        id: 'local_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9),
+                        name: file.name,
+                        type: file.type,
+                        size: file.size,
+                        data: base64 // Store base64 directly for now
+                    });
+                }
+            }
+            
+            return uploadedFiles;
+        }
+        
+        function fileToBase64(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = reject;
+                reader.readAsDataURL(file);
+            });
+        }
+        
+        // Image lightbox
+        function openLightbox(src) {
+            let lightbox = document.getElementById('imageLightbox');
+            if (!lightbox) {
+                lightbox = document.createElement('div');
+                lightbox.id = 'imageLightbox';
+                lightbox.className = 'image-lightbox';
+                lightbox.innerHTML = `
+                    <button class="image-lightbox-close" onclick="closeLightbox()">&times;</button>
+                    <img src="" alt="Full size">
+                `;
+                lightbox.addEventListener('click', (e) => {
+                    if (e.target === lightbox) closeLightbox();
+                });
+                document.body.appendChild(lightbox);
+            }
+            
+            lightbox.querySelector('img').src = src;
+            lightbox.classList.add('active');
+        }
+        
+        function closeLightbox() {
+            const lightbox = document.getElementById('imageLightbox');
+            if (lightbox) lightbox.classList.remove('active');
+        }
+
         async function sendResponse() {
             const input = document.getElementById('responseInput');
             const content = input.value.trim();
             
-            if (!content) return;
+            if (!content && pendingFiles.length === 0) return;
 
             try {
+                // Upload files first
+                let attachments = [];
+                if (pendingFiles.length > 0) {
+                    attachments = await uploadFiles(pendingFiles);
+                }
+                
                 let newMessage;
                 
                 if (API_BASE) {
@@ -1125,7 +1791,11 @@
                     const response = await fetch(`${API_BASE}/api/dialogue/respond`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ key: currentKey, content })
+                        body: JSON.stringify({ 
+                            key: currentKey, 
+                            content: content || '(File attachment)',
+                            attachments: attachments
+                        })
                     });
                     
                     if (!response.ok) throw new Error('Failed to send response');
@@ -1136,10 +1806,11 @@
                     // Local mode - create message locally
                     newMessage = {
                         id: 'msg_' + Date.now(),
-                        content: content,
+                        content: content || '(File attachment)',
                         fromLuminary: false,
                         date: new Date().toISOString(),
-                        read: false
+                        read: false,
+                        attachments: attachments
                     };
                     
                     // Save to localStorage
@@ -1152,7 +1823,10 @@
                 if (!currentDialogue.messages) currentDialogue.messages = [];
                 currentDialogue.messages.push(newMessage);
                 
+                // Clear inputs
                 input.value = '';
+                pendingFiles = [];
+                renderFilePreview();
                 renderMessages();
                 
                 showNotification('Response sent! The Luminary team will be notified and will respond soon.');
@@ -1248,6 +1922,15 @@
         document.getElementById('keyModal').addEventListener('click', function(e) {
             if (e.target === this) closeKeyModal();
         });
+        
+        // Initialize - check for existing session
+        (async function initSession() {
+            const hasSession = await restoreSession();
+            if (hasSession) {
+                document.body.classList.add('has-session');
+                console.log('Session restored for:', currentDialogue.recipientName);
+            }
+        })();
     </script>
 </body>
 </html>

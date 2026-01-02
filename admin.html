@@ -1022,6 +1022,33 @@
         ::-webkit-scrollbar-thumb { background: var(--border-subtle); border-radius: 3px; }
         ::-webkit-scrollbar-thumb:hover { background: var(--gold-dark); }
 
+        /* File Preview */
+        .file-preview-container { display: flex; flex-wrap: wrap; gap: 0.5rem; padding: 0.5rem 0; }
+        .file-preview-container:empty { display: none; }
+        .file-preview-item { position: relative; background: var(--bg-dark); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 0.5rem; display: flex; align-items: center; gap: 0.5rem; }
+        .file-preview-item img { width: 40px; height: 40px; object-fit: cover; border-radius: 4px; }
+        .file-preview-item .file-icon { width: 40px; height: 40px; background: var(--bg-deep); border-radius: 4px; display: flex; align-items: center; justify-content: center; color: var(--gold); font-size: 0.7rem; font-weight: 600; }
+        .file-preview-info { flex: 1; min-width: 0; }
+        .file-preview-name { color: var(--text-light); font-size: 0.8rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 120px; }
+        .file-preview-size { color: var(--text-muted); font-size: 0.7rem; }
+        .file-preview-remove { position: absolute; top: -6px; right: -6px; width: 18px; height: 18px; background: #e74c3c; border: none; border-radius: 50%; color: white; font-size: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+
+        /* Message Attachments */
+        .message-attachments { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid var(--border-subtle); }
+        .message-attachment { display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem 0.75rem; background: var(--bg-deep); border-radius: 6px; cursor: pointer; transition: all 0.2s ease; text-decoration: none; color: inherit; }
+        .message-attachment:hover { background: rgba(212, 175, 55, 0.15); }
+        .message-attachment-icon { width: 32px; height: 32px; border-radius: 4px; display: flex; align-items: center; justify-content: center; background: var(--bg-card); color: var(--gold); font-size: 0.65rem; font-weight: 600; }
+        .message-attachment-icon img { width: 100%; height: 100%; object-fit: cover; border-radius: 4px; }
+        .message-attachment-info { font-size: 0.8rem; }
+        .message-attachment-name { color: var(--text-light); max-width: 150px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .message-attachment-size { color: var(--text-muted); font-size: 0.7rem; }
+
+        /* Image Lightbox */
+        .image-lightbox { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.95); z-index: 10000; display: flex; align-items: center; justify-content: center; opacity: 0; visibility: hidden; transition: all 0.3s ease; }
+        .image-lightbox.active { opacity: 1; visibility: visible; }
+        .image-lightbox img { max-width: 90vw; max-height: 90vh; object-fit: contain; border-radius: 8px; }
+        .image-lightbox-close { position: absolute; top: 20px; right: 20px; width: 40px; height: 40px; background: rgba(255,255,255,0.1); border: none; border-radius: 50%; color: white; font-size: 24px; cursor: pointer; }
+
         /* Responsive */
         @media (max-width: 1200px) {
             .app-container { grid-template-columns: 220px 320px 1fr; }
@@ -1211,12 +1238,17 @@
                     <div class="compose-header">
                         <span class="compose-label">Your Response</span>
                         <div class="compose-tools">
+                            <button class="tool-btn" id="btnAttachFile" title="Attach file">
+                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"/></svg>
+                            </button>
                             <button class="tool-btn" id="btnInsertTemplate" title="Quick reply">
                                 <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
                             </button>
                         </div>
                     </div>
                     <textarea class="compose-editor" id="composeEditor" placeholder="Write your response..."></textarea>
+                    <input type="file" id="adminFileInput" multiple accept="image/*,.pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt" style="display: none;">
+                    <div class="file-preview-container" id="adminFilePreview"></div>
                     <div class="compose-footer">
                         <span class="compose-info">Ctrl+Enter to send • Auto-saved</span>
                         <div class="compose-buttons">
@@ -1725,6 +1757,16 @@ Please let us know if you have other questions.
 
             // Messages
             messages.forEach((msg, idx) => {
+                // Render attachments if present
+                let attachmentsHtml = '';
+                if (msg.attachments && msg.attachments.length > 0) {
+                    attachmentsHtml = `
+                        <div class="message-attachments">
+                            ${msg.attachments.map(att => renderMessageAttachment(att)).join('')}
+                        </div>
+                    `;
+                }
+                
                 html += `
                     <div class="message-item ${msg.fromLuminary ? 'outbound' : 'inbound'}">
                         <div class="message-bubble">
@@ -1732,7 +1774,7 @@ Please let us know if you have other questions.
                                 <span class="message-sender">${msg.fromLuminary ? 'Luminary' : currentPartner.recipientName}</span>
                                 <span class="message-time">${formatDate(msg.date)}</span>
                             </div>
-                            <div class="message-body">${formatContent(msg.content)}</div>
+                            <div class="message-body">${formatContent(msg.content)}${attachmentsHtml}</div>
                             <div class="message-actions">
                                 <button class="message-action-btn" onclick="copyText(\`${escapeBackticks(msg.content)}\`)">
                                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
@@ -1753,6 +1795,37 @@ Please let us know if you have other questions.
             html += '</div>';
             container.innerHTML = html;
             container.scrollTop = container.scrollHeight;
+        }
+        
+        function renderMessageAttachment(att) {
+            const isImage = att.type && att.type.startsWith('image/');
+            const ext = getFileExtension(att.name);
+            const size = formatFileSize(att.size);
+            const url = att.url || att.data;
+            
+            if (isImage) {
+                return `
+                    <div class="message-attachment" onclick="openLightbox('${url}')">
+                        <div class="message-attachment-icon">
+                            <img src="${url}" alt="${att.name}">
+                        </div>
+                        <div class="message-attachment-info">
+                            <div class="message-attachment-name">${att.name}</div>
+                            <div class="message-attachment-size">${size}</div>
+                        </div>
+                    </div>
+                `;
+            } else {
+                return `
+                    <a class="message-attachment" href="${url}" download="${att.name}" target="_blank">
+                        <div class="message-attachment-icon">${ext}</div>
+                        <div class="message-attachment-info">
+                            <div class="message-attachment-name">${att.name}</div>
+                            <div class="message-attachment-size">${size}</div>
+                        </div>
+                    </a>
+                `;
+            }
         }
 
         function renderDetails(container) {
@@ -1817,13 +1890,156 @@ Please let us know if you have other questions.
         }
 
         // ===== MESSAGING =====
+        let adminPendingFiles = [];
+        const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+        
+        function formatFileSize(bytes) {
+            if (bytes < 1024) return bytes + ' B';
+            if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+            return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+        }
+        
+        function getFileExtension(filename) {
+            return filename.split('.').pop().toUpperCase();
+        }
+        
+        function handleAdminFileSelect(event) {
+            const files = Array.from(event.target.files);
+            files.forEach(file => {
+                if (file.size > MAX_FILE_SIZE) {
+                    alert(`File "${file.name}" is too large. Maximum size is 10MB.`);
+                    return;
+                }
+                adminPendingFiles.push(file);
+            });
+            renderAdminFilePreview();
+            event.target.value = '';
+        }
+        
+        function renderAdminFilePreview() {
+            const container = document.getElementById('adminFilePreview');
+            container.innerHTML = adminPendingFiles.map((file, index) => {
+                const isImage = file.type.startsWith('image/');
+                const ext = file.name.split('.').pop().toUpperCase();
+                const size = formatFileSize(file.size);
+                return `
+                    <div class="file-preview-item">
+                        ${isImage ? `<img src="${URL.createObjectURL(file)}" alt="${file.name}">` 
+                                  : `<div class="file-icon">${ext}</div>`}
+                        <div class="file-preview-info">
+                            <div class="file-preview-name">${file.name}</div>
+                            <div class="file-preview-size">${size}</div>
+                        </div>
+                        <button class="file-preview-remove" onclick="removeAdminFile(${index})">&times;</button>
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        function removeAdminFile(index) {
+            adminPendingFiles.splice(index, 1);
+            renderAdminFilePreview();
+        }
+        
+        function fileToBase64(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = reject;
+                reader.readAsDataURL(file);
+            });
+        }
+        
+        async function uploadAdminFiles(files) {
+            if (!files.length) return [];
+            const uploadedFiles = [];
+            
+            for (const file of files) {
+                try {
+                    const base64 = await fileToBase64(file);
+                    
+                    // Upload to R2 via API
+                    const response = await fetch(`${API_BASE}/api/admin/files/upload`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${authToken}`
+                        },
+                        body: JSON.stringify({
+                            partnerId: currentPartner.id,
+                            filename: file.name,
+                            contentType: file.type,
+                            data: base64,
+                            size: file.size
+                        })
+                    });
+                    
+                    if (!response.ok) throw new Error('Upload failed');
+                    
+                    const result = await response.json();
+                    uploadedFiles.push({
+                        id: result.fileId,
+                        name: file.name,
+                        type: file.type,
+                        size: file.size,
+                        url: result.url
+                    });
+                } catch (error) {
+                    console.error('File upload error:', error);
+                    // Fallback to base64 if R2 upload fails
+                    const base64 = await fileToBase64(file);
+                    uploadedFiles.push({
+                        id: 'local_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9),
+                        name: file.name,
+                        type: file.type,
+                        size: file.size,
+                        data: base64
+                    });
+                }
+            }
+            
+            return uploadedFiles;
+        }
+        
+        // Image lightbox
+        function openLightbox(src) {
+            let lightbox = document.getElementById('imageLightbox');
+            if (!lightbox) {
+                lightbox = document.createElement('div');
+                lightbox.id = 'imageLightbox';
+                lightbox.className = 'image-lightbox';
+                lightbox.innerHTML = `
+                    <button class="image-lightbox-close" onclick="closeLightbox()">&times;</button>
+                    <img src="" alt="Full size">
+                `;
+                lightbox.addEventListener('click', (e) => {
+                    if (e.target === lightbox) closeLightbox();
+                });
+                document.body.appendChild(lightbox);
+            }
+            lightbox.querySelector('img').src = src;
+            lightbox.classList.add('active');
+        }
+        
+        function closeLightbox() {
+            const lightbox = document.getElementById('imageLightbox');
+            if (lightbox) lightbox.classList.remove('active');
+        }
+        
         async function sendMessage() {
             const content = document.getElementById('composeEditor').value.trim();
-            if (!content || !currentPartner) return;
+            if (!content && adminPendingFiles.length === 0) return;
+            if (!currentPartner) return;
 
             showSaveIndicator('saving');
             
             try {
+                // Upload files
+                let attachments = [];
+                if (adminPendingFiles.length > 0) {
+                    attachments = await uploadAdminFiles(adminPendingFiles);
+                }
+                
                 const response = await fetch(`${API_BASE}/api/admin/messages`, {
                     method: 'POST',
                     headers: {
@@ -1832,7 +2048,8 @@ Please let us know if you have other questions.
                     },
                     body: JSON.stringify({
                         partnerId: currentPartner.id,
-                        content: content
+                        content: content || '(File attachment)',
+                        attachments: attachments
                     })
                 });
                 
@@ -1846,6 +2063,8 @@ Please let us know if you have other questions.
                 currentPartner.lastActivity = new Date().toISOString();
                 
                 document.getElementById('composeEditor').value = '';
+                adminPendingFiles = [];
+                renderAdminFilePreview();
                 
                 showSaveIndicator('saved');
                 renderCurrentTab();
@@ -2138,6 +2357,8 @@ Please let us know if you have other questions.
             document.getElementById('btnMarkStatus').addEventListener('click', markStatus);
             document.getElementById('btnInsertTemplate').addEventListener('click', () => openModal('quickReplyModal'));
             document.getElementById('btnSendMessage').addEventListener('click', sendMessage);
+            document.getElementById('btnAttachFile').addEventListener('click', () => document.getElementById('adminFileInput').click());
+            document.getElementById('adminFileInput').addEventListener('change', handleAdminFileSelect);
 
             // Escape to close modals
             document.addEventListener('keydown', (e) => {
@@ -2145,6 +2366,7 @@ Please let us know if you have other questions.
                     closeModal('templateModal');
                     closeModal('quickReplyModal');
                     closeModal('confirmModal');
+                    closeLightbox();
                 }
             });
         });
