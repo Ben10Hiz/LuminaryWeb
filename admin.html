@@ -1035,13 +1035,95 @@
 
         /* Message Attachments */
         .message-attachments { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid var(--border-subtle); }
-        .message-attachment { display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem 0.75rem; background: var(--bg-deep); border-radius: 6px; cursor: pointer; transition: all 0.2s ease; text-decoration: none; color: inherit; }
+        .message-attachment { display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem 0.75rem; background: var(--bg-deep); border-radius: 6px; cursor: pointer; transition: all 0.2s ease; text-decoration: none; color: inherit; position: relative; }
         .message-attachment:hover { background: rgba(212, 175, 55, 0.15); }
+        .message-attachment.pdf { border-left: 3px solid #E74C3C; }
+        .message-attachment.doc { border-left: 3px solid #2B579A; }
+        .message-attachment.spreadsheet { border-left: 3px solid #217346; }
+        .message-attachment.image { border-left: 3px solid #9B59B6; }
         .message-attachment-icon { width: 32px; height: 32px; border-radius: 4px; display: flex; align-items: center; justify-content: center; background: var(--bg-card); color: var(--gold); font-size: 0.65rem; font-weight: 600; }
         .message-attachment-icon img { width: 100%; height: 100%; object-fit: cover; border-radius: 4px; }
-        .message-attachment-info { font-size: 0.8rem; }
+        .message-attachment-icon svg { width: 18px; height: 18px; }
+        .message-attachment-info { font-size: 0.8rem; flex: 1; min-width: 0; }
         .message-attachment-name { color: var(--text-light); max-width: 150px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .message-attachment-size { color: var(--text-muted); font-size: 0.7rem; }
+        .attachment-actions { display: flex; gap: 0.25rem; }
+        .attachment-download, .attachment-preview { background: transparent; border: none; color: var(--text-muted); cursor: pointer; padding: 0.25rem; border-radius: 4px; transition: all 0.2s ease; }
+        .attachment-download:hover, .attachment-preview:hover { color: var(--gold); background: rgba(212, 175, 55, 0.1); }
+        .attachment-download svg, .attachment-preview svg { width: 16px; height: 16px; }
+
+        /* File Preview Modal */
+        .file-preview-modal { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.95); z-index: 10000; display: flex; align-items: center; justify-content: center; opacity: 0; visibility: hidden; transition: all 0.3s ease; }
+        .file-preview-modal.active { opacity: 1; visibility: visible; }
+        .file-preview-modal-content { width: 90vw; height: 90vh; background: var(--bg-card); border-radius: 12px; display: flex; flex-direction: column; overflow: hidden; }
+        .file-preview-modal-header { display: flex; align-items: center; justify-content: space-between; padding: 1rem 1.5rem; border-bottom: 1px solid var(--border-subtle); background: var(--bg-deep); }
+        .file-preview-modal-title { font-weight: 600; color: var(--text-light); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 60%; }
+        .file-preview-modal-actions { display: flex; align-items: center; gap: 0.75rem; }
+        .file-preview-modal-download { display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; background: var(--gold); color: var(--bg-dark); border: none; border-radius: 6px; cursor: pointer; font-weight: 500; transition: all 0.2s ease; }
+        .file-preview-modal-download:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(212, 175, 55, 0.3); }
+        .file-preview-modal-download svg { width: 16px; height: 16px; }
+        .file-preview-modal-close { width: 36px; height: 36px; background: transparent; border: 1px solid var(--border-subtle); border-radius: 6px; color: var(--text-muted); font-size: 24px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        .file-preview-modal-close:hover { border-color: #e74c3c; color: #e74c3c; }
+        .file-preview-modal-body { flex: 1; overflow: auto; display: flex; align-items: center; justify-content: center; background: #1a1a1a; }
+        .file-preview-modal-body iframe { border: none; background: white; }
+        .file-preview-modal-body img { max-width: 100%; max-height: 100%; object-fit: contain; }
+        .file-preview-unsupported { text-align: center; color: var(--text-muted); padding: 3rem; }
+        .file-preview-unsupported svg { margin-bottom: 1rem; opacity: 0.5; }
+        .file-preview-unsupported button { margin-top: 1rem; padding: 0.75rem 1.5rem; background: var(--gold); color: var(--bg-dark); border: none; border-radius: 6px; cursor: pointer; font-weight: 500; }
+
+        /* Files Tab */
+        .files-container { padding: 1.5rem; overflow-y: auto; height: 100%; }
+        .files-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; }
+        .files-header h3 { font-size: 1.1rem; color: var(--text-light); font-weight: 600; }
+        .files-download-all { display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; background: transparent; border: 1px solid var(--border-subtle); color: var(--text-muted); border-radius: 6px; cursor: pointer; font-size: 0.85rem; transition: all 0.2s ease; }
+        .files-download-all:hover { border-color: var(--gold); color: var(--gold); }
+        .files-download-all svg { width: 16px; height: 16px; }
+        .files-section { margin-bottom: 2rem; }
+        .files-section-title { display: flex; align-items: center; gap: 0.5rem; font-size: 0.9rem; color: var(--text-muted); margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--border-subtle); }
+        .files-section-title svg { width: 18px; height: 18px; }
+        .files-empty { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; color: var(--text-muted); text-align: center; padding: 3rem; }
+        .files-empty svg { opacity: 0.3; margin-bottom: 1rem; }
+        .files-empty h3 { color: var(--text-light); margin-bottom: 0.5rem; }
+
+        /* Files Grid (Images) */
+        .files-grid.images { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 1rem; }
+        .file-card.image-card { background: var(--bg-deep); border-radius: 8px; overflow: hidden; cursor: pointer; transition: all 0.2s ease; border: 1px solid var(--border-subtle); }
+        .file-card.image-card:hover { border-color: var(--gold); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.3); }
+        .file-card-preview { aspect-ratio: 1; overflow: hidden; background: #0a0a0a; }
+        .file-card-preview img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s ease; }
+        .file-card.image-card:hover .file-card-preview img { transform: scale(1.05); }
+        .file-card-info { padding: 0.75rem; }
+        .file-card-name { font-size: 0.8rem; color: var(--text-light); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 0.25rem; }
+        .file-card-meta { display: flex; flex-wrap: wrap; gap: 0.5rem; font-size: 0.7rem; color: var(--text-muted); }
+        .file-card-sender { padding: 0.15rem 0.4rem; border-radius: 3px; background: var(--bg-card); }
+        .file-card-sender.luminary { background: rgba(212, 175, 55, 0.2); color: var(--gold); }
+        .file-card-sender.partner { background: rgba(52, 152, 219, 0.2); color: #3498db; }
+        .file-card-actions { position: absolute; top: 0.5rem; right: 0.5rem; opacity: 0; transition: opacity 0.2s ease; }
+        .file-card:hover .file-card-actions { opacity: 1; }
+        .file-card-actions button { width: 32px; height: 32px; background: rgba(0,0,0,0.7); border: none; border-radius: 6px; color: white; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        .file-card-actions button:hover { background: var(--gold); color: var(--bg-dark); }
+        .file-card-actions button svg { width: 16px; height: 16px; }
+        .file-card.image-card { position: relative; }
+
+        /* Files List (Documents) */
+        .files-list { display: flex; flex-direction: column; gap: 0.5rem; }
+        .file-card.document-card { display: flex; align-items: center; gap: 1rem; padding: 1rem; background: var(--bg-deep); border-radius: 8px; border: 1px solid var(--border-subtle); transition: all 0.2s ease; }
+        .file-card.document-card:hover { border-color: var(--gold); background: rgba(212, 175, 55, 0.05); }
+        .file-card-icon { width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; background: var(--bg-card); border-radius: 8px; flex-shrink: 0; }
+        .file-card-icon svg { width: 28px; height: 28px; }
+        .file-card-icon.pdf { background: rgba(231, 76, 60, 0.1); }
+        .file-card-icon.doc, .file-card-icon.docx { background: rgba(43, 87, 154, 0.1); }
+        .file-card-icon.xls, .file-card-icon.xlsx, .file-card-icon.csv { background: rgba(33, 115, 70, 0.1); }
+        .file-card-icon.ppt, .file-card-icon.pptx { background: rgba(210, 71, 38, 0.1); }
+        .file-card.document-card .file-card-info { flex: 1; min-width: 0; }
+        .file-card.document-card .file-card-name { font-size: 0.9rem; margin-bottom: 0.35rem; }
+        .file-card.document-card .file-card-meta { align-items: center; }
+        .file-card-size { color: var(--text-muted); }
+        .file-card-context { font-size: 0.75rem; color: var(--text-muted); font-style: italic; margin-top: 0.35rem; opacity: 0.8; }
+        .file-card.document-card .file-card-actions { display: flex; gap: 0.5rem; opacity: 1; position: static; }
+        .file-card.document-card .file-card-actions button { width: 36px; height: 36px; background: transparent; border: 1px solid var(--border-subtle); border-radius: 6px; color: var(--text-muted); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s ease; }
+        .file-card.document-card .file-card-actions button:hover { border-color: var(--gold); color: var(--gold); background: rgba(212, 175, 55, 0.1); }
+        .file-card.document-card .file-card-actions button svg { width: 18px; height: 18px; }
 
         /* Image Lightbox */
         .image-lightbox { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.95); z-index: 10000; display: flex; align-items: center; justify-content: center; opacity: 0; visibility: hidden; transition: all 0.3s ease; }
@@ -1229,6 +1311,7 @@
 
                 <div class="detail-tabs">
                     <button class="detail-tab active" data-tab="conversation">Conversation</button>
+                    <button class="detail-tab" data-tab="files">Files</button>
                     <button class="detail-tab" data-tab="details">Details</button>
                 </div>
 
@@ -1719,6 +1802,9 @@ Please let us know if you have other questions.
             if (currentTab === 'conversation') {
                 compose.style.display = 'block';
                 renderConversation(content);
+            } else if (currentTab === 'files') {
+                compose.style.display = 'none';
+                renderFiles(content);
             } else {
                 compose.style.display = 'none';
                 renderDetails(content);
@@ -1799,33 +1885,310 @@ Please let us know if you have other questions.
         
         function renderMessageAttachment(att) {
             const isImage = att.type && att.type.startsWith('image/');
+            const isPDF = att.type === 'application/pdf' || att.name.toLowerCase().endsWith('.pdf');
+            const isDoc = att.type && (att.type.includes('word') || att.type.includes('document')) || 
+                          att.name.match(/\.(doc|docx)$/i);
+            const isSpreadsheet = att.type && (att.type.includes('excel') || att.type.includes('spreadsheet')) ||
+                                  att.name.match(/\.(xls|xlsx|csv)$/i);
             const ext = getFileExtension(att.name);
             const size = formatFileSize(att.size);
             const url = att.url || att.data;
             
+            // Determine icon/color based on file type
+            let iconHtml, iconClass;
+            if (isImage) {
+                iconHtml = `<img src="${url}" alt="${att.name}">`;
+                iconClass = 'image';
+            } else if (isPDF) {
+                iconHtml = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>`;
+                iconClass = 'pdf';
+            } else if (isDoc) {
+                iconHtml = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>`;
+                iconClass = 'doc';
+            } else if (isSpreadsheet) {
+                iconHtml = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><rect x="8" y="12" width="8" height="6"></rect></svg>`;
+                iconClass = 'spreadsheet';
+            } else {
+                iconHtml = ext;
+                iconClass = 'generic';
+            }
+            
             if (isImage) {
                 return `
-                    <div class="message-attachment" onclick="openLightbox('${url}')">
+                    <div class="message-attachment ${iconClass}" onclick="openLightbox('${url}')">
                         <div class="message-attachment-icon">
-                            <img src="${url}" alt="${att.name}">
+                            ${iconHtml}
                         </div>
                         <div class="message-attachment-info">
                             <div class="message-attachment-name">${att.name}</div>
                             <div class="message-attachment-size">${size}</div>
+                        </div>
+                        <button class="attachment-download" onclick="event.stopPropagation(); downloadFile('${url}', '${att.name}')" title="Download">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                        </button>
+                    </div>
+                `;
+            } else {
+                return `
+                    <div class="message-attachment ${iconClass}">
+                        <div class="message-attachment-icon">
+                            ${iconHtml}
+                        </div>
+                        <div class="message-attachment-info">
+                            <div class="message-attachment-name">${att.name}</div>
+                            <div class="message-attachment-size">${size}</div>
+                        </div>
+                        <div class="attachment-actions">
+                            ${isPDF ? `<button class="attachment-preview" onclick="previewFile('${url}', '${att.name}', '${att.type}')" title="Preview"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg></button>` : ''}
+                            <button class="attachment-download" onclick="downloadFile('${url}', '${att.name}')" title="Download">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+        
+        // Download file helper
+        function downloadFile(url, filename) {
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            a.target = '_blank';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        }
+        
+        // Preview file in modal
+        function previewFile(url, filename, type) {
+            let preview = document.getElementById('filePreviewModal');
+            if (!preview) {
+                preview = document.createElement('div');
+                preview.id = 'filePreviewModal';
+                preview.className = 'file-preview-modal';
+                preview.innerHTML = `
+                    <div class="file-preview-modal-content">
+                        <div class="file-preview-modal-header">
+                            <span class="file-preview-modal-title"></span>
+                            <div class="file-preview-modal-actions">
+                                <button class="file-preview-modal-download" onclick="downloadFile(currentPreviewUrl, currentPreviewName)">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                                    Download
+                                </button>
+                                <button class="file-preview-modal-close" onclick="closeFilePreview()">&times;</button>
+                            </div>
+                        </div>
+                        <div class="file-preview-modal-body"></div>
+                    </div>
+                `;
+                preview.addEventListener('click', (e) => {
+                    if (e.target === preview) closeFilePreview();
+                });
+                document.body.appendChild(preview);
+            }
+            
+            window.currentPreviewUrl = url;
+            window.currentPreviewName = filename;
+            
+            preview.querySelector('.file-preview-modal-title').textContent = filename;
+            const body = preview.querySelector('.file-preview-modal-body');
+            
+            if (type === 'application/pdf' || filename.toLowerCase().endsWith('.pdf')) {
+                body.innerHTML = `<iframe src="${url}" width="100%" height="100%"></iframe>`;
+            } else if (type && type.startsWith('image/')) {
+                body.innerHTML = `<img src="${url}" alt="${filename}">`;
+            } else {
+                body.innerHTML = `<div class="file-preview-unsupported">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="64" height="64"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+                    <p>Preview not available for this file type</p>
+                    <button onclick="downloadFile('${url}', '${filename}')">Download File</button>
+                </div>`;
+            }
+            
+            preview.classList.add('active');
+        }
+        
+        function closeFilePreview() {
+            const preview = document.getElementById('filePreviewModal');
+            if (preview) preview.classList.remove('active');
+        }
+        
+        // Render Files tab
+        function renderFiles(container) {
+            const messages = currentPartner.messages || [];
+            
+            // Collect all files from all messages
+            const allFiles = [];
+            messages.forEach((msg, msgIdx) => {
+                if (msg.attachments && msg.attachments.length > 0) {
+                    msg.attachments.forEach(att => {
+                        allFiles.push({
+                            ...att,
+                            sender: msg.fromLuminary ? 'Luminary' : currentPartner.recipientName,
+                            fromLuminary: msg.fromLuminary,
+                            date: msg.date,
+                            messageContent: msg.content
+                        });
+                    });
+                }
+            });
+            
+            if (allFiles.length === 0) {
+                container.innerHTML = `
+                    <div class="files-empty">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="64" height="64">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                            <polyline points="14 2 14 8 20 8"></polyline>
+                        </svg>
+                        <h3>No Files Shared</h3>
+                        <p>Files shared in this conversation will appear here</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            // Group files by type
+            const imageFiles = allFiles.filter(f => f.type && f.type.startsWith('image/'));
+            const documentFiles = allFiles.filter(f => !f.type || !f.type.startsWith('image/'));
+            
+            let html = `
+                <div class="files-container">
+                    <div class="files-header">
+                        <h3>Shared Files (${allFiles.length})</h3>
+                        <div class="files-actions">
+                            <button class="files-download-all" onclick="downloadAllFiles()">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                                Download All
+                            </button>
+                        </div>
+                    </div>
+            `;
+            
+            // Images section
+            if (imageFiles.length > 0) {
+                html += `
+                    <div class="files-section">
+                        <h4 class="files-section-title">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+                            Images (${imageFiles.length})
+                        </h4>
+                        <div class="files-grid images">
+                            ${imageFiles.map(f => renderFileCard(f, true)).join('')}
+                        </div>
+                    </div>
+                `;
+            }
+            
+            // Documents section
+            if (documentFiles.length > 0) {
+                html += `
+                    <div class="files-section">
+                        <h4 class="files-section-title">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+                            Documents (${documentFiles.length})
+                        </h4>
+                        <div class="files-list">
+                            ${documentFiles.map(f => renderFileCard(f, false)).join('')}
+                        </div>
+                    </div>
+                `;
+            }
+            
+            html += '</div>';
+            container.innerHTML = html;
+        }
+        
+        function renderFileCard(file, isImage) {
+            const url = file.url || file.data;
+            const ext = getFileExtension(file.name);
+            const size = formatFileSize(file.size);
+            const date = formatDate(file.date);
+            const isPDF = file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf');
+            
+            if (isImage) {
+                return `
+                    <div class="file-card image-card" onclick="openLightbox('${url}')">
+                        <div class="file-card-preview">
+                            <img src="${url}" alt="${file.name}">
+                        </div>
+                        <div class="file-card-info">
+                            <div class="file-card-name" title="${file.name}">${file.name}</div>
+                            <div class="file-card-meta">
+                                <span class="file-card-sender ${file.fromLuminary ? 'luminary' : 'partner'}">${file.sender}</span>
+                                <span class="file-card-date">${date}</span>
+                            </div>
+                        </div>
+                        <div class="file-card-actions">
+                            <button onclick="event.stopPropagation(); downloadFile('${url}', '${file.name}')" title="Download">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                            </button>
                         </div>
                     </div>
                 `;
             } else {
                 return `
-                    <a class="message-attachment" href="${url}" download="${att.name}" target="_blank">
-                        <div class="message-attachment-icon">${ext}</div>
-                        <div class="message-attachment-info">
-                            <div class="message-attachment-name">${att.name}</div>
-                            <div class="message-attachment-size">${size}</div>
+                    <div class="file-card document-card">
+                        <div class="file-card-icon ${ext.toLowerCase()}">
+                            ${getFileIcon(file.type, file.name)}
                         </div>
-                    </a>
+                        <div class="file-card-info">
+                            <div class="file-card-name" title="${file.name}">${file.name}</div>
+                            <div class="file-card-meta">
+                                <span class="file-card-size">${size}</span>
+                                <span class="file-card-sender ${file.fromLuminary ? 'luminary' : 'partner'}">${file.sender}</span>
+                                <span class="file-card-date">${date}</span>
+                            </div>
+                            ${file.messageContent && file.messageContent !== '(File attachment)' ? 
+                                `<div class="file-card-context">"${truncateText(file.messageContent, 50)}"</div>` : ''}
+                        </div>
+                        <div class="file-card-actions">
+                            ${isPDF ? `<button onclick="previewFile('${url}', '${file.name}', '${file.type}')" title="Preview">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                            </button>` : ''}
+                            <button onclick="downloadFile('${url}', '${file.name}')" title="Download">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                            </button>
+                        </div>
+                    </div>
                 `;
             }
+        }
+        
+        function getFileIcon(type, name) {
+            const isPDF = type === 'application/pdf' || name.toLowerCase().endsWith('.pdf');
+            const isDoc = type && (type.includes('word') || type.includes('document')) || name.match(/\.(doc|docx)$/i);
+            const isSpreadsheet = type && (type.includes('excel') || type.includes('spreadsheet')) || name.match(/\.(xls|xlsx|csv)$/i);
+            const isPPT = type && type.includes('presentation') || name.match(/\.(ppt|pptx)$/i);
+            
+            if (isPDF) {
+                return `<svg viewBox="0 0 24 24" fill="none" stroke="#E74C3C" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><text x="8" y="17" font-size="6" fill="#E74C3C">PDF</text></svg>`;
+            } else if (isDoc) {
+                return `<svg viewBox="0 0 24 24" fill="none" stroke="#2B579A" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><text x="7" y="17" font-size="5" fill="#2B579A">DOC</text></svg>`;
+            } else if (isSpreadsheet) {
+                return `<svg viewBox="0 0 24 24" fill="none" stroke="#217346" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><text x="7" y="17" font-size="5" fill="#217346">XLS</text></svg>`;
+            } else if (isPPT) {
+                return `<svg viewBox="0 0 24 24" fill="none" stroke="#D24726" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><text x="7" y="17" font-size="5" fill="#D24726">PPT</text></svg>`;
+            } else {
+                return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>`;
+            }
+        }
+        
+        function truncateText(text, maxLength) {
+            if (text.length <= maxLength) return text;
+            return text.substring(0, maxLength) + '...';
+        }
+        
+        function downloadAllFiles() {
+            const messages = currentPartner.messages || [];
+            messages.forEach(msg => {
+                if (msg.attachments && msg.attachments.length > 0) {
+                    msg.attachments.forEach(att => {
+                        const url = att.url || att.data;
+                        downloadFile(url, att.name);
+                    });
+                }
+            });
         }
 
         function renderDetails(container) {
