@@ -212,6 +212,12 @@
         .dialogue-message.from-luminary { background: rgba(212, 168, 83, 0.1); border: 1px solid var(--border-subtle); align-self: flex-start; }
         .dialogue-message.from-recipient { background: linear-gradient(135deg, rgba(var(--school-primary-rgb, 0, 51, 102), 0.15) 0%, var(--bg-card) 100%); border: 1px solid var(--school-primary); border-left: 3px solid var(--school-primary); align-self: flex-end; }
         .dialogue-message.from-recipient .dialogue-message-sender { color: var(--school-primary); filter: brightness(1.4); }
+        .media-section-header { font-family: 'Cinzel', serif; font-size: 0.85rem; letter-spacing: 0.15em; color: var(--gold-primary); margin: 1.5rem 0 0.5rem 0; padding-bottom: 0.25rem; border-bottom: 1px solid rgba(212, 168, 83, 0.3); }
+        .dialogue-panel[data-type="media"] .dialogue-header { background: linear-gradient(135deg, #0a0a0f 0%, #1a1a2e 100%); }
+        .dialogue-panel[data-type="media"] .dialogue-header::before { background: linear-gradient(90deg, var(--school-primary), var(--school-secondary), var(--school-primary)); }
+        .dialogue-type-badge { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.1em; padding: 0.2rem 0.5rem; border-radius: 3px; margin-left: 0.5rem; font-family: 'Cormorant Garamond', serif; }
+        .dialogue-type-badge.university { background: rgba(212, 168, 83, 0.2); color: var(--gold-primary); }
+        .dialogue-type-badge.media { background: rgba(255, 107, 53, 0.2); color: #FF6B35; }
         .dialogue-message-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; gap: 1rem; }
         .dialogue-message-sender { font-family: 'Cinzel', serif; font-size: 0.75rem; color: var(--gold-primary); letter-spacing: 0.1em; }
         .dialogue-message-time { font-size: 0.7rem; color: var(--text-muted); }
@@ -227,6 +233,16 @@
         .dialogue-btn-group .btn { flex: 1; justify-content: center; padding: 0.85rem 1.5rem; }
         .btn-accept { background: linear-gradient(135deg, #4ade80, #22c55e); color: var(--bg-deep); font-weight: 600; }
         .btn-accept:hover { box-shadow: 0 10px 40px rgba(74, 222, 128, 0.3); transform: translateY(-2px); }
+        
+        /* Media partner styling */
+        .dialogue-panel.media-partner .btn-accept { background: linear-gradient(135deg, #E94560, #D63384); }
+        .dialogue-panel.media-partner .btn-accept:hover { box-shadow: 0 10px 40px rgba(233, 69, 96, 0.3); }
+        .dialogue-panel.media-partner .dialogue-header::before { background: linear-gradient(90deg, var(--school-primary), #E94560, var(--school-primary)); }
+        .dialogue-panel.media-partner .dialogue-message.from-luminary { border-left: 3px solid #E94560; }
+        
+        /* Media badge for header */
+        .dialogue-panel.media-partner .dialogue-header-info h3::after { content: '📰'; margin-left: 0.5rem; font-size: 0.9em; }
+        .dialogue-panel.university-partner .dialogue-header-info h3::after { content: '🎓'; margin-left: 0.5rem; font-size: 0.9em; }
 
         @media (max-width: 600px) {
             .dialogue-panel { width: 100vw; }
@@ -515,7 +531,7 @@
     <div class="dialogue-panel" id="dialoguePanel">
         <div class="dialogue-header">
             <div class="dialogue-header-info">
-                <h3>Partnership Dialogue</h3>
+                <h3>Partnership Dialogue <span class="dialogue-type-badge" id="dialogueTypeBadge"></span></h3>
                 <p class="dialogue-recipient" id="dialogueRecipient">Loading...</p>
             </div>
             <button class="dialogue-close" onclick="closeDialogue()">&times;</button>
@@ -526,7 +542,7 @@
         <div class="dialogue-actions">
             <textarea class="dialogue-response-input" id="responseInput" placeholder="Write your response..."></textarea>
             <div class="dialogue-btn-group">
-                <button class="btn btn-accept" onclick="acceptProposal()">Accept Proposal</button>
+                <button class="btn btn-accept" id="primaryActionBtn" onclick="primaryAction()">Accept Proposal</button>
                 <button class="btn btn-primary" onclick="sendResponse()">Send Response</button>
             </div>
         </div>
@@ -607,6 +623,70 @@
             'H63GCOWWOUULMPJ': { id: 'H63GCOWWOUULMPJ', recipientName: 'Miami Herbert Business School', universityName: 'University of Miami', schoolName: 'Miami Herbert Business School', state: 'FL', contacts: [{ name: 'Paul A. Pavlou', title: 'Dean', email: 'pap172@miami.edu' }], colors: { primary: '#F47321', secondary: '#005030' }, status: 'pending', messages: [] }
         };
 
+        // Media partner data - sample entries for client-side validation
+        const mediaData = {
+            '1XQJZQA1G2P2C6Q': { id: '1XQJZQA1G2P2C6Q', partnerType: 'media', outletName: 'TechCrunch', recipientName: 'TechCrunch', focus: 'Startups, venture, tech news', contacts: [{ name: 'News tips inbox', email: 'tips@techcrunch.com', type: 'Tips inbox' }], colors: { primary: '#0A9E29', secondary: '#000000' }, status: 'pending', messages: [] },
+            '1Z54M8SMG4XV61T': { id: '1Z54M8SMG4XV61T', partnerType: 'media', outletName: 'The Verge', recipientName: 'The Verge', focus: 'Consumer tech, internet culture, gadgets', contacts: [{ name: 'News tips inbox', email: 'tips@theverge.com', type: 'Tips inbox' }], colors: { primary: '#E84F53', secondary: '#000000' }, status: 'pending', messages: [] },
+            '4593JNX5WD6FP30': { id: '4593JNX5WD6FP30', partnerType: 'media', outletName: 'Engadget', recipientName: 'Engadget', focus: 'Gadgets, consumer tech, reviews', contacts: [{ name: 'News tips inbox', email: 'tips@engadget.com', type: 'Tips inbox' }], colors: { primary: '#FF0099', secondary: '#000000' }, status: 'pending', messages: [] },
+            '1Y96TC1HE7748N5': { id: '1Y96TC1HE7748N5', partnerType: 'media', outletName: 'Gizmodo', recipientName: 'Gizmodo', focus: 'Tech, science, culture', contacts: [{ name: 'Tipbox', email: 'tipbox@gizmodo.com', type: 'Tips inbox' }], colors: { primary: '#90EE90', secondary: '#000000' }, status: 'pending', messages: [] },
+            '1B1752QVYHDGYF0': { id: '1B1752QVYHDGYF0', partnerType: 'media', outletName: 'VentureBeat', recipientName: 'VentureBeat', focus: 'AI, enterprise tech, startups', contacts: [{ name: 'General news tips inbox', email: 'tips@venturebeat.com', type: 'Tips inbox' }], colors: { primary: '#C8102E', secondary: '#1A1A1A' }, status: 'pending', messages: [] },
+            '14PSNZ1YTPRZT71': { id: '14PSNZ1YTPRZT71', partnerType: 'media', outletName: 'GeekWire', recipientName: 'GeekWire', focus: 'Tech, startups, enterprise (Seattle/Pacific NW + national)', contacts: [{ name: 'News tips inbox', email: 'tips@geekwire.com', type: 'Tips inbox' }], colors: { primary: '#00AA44', secondary: '#000000' }, status: 'pending', messages: [] },
+            '12XVNCCE1MBKN60': { id: '12XVNCCE1MBKN60', partnerType: 'media', outletName: 'Bloomberg', recipientName: 'Bloomberg', focus: 'Business + tech scoops', contacts: [{ name: 'Confidential tips inbox', email: 'tips2@bloomberg.net', type: 'Tips inbox' }], colors: { primary: '#000000', secondary: '#FF9E1B' }, status: 'pending', messages: [] },
+            'W0PA1ZGGVKAY4Y3': { id: 'W0PA1ZGGVKAY4Y3', partnerType: 'media', outletName: 'Reuters', recipientName: 'Reuters', focus: 'Global news tips (including tech)', contacts: [{ name: 'News tips inbox', email: 'tips@reuters.com', type: 'Tips inbox' }], colors: { primary: '#FF8000', secondary: '#1A1A1A' }, status: 'pending', messages: [] },
+            '1S3H1KNZSQT76AW': { id: '1S3H1KNZSQT76AW', partnerType: 'media', outletName: 'The Washington Post', recipientName: 'The Washington Post', focus: 'Investigations + tips (incl. tech/industry)', contacts: [{ name: 'Secure tip line (email)', email: 'lockbox@washpost.com', type: 'Secure tips' }], colors: { primary: '#000000', secondary: '#FFFFFF' }, status: 'pending', messages: [] },
+            '1F48RYTZYHFZ5MW': { id: '1F48RYTZYHFZ5MW', partnerType: 'media', outletName: 'Business Insider', recipientName: 'Business Insider', focus: 'Tech, business, AI, markets', contacts: [{ name: 'Secure news tips inbox', email: 'newstips@businessinsider.com', type: 'Tips inbox' }], colors: { primary: '#0066CC', secondary: '#000000' }, status: 'pending', messages: [] },
+            '8E1FZTTKFSY4M6F': { id: '8E1FZTTKFSY4M6F', partnerType: 'media', outletName: 'Financial Times', recipientName: 'Financial Times', focus: 'Business + tech + markets', contacts: [{ name: 'News tips inbox', email: 'newstips@ft.com', type: 'Tips inbox' }], colors: { primary: '#FFF1E5', secondary: '#990F3D' }, status: 'pending', messages: [] },
+            '114C12MNM9WYYWF': { id: '114C12MNM9WYYWF', partnerType: 'media', outletName: '9to5Mac', recipientName: '9to5Mac', focus: 'Apple ecosystem', contacts: [{ name: 'Newsroom tips inbox', email: 'tips@9to5mac.com', type: 'Tips inbox' }], colors: { primary: '#000000', secondary: '#555555' }, status: 'pending', messages: [] },
+            'VZJWX9HK7CZRZNZ': { id: 'VZJWX9HK7CZRZNZ', partnerType: 'media', outletName: '9to5Google', recipientName: '9to5Google', focus: 'Google/Alphabet, Android, Pixel', contacts: [{ name: 'News tips inbox', email: 'gtips@9to5g.com', type: 'Tips inbox' }], colors: { primary: '#4285F4', secondary: '#34A853' }, status: 'pending', messages: [] },
+            'PDTG8ENPFTQ2YDX': { id: 'PDTG8ENPFTQ2YDX', partnerType: 'media', outletName: 'The Hacker News', recipientName: 'The Hacker News', focus: 'Cybersecurity news', contacts: [{ name: 'Admin / contact', email: 'admin@thehackernews.com', type: 'Editorial inbox' }], colors: { primary: '#FF6600', secondary: '#000000' }, status: 'pending', messages: [] },
+            '4XV0HRX9W9FG104': { id: '4XV0HRX9W9FG104', partnerType: 'media', outletName: 'CyberScoop', recipientName: 'CyberScoop', focus: 'Cybersecurity policy + industry', contacts: [{ name: 'Tim Starks', email: 'tim.starks@cyberscoop.com', type: 'Individual (publicly listed)' }], colors: { primary: '#00D4AA', secondary: '#0D1117' }, status: 'pending', messages: [] },
+            '1RV9YZZV1NZAAMB': { id: '1RV9YZZV1NZAAMB', partnerType: 'media', outletName: 'FedScoop', recipientName: 'FedScoop', focus: 'GovTech / federal tech', contacts: [{ name: 'Editorial inbox', email: 'editorial@scoopnewsgroup.com', type: 'Editorial inbox' }], colors: { primary: '#0055AA', secondary: '#FFFFFF' }, status: 'pending', messages: [] },
+            '17MKE8N9952GW3D': { id: '17MKE8N9952GW3D', partnerType: 'media', outletName: 'TechRadar', recipientName: 'TechRadar', focus: 'Consumer tech news, reviews', contacts: [{ name: 'News inbox', email: 'news@techradar.com', type: 'Editorial inbox' }], colors: { primary: '#FF0033', secondary: '#000000' }, status: 'pending', messages: [] },
+            '1QMDAKHJTAR621S': { id: '1QMDAKHJTAR621S', partnerType: 'media', outletName: 'Digital Trends', recipientName: 'Digital Trends', focus: 'Consumer tech + trends', contacts: [{ name: 'Editorial inbox', email: 'editorial@digitaltrends.com', type: 'Editorial inbox' }], colors: { primary: '#0099FF', secondary: '#000000' }, status: 'pending', messages: [] },
+            'R0QQ2C45705QXBR': { id: 'R0QQ2C45705QXBR', partnerType: 'media', outletName: 'Android Police', recipientName: 'Android Police', focus: 'Android/Google, mobile tech', contacts: [{ name: 'Editorial inbox', email: 'editorial@androidpolice.com', type: 'Editorial inbox' }], colors: { primary: '#A4C639', secondary: '#000000' }, status: 'pending', messages: [] },
+            '1CGQGS080H36W43': { id: '1CGQGS080H36W43', partnerType: 'media', outletName: "Tom's Hardware", recipientName: "Tom's Hardware", focus: 'PC hardware, components, reviews', contacts: [{ name: 'Editors inbox', email: 'editors@tomshardware.com', type: 'Editorial inbox' }], colors: { primary: '#D72D2D', secondary: '#000000' }, status: 'pending', messages: [] },
+            'BWVTJGKAEE7AM31': { id: 'BWVTJGKAEE7AM31', partnerType: 'media', outletName: 'PC Gamer', recipientName: 'PC Gamer', focus: 'PC gaming + hardware', contacts: [{ name: 'Tips inbox', email: 'tips@pcgamer.com', type: 'Tips inbox' }], colors: { primary: '#E60012', secondary: '#000000' }, status: 'pending', messages: [] }
+        };
+
+        // Generate media pitch based on outlet data
+        function generateMediaPitch(partner) {
+            const today = new Date().toISOString();
+            return {
+                title: 'Story Pitch: Luminary AI Technologies',
+                content: `<p>Dear ${partner.outletName} Editorial Team,</p>
+                
+                <p>I'm reaching out because your coverage of <strong>${partner.focus}</strong> aligns directly with what we're building at Luminary AI Technologies—and we think there's a story here that your readers would find valuable.</p>
+                
+                <p><strong>The Short Version:</strong></p>
+                
+                <p>We're a Delaware C-Corp building intelligent infrastructure across three domains: market intelligence (Vestiq), regulatory compliance (Legal Insights), and e-commerce optimization (Blue Haven). What makes us unusual isn't just the tech—it's how we got here.</p>
+                
+                <p><strong>Why This Might Be A Story:</strong></p>
+                
+                <p>• <strong>Zero Institutional Funding</strong> — We've taken no money from Silicon Valley VCs, no hedge fund backing, no institutional investors. We've bootstrapped everything to maintain complete independence.</p>
+                
+                <p>• <strong>Building in Public</strong> — We're documenting our entire journey transparently. Our mission statement is "Technology for the people. Not power." We actually mean it.</p>
+                
+                <p>• <strong>Contrarian Infrastructure Play</strong> — While everyone's chasing AI chatbots, we're building the underlying intelligence layer that makes complex systems accessible to regular people—not just institutions with expensive consultants.</p>
+                
+                <p>• <strong>Multi-Vertical Approach</strong> — Most startups pick one lane. We're building a connected ecosystem where market data, regulatory changes, and operational tools inform each other.</p>
+                
+                <p><strong>What We Can Offer:</strong></p>
+                
+                <p>• Exclusive interviews and access to our roadmap<br>
+                • Technical deep-dives on our architecture and approach<br>
+                • Our take on where AI infrastructure is actually headed (vs. the hype)<br>
+                • Documentation of building a tech company without institutional money</p>
+                
+                <p>We're not looking for a puff piece—we want to have a real conversation about what we're building, why, and whether it matters. If that's interesting to ${partner.outletName}, we'd love to talk.</p>
+                
+                <p><strong>— Ben Hizer</strong><br>
+                <em>Founder, Luminary AI Technologies</em><br>
+                <em>Technology for the people. Not power.</em></p>`,
+                date: today
+            };
+        }
+
         // Generate personalized proposal based on school data
         function generateProposal(partner) {
             const today = new Date().toISOString();
@@ -644,8 +724,79 @@
             };
         }
 
-        let currentDialogue = null;
-        let currentKey = null;
+        // Generate media press kit / pitch for media outlets
+        function generateMediaPitch(partner) {
+            const today = new Date().toISOString();
+            return {
+                title: 'Story Opportunity: Luminary AI Technologies',
+                content: `<p>Thank you for connecting with us. Below is background on Luminary for your consideration.</p>
+                
+                <p class="media-section-header">THE COMPANY</p>
+                
+                <p><strong>Luminary AI Technologies</strong> is building intelligent infrastructure for complex operations. We're a Delaware C-corp creating technology designed to challenge and replace inefficient legacy systems across healthcare, government, education, and finance.</p>
+                
+                <p>Our tagline: <em>"Technology for the people. Not power."</em></p>
+                
+                <p class="media-section-header">THE STORY</p>
+                
+                <p><strong>The Outsider Angle:</strong> We have taken zero institutional funding—no Silicon Valley VC, no hedge fund backing, no big bank investment. We've spent years building quietly, bootstrapped, because we wanted complete independence. We believe technology infrastructure is too important to be controlled by the same institutions that benefit from complexity.</p>
+                
+                <p><strong>The Mission Angle:</strong> Our thesis is that most institutional dysfunction—from healthcare authorization delays to government administrative burden to investment opacity—stems from legacy technology and deliberate complexity that benefits incumbents. We're building platforms that make these systems transparent and accessible to individuals.</p>
+                
+                <p class="media-section-header">OUR PLATFORMS</p>
+                
+                <p>• <strong>Vestiq</strong> — Wealth intelligence platform providing transparent, thesis-driven investment analysis. Think "Bloomberg Terminal for regular people."</p>
+                
+                <p>• <strong>Legal Insights</strong> — Policy intelligence tracking regulatory changes. Helping citizens understand how laws actually affect them.</p>
+                
+                <p>• <strong>Blue Haven</strong> — E-commerce and marketplace intelligence for entrepreneurs and small businesses.</p>
+                
+                <p>• <strong>Luminary Studios</strong> — Development infrastructure that lets people build software the way they think, not the way programmers code.</p>
+                
+                <p class="media-section-header">FOUNDER AVAILABILITY</p>
+                
+                <p>Our founder is available for interviews, background conversations, or commentary on: AI infrastructure, fintech accessibility, govtech reform, the future of software development, and building companies outside traditional Silicon Valley funding.</p>
+                
+                <p class="media-section-header">ASSETS AVAILABLE</p>
+                
+                <p>• Company background document<br>
+                • Founder bio and high-res photos<br>
+                • Platform screenshots and demos<br>
+                • Data access for stories (case by case)</p>
+                
+                <p><strong>— Luminary AI Technologies</strong><br>
+                <em>Indianapolis, IN | luminary-tech.ai</em></p>`,
+                date: today
+            };
+        }
+
+        // Sample media partner data
+        const mediaPartnerData = {
+            '1XQJZQA1G2P2C6Q': { id: '1XQJZQA1G2P2C6Q', recipientName: 'TechCrunch', outletName: 'TechCrunch', focus: 'Startups, venture, tech news', recipientType: 'media', contacts: [{ name: 'News tips inbox', type: 'Tips inbox', email: 'tips@techcrunch.com' }], colors: { primary: '#0A9E01', secondary: '#000000' }, status: 'pending', messages: [] },
+            '1Z54M8SMG4XV61T': { id: '1Z54M8SMG4XV61T', recipientName: 'The Verge', outletName: 'The Verge', focus: 'Consumer tech, internet culture, gadgets', recipientType: 'media', contacts: [{ name: 'News tips inbox', type: 'Tips inbox', email: 'tips@theverge.com' }], colors: { primary: '#FA4B2A', secondary: '#000000' }, status: 'pending', messages: [] },
+            '4593JNX5WD6FP30': { id: '4593JNX5WD6FP30', recipientName: 'Engadget', outletName: 'Engadget', focus: 'Gadgets, consumer tech, reviews', recipientType: 'media', contacts: [{ name: 'News tips inbox', type: 'Tips inbox', email: 'tips@engadget.com' }], colors: { primary: '#000000', secondary: '#FF0000' }, status: 'pending', messages: [] },
+            '1Y96TC1HE7748N5': { id: '1Y96TC1HE7748N5', recipientName: 'Gizmodo', outletName: 'Gizmodo', focus: 'Tech, science, culture', recipientType: 'media', contacts: [{ name: 'Tipbox', type: 'Tips inbox', email: 'tipbox@gizmodo.com' }], colors: { primary: '#000000', secondary: '#FFFFFF' }, status: 'pending', messages: [] },
+            '1B1752QVYHDGYF0': { id: '1B1752QVYHDGYF0', recipientName: 'VentureBeat', outletName: 'VentureBeat', focus: 'AI, enterprise tech, startups', recipientType: 'media', contacts: [{ name: 'General news tips', type: 'Tips inbox', email: 'tips@venturebeat.com' }], colors: { primary: '#C73A3D', secondary: '#1E1E1E' }, status: 'pending', messages: [] },
+            '14PSNZ1YTPRZT71': { id: '14PSNZ1YTPRZT71', recipientName: 'GeekWire', outletName: 'GeekWire', focus: 'Tech, startups, enterprise', recipientType: 'media', contacts: [{ name: 'News tips inbox', type: 'Tips inbox', email: 'tips@geekwire.com' }], colors: { primary: '#5ABF35', secondary: '#333333' }, status: 'pending', messages: [] },
+            '12XVNCCE1MBKN60': { id: '12XVNCCE1MBKN60', recipientName: 'Bloomberg', outletName: 'Bloomberg', focus: 'Business + tech scoops', recipientType: 'media', contacts: [{ name: 'Confidential tips inbox', type: 'Tips inbox', email: 'tips2@bloomberg.net' }], colors: { primary: '#000000', secondary: '#FF6600' }, status: 'pending', messages: [] },
+            'W0PA1ZGGVKAY4Y3': { id: 'W0PA1ZGGVKAY4Y3', recipientName: 'Reuters', outletName: 'Reuters', focus: 'Global news tips', recipientType: 'media', contacts: [{ name: 'News tips inbox', type: 'Tips inbox', email: 'tips@reuters.com' }], colors: { primary: '#FF8000', secondary: '#000000' }, status: 'pending', messages: [] },
+            '1S3H1KNZSQT76AW': { id: '1S3H1KNZSQT76AW', recipientName: 'The Washington Post', outletName: 'The Washington Post', focus: 'Investigations + tech/industry', recipientType: 'media', contacts: [{ name: 'Secure tip line', type: 'Secure tips', email: 'lockbox@washpost.com' }], colors: { primary: '#000000', secondary: '#FFFFFF' }, status: 'pending', messages: [] },
+            '1F48RYTZYHFZ5MW': { id: '1F48RYTZYHFZ5MW', recipientName: 'Business Insider', outletName: 'Business Insider', focus: 'Tech, business, AI, markets', recipientType: 'media', contacts: [{ name: 'Secure news tips', type: 'Tips inbox', email: 'newstips@businessinsider.com' }], colors: { primary: '#006699', secondary: '#000000' }, status: 'pending', messages: [] },
+            '8E1FZTTKFSY4M6F': { id: '8E1FZTTKFSY4M6F', recipientName: 'Financial Times', outletName: 'Financial Times', focus: 'Business + tech + markets', recipientType: 'media', contacts: [{ name: 'News tips inbox', type: 'Tips inbox', email: 'newstips@ft.com' }], colors: { primary: '#FFF1E0', secondary: '#990F3D' }, status: 'pending', messages: [] },
+            '17MKE8N9952GW3D': { id: '17MKE8N9952GW3D', recipientName: 'TechRadar', outletName: 'TechRadar', focus: 'Consumer tech news, reviews', recipientType: 'media', contacts: [{ name: 'News inbox', type: 'Editorial inbox', email: 'news@techradar.com' }], colors: { primary: '#FF0000', secondary: '#000000' }, status: 'pending', messages: [] },
+            '14GRSN4AE0KPEET': { id: '14GRSN4AE0KPEET', recipientName: 'Ars Technica', outletName: 'Ars Technica', focus: 'Technology, science, policy', recipientType: 'media', contacts: [{ name: 'Tips inbox', type: 'Tips inbox', email: 'tips@arstechnica.com' }], colors: { primary: '#FF4500', secondary: '#1A1A1A' }, status: 'pending', messages: [] },
+            'XZN0ZN7KXHF0NQK': { id: 'XZN0ZN7KXHF0NQK', recipientName: 'CNET', outletName: 'CNET', focus: 'Consumer tech, reviews', recipientType: 'media', contacts: [{ name: 'News tips', type: 'Tips inbox', email: 'tips@cnet.com' }], colors: { primary: '#E00707', secondary: '#000000' }, status: 'pending', messages: [] },
+            '1BR9XBBSSS3VN7D': { id: '1BR9XBBSSS3VN7D', recipientName: 'Axios', outletName: 'Axios', focus: 'News, tech, business', recipientType: 'media', contacts: [{ name: 'News tips', type: 'Tips inbox', email: 'tips@axios.com' }], colors: { primary: '#3562FF', secondary: '#000000' }, status: 'pending', messages: [] },
+            'R2YH43FKGR5MM1F': { id: 'R2YH43FKGR5MM1F', recipientName: 'Forbes', outletName: 'Forbes', focus: 'Business, tech, entrepreneurs', recipientType: 'media', contacts: [{ name: 'Tips', type: 'Tips inbox', email: 'tips@forbes.com' }], colors: { primary: '#000000', secondary: '#C4A052' }, status: 'pending', messages: [] },
+            'TDWCSNMKBH461SB': { id: 'TDWCSNMKBH461SB', recipientName: 'Fast Company', outletName: 'Fast Company', focus: 'Innovation, tech, business', recipientType: 'media', contacts: [{ name: 'News tips', type: 'Tips inbox', email: 'tips@fastcompany.com' }], colors: { primary: '#000000', secondary: '#FF2B06' }, status: 'pending', messages: [] },
+            'E273VN6J36DGB5P': { id: 'E273VN6J36DGB5P', recipientName: 'CNBC', outletName: 'CNBC', focus: 'Business, markets, tech', recipientType: 'media', contacts: [{ name: 'News tips', type: 'Tips inbox', email: 'tips@cnbc.com' }], colors: { primary: '#005594', secondary: '#FCAF17' }, status: 'pending', messages: [] },
+            '2GF9QZ8K8QA1W9M': { id: '2GF9QZ8K8QA1W9M', recipientName: 'CNN', outletName: 'CNN', focus: 'News, tech, business', recipientType: 'media', contacts: [{ name: 'Tips', type: 'Tips inbox', email: 'tips@cnn.com' }], colors: { primary: '#CC0000', secondary: '#000000' }, status: 'pending', messages: [] },
+            '114C12MNM9WYYWF': { id: '114C12MNM9WYYWF', recipientName: '9to5Mac', outletName: '9to5Mac', focus: 'Apple ecosystem', recipientType: 'media', contacts: [{ name: 'Newsroom tips', type: 'Tips inbox', email: 'tips@9to5mac.com' }], colors: { primary: '#000000', secondary: '#0071E3' }, status: 'pending', messages: [] },
+            'VZJWX9HK7CZRZNZ': { id: 'VZJWX9HK7CZRZNZ', recipientName: '9to5Google', outletName: '9to5Google', focus: 'Google/Alphabet, Android', recipientType: 'media', contacts: [{ name: 'News tips', type: 'Tips inbox', email: 'gtips@9to5g.com' }], colors: { primary: '#4285F4', secondary: '#34A853' }, status: 'pending', messages: [] },
+            'Z1N8P9JAB9M8JJK': { id: 'Z1N8P9JAB9M8JJK', recipientName: 'Dark Reading', outletName: 'Dark Reading', focus: 'Cybersecurity', recipientType: 'media', contacts: [{ name: 'Editorial', type: 'Editorial inbox', email: 'editors@darkreading.com' }], colors: { primary: '#1A1A1A', secondary: '#00BFFF' }, status: 'pending', messages: [] },
+            '4XV0HRX9W9FG104': { id: '4XV0HRX9W9FG104', recipientName: 'CyberScoop', outletName: 'CyberScoop', focus: 'Cybersecurity policy + industry', recipientType: 'media', contacts: [{ name: 'Tim Starks', type: 'Individual', email: 'tim.starks@cyberscoop.com' }], colors: { primary: '#0D47A1', secondary: '#00BCD4' }, status: 'pending', messages: [] },
+            '1RV9YZZV1NZAAMB': { id: '1RV9YZZV1NZAAMB', recipientName: 'FedScoop', outletName: 'FedScoop', focus: 'GovTech / federal tech', recipientType: 'media', contacts: [{ name: 'Editorial', type: 'Editorial inbox', email: 'editorial@scoopnewsgroup.com' }], colors: { primary: '#003366', secondary: '#FF6600' }, status: 'pending', messages: [] }
+        };
 
         function openKeyModal() {
             document.getElementById('keyModal').classList.add('active');
@@ -691,14 +842,21 @@
                     data = await response.json();
                     if (!response.ok) throw new Error(data.error || 'Invalid key');
                 } else {
-                    // Local validation
+                    // Local validation - check both university and media partners
                     await new Promise(resolve => setTimeout(resolve, 1000));
                     if (partnerData[key]) {
                         data = { ...partnerData[key] };
+                        data.partnerType = 'university';
                         data.proposal = generateProposal(data);
-                        // Ensure colors are included
                         if (!data.colors) {
                             data.colors = { primary: '#003366', secondary: '#D4A853' };
+                        }
+                    } else if (mediaPartnerData[key]) {
+                        data = { ...mediaPartnerData[key] };
+                        data.partnerType = 'media';
+                        data.proposal = generateMediaPitch(data);
+                        if (!data.colors) {
+                            data.colors = { primary: '#1A1A2E', secondary: '#E94560' };
                         }
                     } else {
                         throw new Error('Invalid key');
@@ -731,11 +889,29 @@
             if (!currentDialogue) return;
             
             const panel = document.getElementById('dialoguePanel');
+            const headerTitle = panel.querySelector('.dialogue-header-info h3');
+            const primaryBtn = document.getElementById('primaryActionBtn');
+            const responseInput = document.getElementById('responseInput');
             
-            // Apply school colors
+            // Apply partner colors
             const colors = currentDialogue.colors || { primary: '#003366', secondary: '#D4A853' };
             panel.style.setProperty('--school-primary', colors.primary);
             panel.style.setProperty('--school-secondary', colors.secondary);
+            
+            // Update header and actions based on partner type
+            if (currentDialogue.partnerType === 'media') {
+                headerTitle.textContent = 'Media Channel';
+                primaryBtn.textContent = 'Request Interview';
+                responseInput.placeholder = 'Share additional context, ask questions, or request specific information...';
+                panel.classList.add('media-partner');
+                panel.classList.remove('university-partner');
+            } else {
+                headerTitle.textContent = 'Partnership Dialogue';
+                primaryBtn.textContent = 'Accept Proposal';
+                responseInput.placeholder = 'Write your response...';
+                panel.classList.add('university-partner');
+                panel.classList.remove('media-partner');
+            }
             
             document.getElementById('dialogueRecipient').textContent = currentDialogue.recipientName;
             renderMessages();
@@ -774,9 +950,10 @@
                 currentDialogue.messages.forEach(msg => {
                     const msgEl = document.createElement('div');
                     msgEl.className = `dialogue-message ${msg.fromLuminary ? 'from-luminary' : 'from-recipient'}`;
+                    const senderName = msg.fromLuminary ? 'LUMINARY' : (currentDialogue.outletName || currentDialogue.schoolName || currentDialogue.recipientName).toUpperCase();
                     msgEl.innerHTML = `
                         <div class="dialogue-message-header">
-                            <span class="dialogue-message-sender">${msg.fromLuminary ? 'LUMINARY' : (currentDialogue.schoolName || currentDialogue.recipientName).toUpperCase()}</span>
+                            <span class="dialogue-message-sender">${senderName}</span>
                             <span class="dialogue-message-time">${formatDate(msg.date)}</span>
                         </div>
                         <div class="dialogue-message-content">
@@ -837,37 +1014,55 @@
             }
         }
 
-        async function acceptProposal() {
-            if (!confirm('Are you sure you want to accept this proposal? This will initiate the partnership process and notify the Luminary team.')) {
+        async function primaryAction() {
+            const isMedia = currentDialogue.partnerType === 'media';
+            const confirmMsg = isMedia 
+                ? 'Request an interview with Luminary? This will notify the team that you\'re interested in coverage.'
+                : 'Accept this partnership proposal? This will initiate the partnership process and notify the Luminary team.';
+            
+            if (!confirm(confirmMsg)) {
                 return;
             }
 
             try {
                 if (API_BASE) {
                     // Real API call
-                    const response = await fetch(`${API_BASE}/api/dialogue/accept`, {
+                    const endpoint = isMedia ? `${API_BASE}/api/dialogue/interview` : `${API_BASE}/api/dialogue/accept`;
+                    const response = await fetch(endpoint, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ key: currentKey })
                     });
-                    if (!response.ok) throw new Error('Failed to accept proposal');
+                    if (!response.ok) throw new Error('Failed to process request');
                 }
 
-                // Add acceptance message
+                // Add response message
                 if (!currentDialogue.messages) currentDialogue.messages = [];
+                
+                const responseContent = isMedia
+                    ? `We're interested in covering this story and would like to schedule an interview with the Luminary team.`
+                    : 'We accept this partnership proposal and look forward to working together with Luminary AI Technologies.';
+                
                 currentDialogue.messages.push({
-                    content: 'We accept this partnership proposal and look forward to working together with Luminary AI Technologies.',
+                    content: responseContent,
                     fromLuminary: false,
                     date: new Date().toISOString()
                 });
                 
                 renderMessages();
-                showNotification('Proposal accepted! The Luminary team will reach out shortly to begin the partnership process.');
+                
+                const successMsg = isMedia
+                    ? 'Interview requested! The Luminary team will reach out shortly to schedule.'
+                    : 'Proposal accepted! The Luminary team will reach out shortly to begin the partnership process.';
+                showNotification(successMsg);
 
             } catch (error) {
-                showNotification('Failed to accept proposal. Please try again.', true);
+                showNotification('Failed to process request. Please try again.', true);
             }
         }
+
+        // Legacy function name for backwards compatibility
+        async function acceptProposal() { return primaryAction(); }
 
         function showNotification(message, isError = false) {
             // Simple alert for now - can be replaced with a toast notification
@@ -897,3 +1092,5 @@
     </script>
 </body>
 </html>
+
+
