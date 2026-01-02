@@ -594,6 +594,56 @@
         // Configuration - Replace with your actual API endpoint when ready
         const API_BASE = ''; // e.g., 'https://api.luminary-tech.ai'
         
+        // Shared storage key - MUST match admin dashboard
+        const STORAGE_KEY = 'luminary_partners_data';
+        
+        // Load partner data from localStorage (syncs with admin)
+        function getStoredPartnerData() {
+            try {
+                const stored = localStorage.getItem(STORAGE_KEY);
+                return stored ? JSON.parse(stored) : {};
+            } catch (e) {
+                console.error('Failed to load stored data:', e);
+                return {};
+            }
+        }
+        
+        // Save partner data to localStorage (syncs with admin)
+        function savePartnerData(key, data) {
+            try {
+                const allData = getStoredPartnerData();
+                allData[key] = data;
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(allData));
+                return true;
+            } catch (e) {
+                console.error('Failed to save data:', e);
+                return false;
+            }
+        }
+        
+        // Get a specific partner's data, merging stored messages with embedded data
+        function getPartnerWithMessages(key, embeddedData) {
+            const storedData = getStoredPartnerData();
+            const stored = storedData[key];
+            
+            if (stored) {
+                // Merge: use embedded data as base, overlay stored messages and status
+                return {
+                    ...embeddedData,
+                    messages: stored.messages || [],
+                    status: stored.status || embeddedData.status || 'pending',
+                    lastActivity: stored.lastActivity || new Date().toISOString()
+                };
+            }
+            
+            return {
+                ...embeddedData,
+                messages: [],
+                status: 'pending',
+                lastActivity: new Date().toISOString()
+            };
+        }
+        
         // Partner data - sample entries for client-side validation
         // Full data loaded from API or partner-keys.json
         const partnerData = {
@@ -844,23 +894,43 @@
                 } else {
                     // Local validation - check both university and media partners
                     await new Promise(resolve => setTimeout(resolve, 1000));
+                    
+                    let embeddedData = null;
+                    let partnerType = null;
+                    
                     if (partnerData[key]) {
-                        data = { ...partnerData[key] };
-                        data.partnerType = 'university';
-                        data.proposal = generateProposal(data);
-                        if (!data.colors) {
-                            data.colors = { primary: '#003366', secondary: '#D4A853' };
-                        }
+                        embeddedData = { ...partnerData[key] };
+                        partnerType = 'university';
                     } else if (mediaPartnerData[key]) {
-                        data = { ...mediaPartnerData[key] };
-                        data.partnerType = 'media';
+                        embeddedData = { ...mediaPartnerData[key] };
+                        partnerType = 'media';
+                    } else {
+                        throw new Error('Invalid key');
+                    }
+                    
+                    // Merge with any stored messages from localStorage
+                    data = getPartnerWithMessages(key, embeddedData);
+                    data.partnerType = partnerType;
+                    
+                    // Generate proposal/pitch
+                    if (partnerType === 'media') {
                         data.proposal = generateMediaPitch(data);
                         if (!data.colors) {
                             data.colors = { primary: '#1A1A2E', secondary: '#E94560' };
                         }
                     } else {
-                        throw new Error('Invalid key');
+                        data.proposal = generateProposal(data);
+                        if (!data.colors) {
+                            data.colors = { primary: '#003366', secondary: '#D4A853' };
+                        }
                     }
+                    
+                    // Mark as viewed and save
+                    if (data.status === 'pending') {
+                        data.status = 'viewed';
+                    }
+                    data.lastActivity = new Date().toISOString();
+                    savePartnerData(key, data);
                 }
 
                 keyInput.classList.remove('validating');
@@ -999,10 +1069,19 @@
                 // Add message to dialogue
                 if (!currentDialogue.messages) currentDialogue.messages = [];
                 currentDialogue.messages.push({
+                    id: 'msg_' + Date.now(),
                     content: content,
                     fromLuminary: false,
-                    date: new Date().toISOString()
+                    date: new Date().toISOString(),
+                    read: false
                 });
+                
+                // Update status and activity
+                currentDialogue.status = 'responded';
+                currentDialogue.lastActivity = new Date().toISOString();
+                
+                // Save to localStorage (syncs with admin dashboard)
+                savePartnerData(currentKey, currentDialogue);
                 
                 input.value = '';
                 renderMessages();
@@ -1044,10 +1123,19 @@
                     : 'We accept this partnership proposal and look forward to working together with Luminary AI Technologies.';
                 
                 currentDialogue.messages.push({
+                    id: 'msg_' + Date.now(),
                     content: responseContent,
                     fromLuminary: false,
-                    date: new Date().toISOString()
+                    date: new Date().toISOString(),
+                    read: false
                 });
+                
+                // Update status and activity
+                currentDialogue.status = 'accepted';
+                currentDialogue.lastActivity = new Date().toISOString();
+                
+                // Save to localStorage (syncs with admin dashboard)
+                savePartnerData(currentKey, currentDialogue);
                 
                 renderMessages();
                 
