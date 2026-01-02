@@ -2008,6 +2008,9 @@
             const container = document.getElementById('dialogueMessages');
             container.innerHTML = '';
             
+            // Debug: log messages
+            console.log('Rendering messages:', currentDialogue.messages);
+            
             // Update file count badge
             updateFileCountBadge();
             
@@ -2027,14 +2030,20 @@
             
             // Render any subsequent messages
             if (currentDialogue.messages && currentDialogue.messages.length > 0) {
-                currentDialogue.messages.forEach(msg => {
+                currentDialogue.messages.forEach((msg, idx) => {
+                    console.log(`Message ${idx}:`, msg);
+                    console.log(`Message ${idx} attachments:`, msg.attachments);
+                    
                     const msgEl = document.createElement('div');
                     msgEl.className = `dialogue-message ${msg.fromLuminary ? 'from-luminary' : 'from-recipient'}`;
                     const senderName = msg.fromLuminary ? 'LUMINARY' : (currentDialogue.outletName || currentDialogue.schoolName || currentDialogue.recipientName).toUpperCase();
                     
                     // Render attachments if present
                     let attachmentsHtml = '';
-                    if (msg.attachments && msg.attachments.length > 0) {
+                    const hasAttachments = msg.attachments && Array.isArray(msg.attachments) && msg.attachments.length > 0;
+                    
+                    if (hasAttachments) {
+                        console.log(`Rendering ${msg.attachments.length} attachments for message ${idx}`);
                         attachmentsHtml = `
                             <div class="message-attachments">
                                 ${msg.attachments.map(att => renderAttachment(att)).join('')}
@@ -2043,7 +2052,7 @@
                     }
                     
                     // Don't show "(File attachment)" as content if there are actual attachments
-                    const displayContent = msg.content === '(File attachment)' && msg.attachments && msg.attachments.length > 0 
+                    const displayContent = msg.content === '(File attachment)' && hasAttachments
                         ? '' 
                         : `<p>${escapeHtml(msg.content)}</p>`;
                     
@@ -2059,6 +2068,11 @@
                     `;
                     container.appendChild(msgEl);
                 });
+            }
+            
+            // Scroll to bottom
+            container.scrollTop = container.scrollHeight;
+        }
             }
             
             // Scroll to bottom
@@ -2507,44 +2521,60 @@
                 try {
                     // Convert file to base64
                     const base64 = await fileToBase64(file);
+                    console.log(`Uploading file: ${file.name}, size: ${file.size}, type: ${file.type}`);
                     
-                    // Upload to API
-                    const response = await fetch(`${API_BASE}/api/files/upload`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            key: currentKey,
-                            filename: file.name,
-                            contentType: file.type,
-                            data: base64,
-                            size: file.size
-                        })
-                    });
+                    // Try to upload to R2 via API
+                    if (API_BASE) {
+                        try {
+                            const response = await fetch(`${API_BASE}/api/files/upload`, {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({
+                                    key: currentKey,
+                                    filename: file.name,
+                                    contentType: file.type,
+                                    data: base64,
+                                    size: file.size
+                                })
+                            });
+                            
+                            if (response.ok) {
+                                const result = await response.json();
+                                console.log('R2 upload success:', result);
+                                uploadedFiles.push({
+                                    id: result.fileId,
+                                    name: file.name,
+                                    type: file.type,
+                                    size: file.size,
+                                    url: result.url
+                                });
+                                continue; // Success, move to next file
+                            } else {
+                                const errText = await response.text();
+                                console.warn('R2 upload failed, using base64 fallback:', errText);
+                            }
+                        } catch (r2Error) {
+                            console.warn('R2 upload error, using base64 fallback:', r2Error);
+                        }
+                    }
                     
-                    if (!response.ok) throw new Error('Upload failed');
-                    
-                    const result = await response.json();
-                    uploadedFiles.push({
-                        id: result.fileId,
-                        name: file.name,
-                        type: file.type,
-                        size: file.size,
-                        url: result.url
-                    });
-                } catch (error) {
-                    console.error('File upload error:', error);
-                    // For now, store as base64 in message (temporary until R2 is set up)
-                    const base64 = await fileToBase64(file);
+                    // Fallback: store as base64 (will be stored in MongoDB with the message)
+                    console.log('Using base64 fallback for:', file.name);
                     uploadedFiles.push({
                         id: 'local_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9),
                         name: file.name,
                         type: file.type,
                         size: file.size,
-                        data: base64 // Store base64 directly for now
+                        data: base64 // Store base64 directly
                     });
+                    
+                } catch (error) {
+                    console.error('File processing error:', error);
+                    showNotification(`Failed to process ${file.name}`, true);
                 }
             }
             
+            console.log('Final uploaded files:', uploadedFiles.map(f => ({ name: f.name, hasUrl: !!f.url, hasData: !!f.data })));
             return uploadedFiles;
         }
         
@@ -2593,27 +2623,43 @@
                 // Upload files first
                 let attachments = [];
                 if (pendingFiles.length > 0) {
+                    console.log('Uploading files:', pendingFiles.length);
                     attachments = await uploadFiles(pendingFiles);
+                    console.log('Upload result:', attachments);
                 }
                 
                 let newMessage;
                 
                 if (API_BASE) {
                     // Real API call
+                    const payload = { 
+                        key: currentKey, 
+                        content: content || '(File attachment)',
+                        attachments: attachments
+                    };
+                    console.log('Sending to API:', payload);
+                    
                     const response = await fetch(`${API_BASE}/api/dialogue/respond`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ 
-                            key: currentKey, 
-                            content: content || '(File attachment)',
-                            attachments: attachments
-                        })
+                        body: JSON.stringify(payload)
                     });
                     
-                    if (!response.ok) throw new Error('Failed to send response');
+                    if (!response.ok) {
+                        const errText = await response.text();
+                        console.error('API error:', errText);
+                        throw new Error('Failed to send response');
+                    }
                     
                     const data = await response.json();
+                    console.log('API response:', data);
                     newMessage = data.message;
+                    
+                    // Ensure attachments are preserved from our upload
+                    if (attachments.length > 0 && (!newMessage.attachments || newMessage.attachments.length === 0)) {
+                        console.log('Preserving local attachments');
+                        newMessage.attachments = attachments;
+                    }
                 } else {
                     // Local mode - create message locally
                     newMessage = {
@@ -2630,6 +2676,8 @@
                     currentDialogue.lastActivity = new Date().toISOString();
                     savePartnerData(currentKey, currentDialogue);
                 }
+                
+                console.log('New message:', newMessage);
                 
                 // Add message to local dialogue state
                 if (!currentDialogue.messages) currentDialogue.messages = [];

@@ -45,6 +45,20 @@ const r2Client = new S3Client({
 // ===== MIDDLEWARE =====
 app.use(cors());
 app.use(express.json({ limit: '50mb' })); // Increased for file attachments
+app.use(express.urlencoded({ limit: '50mb', extended: true }));
+
+// Error handling for body parsing
+app.use((err, req, res, next) => {
+    if (err.type === 'entity.too.large') {
+        console.error('Request body too large:', err);
+        return res.status(413).json({ error: 'Request body too large' });
+    }
+    if (err instanceof SyntaxError && err.status === 400 && 'body' in err) {
+        console.error('Invalid JSON:', err);
+        return res.status(400).json({ error: 'Invalid JSON in request body' });
+    }
+    next(err);
+});
 
 // Request logging
 app.use((req, res, next) => {
@@ -191,6 +205,18 @@ app.post('/api/validate-key', async (req, res) => {
             .find({ partnerId: key })
             .sort({ date: 1 })
             .toArray();
+        
+        // Log messages with attachments for debugging
+        console.log(`Validate-key: Found ${messages.length} messages for partner ${key}`);
+        messages.forEach((m, i) => {
+            const attCount = m.attachments ? m.attachments.length : 0;
+            console.log(`  Message ${i}: "${m.content?.substring(0, 30)}...", attachments: ${attCount}`);
+            if (attCount > 0) {
+                m.attachments.forEach((a, j) => {
+                    console.log(`    Attachment ${j}: ${a.name}, url: ${!!a.url}, data: ${!!a.data}`);
+                });
+            }
+        });
         
         partner.messages = messages;
         
@@ -401,6 +427,13 @@ app.post('/api/dialogue/respond', async (req, res) => {
     try {
         const { key, content, attachments } = req.body;
         
+        console.log('Dialogue respond received:', {
+            key,
+            content,
+            attachmentsCount: attachments ? attachments.length : 0,
+            attachments: attachments ? attachments.map(a => ({ name: a.name, type: a.type, hasUrl: !!a.url, hasData: !!a.data })) : []
+        });
+        
         if (!key || (!content && (!attachments || attachments.length === 0))) {
             return res.status(400).json({ error: 'Key and content or attachments required' });
         }
@@ -423,6 +456,8 @@ app.post('/api/dialogue/respond', async (req, res) => {
             attachments: attachments || []
         };
         
+        console.log('Saving message with attachments:', message.attachments.length);
+        
         await db.collection('messages').insertOne(message);
         
         // Update partner status
@@ -437,6 +472,7 @@ app.post('/api/dialogue/respond', async (req, res) => {
         );
         
         delete message._id;
+        console.log('Returning message:', { id: message.id, attachmentsCount: message.attachments.length });
         res.json({ success: true, message });
         
     } catch (error) {
