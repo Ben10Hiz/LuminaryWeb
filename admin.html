@@ -1058,6 +1058,499 @@
         .file-preview-modal-content { width: 90vw; height: 90vh; background: var(--bg-card); border-radius: 12px; display: flex; flex-direction: column; overflow: hidden; }
         .file-preview-modal-header { display: flex; align-items: center; justify-content: space-between; padding: 1rem 1.5rem; border-bottom: 1px solid var(--border-subtle); background: var(--bg-deep); }
         .file-preview-modal-title { font-weight: 600; color: var(--text-light); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 60%; }
+
+        /* ===== SPLIT VIEW DOCUMENT PREVIEW ===== */
+        .detail-panel { position: relative; transition: all 0.3s ease; }
+        .detail-panel.has-preview { }
+        
+        .detail-main { display: flex; flex-direction: column; height: 100%; transition: all 0.3s ease; }
+        .detail-panel.has-preview .detail-main { width: 50%; border-right: 1px solid var(--border-subtle); }
+        
+        /* Document Preview Panel */
+        .doc-preview-panel {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 50%;
+            height: 100%;
+            background: var(--bg-card);
+            display: flex;
+            flex-direction: column;
+            transform: translateX(100%);
+            opacity: 0;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 100;
+        }
+        .detail-panel.has-preview .doc-preview-panel {
+            transform: translateX(0);
+            opacity: 1;
+        }
+        
+        /* Preview Header */
+        .doc-preview-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem 1.25rem;
+            background: linear-gradient(135deg, var(--bg-deep) 0%, var(--bg-card) 100%);
+            border-bottom: 1px solid var(--border-subtle);
+        }
+        .doc-preview-header-info {
+            flex: 1;
+            min-width: 0;
+        }
+        .doc-preview-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            margin-bottom: 0.25rem;
+        }
+        .doc-preview-meta {
+            display: flex;
+            gap: 0.75rem;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+        .doc-preview-meta span {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+        .doc-preview-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+        .doc-preview-btn {
+            width: 36px;
+            height: 36px;
+            background: transparent;
+            border: 1px solid var(--border-subtle);
+            border-radius: 8px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+        .doc-preview-btn:hover {
+            border-color: var(--gold-primary);
+            color: var(--gold-primary);
+            background: rgba(212, 168, 83, 0.1);
+        }
+        .doc-preview-btn.close:hover {
+            border-color: var(--error);
+            color: var(--error);
+            background: var(--error-bg);
+        }
+        .doc-preview-btn svg {
+            width: 18px;
+            height: 18px;
+        }
+        
+        /* Preview Tabs */
+        .doc-preview-tabs {
+            display: flex;
+            border-bottom: 1px solid var(--border-subtle);
+            background: var(--bg-deep);
+        }
+        .doc-preview-tab {
+            flex: 1;
+            padding: 0.75rem;
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            font-family: inherit;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.4rem;
+            position: relative;
+            transition: all 0.2s ease;
+        }
+        .doc-preview-tab:hover {
+            color: var(--text-primary);
+            background: rgba(255,255,255,0.03);
+        }
+        .doc-preview-tab.active {
+            color: var(--gold-primary);
+        }
+        .doc-preview-tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--gold-primary);
+        }
+        .doc-preview-tab svg {
+            width: 14px;
+            height: 14px;
+        }
+        .doc-preview-tab-badge {
+            background: var(--gold-primary);
+            color: var(--bg-deep);
+            font-size: 0.65rem;
+            padding: 0.1rem 0.35rem;
+            border-radius: 8px;
+            font-weight: 600;
+        }
+        
+        /* Preview Content Area */
+        .doc-preview-content {
+            flex: 1;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* Preview Viewer */
+        .doc-preview-viewer {
+            flex: 1;
+            overflow: auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #0d0d12;
+            position: relative;
+        }
+        .doc-preview-viewer iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            background: white;
+        }
+        .doc-preview-viewer img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            cursor: zoom-in;
+        }
+        .doc-preview-viewer img.zoomed {
+            max-width: none;
+            max-height: none;
+            cursor: zoom-out;
+        }
+        
+        /* Unsupported File */
+        .doc-preview-unsupported {
+            text-align: center;
+            padding: 3rem;
+            color: var(--text-muted);
+        }
+        .doc-preview-unsupported svg {
+            width: 64px;
+            height: 64px;
+            margin-bottom: 1rem;
+            opacity: 0.3;
+        }
+        .doc-preview-unsupported h4 {
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+        .doc-preview-unsupported .download-btn {
+            margin-top: 1rem;
+            padding: 0.75rem 1.5rem;
+            background: var(--gold-primary);
+            color: var(--bg-deep);
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.2s ease;
+        }
+        .doc-preview-unsupported .download-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(212, 168, 83, 0.3);
+        }
+        
+        /* Annotations Panel */
+        .doc-preview-annotations {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1rem;
+        }
+        .annotation-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+        .annotation-header h4 {
+            font-size: 0.9rem;
+            color: var(--text-primary);
+        }
+        .annotation-add-btn {
+            padding: 0.4rem 0.75rem;
+            background: var(--gold-primary);
+            color: var(--bg-deep);
+            border: none;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+            transition: all 0.2s ease;
+        }
+        .annotation-add-btn:hover {
+            transform: translateY(-1px);
+        }
+        .annotation-add-btn svg {
+            width: 12px;
+            height: 12px;
+        }
+        .annotation-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+        .annotation-item {
+            background: var(--bg-deep);
+            border-radius: 8px;
+            padding: 0.75rem;
+            border-left: 3px solid var(--gold-primary);
+        }
+        .annotation-item.partner {
+            border-left-color: var(--info);
+        }
+        .annotation-item-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+        }
+        .annotation-author {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--gold-primary);
+        }
+        .annotation-item.partner .annotation-author {
+            color: var(--info);
+        }
+        .annotation-time {
+            font-size: 0.65rem;
+            color: var(--text-muted);
+        }
+        .annotation-text {
+            font-size: 0.85rem;
+            color: var(--text-primary);
+            line-height: 1.5;
+        }
+        .annotation-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+        .annotation-action-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            font-size: 0.7rem;
+            cursor: pointer;
+            padding: 0.2rem 0.4rem;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+        }
+        .annotation-action-btn:hover {
+            color: var(--gold-primary);
+            background: rgba(212, 168, 83, 0.1);
+        }
+        .annotation-empty {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-muted);
+        }
+        .annotation-empty svg {
+            width: 48px;
+            height: 48px;
+            margin-bottom: 0.75rem;
+            opacity: 0.3;
+        }
+        
+        /* Add Annotation Form */
+        .annotation-form {
+            background: var(--bg-deep);
+            border-radius: 8px;
+            padding: 0.75rem;
+            margin-bottom: 1rem;
+            display: none;
+        }
+        .annotation-form.active {
+            display: block;
+        }
+        .annotation-form textarea {
+            width: 100%;
+            min-height: 80px;
+            padding: 0.75rem;
+            background: var(--bg-input);
+            border: 1px solid var(--border-subtle);
+            border-radius: 6px;
+            color: var(--text-primary);
+            font-family: inherit;
+            font-size: 0.85rem;
+            resize: vertical;
+            margin-bottom: 0.5rem;
+        }
+        .annotation-form textarea:focus {
+            outline: none;
+            border-color: var(--gold-primary);
+        }
+        .annotation-form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.5rem;
+        }
+        .annotation-form-btn {
+            padding: 0.4rem 0.75rem;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .annotation-form-btn.cancel {
+            background: transparent;
+            border: 1px solid var(--border-subtle);
+            color: var(--text-muted);
+        }
+        .annotation-form-btn.save {
+            background: var(--gold-primary);
+            border: none;
+            color: var(--bg-deep);
+        }
+        
+        /* File Info Panel */
+        .doc-preview-info {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1rem;
+        }
+        .file-info-section {
+            margin-bottom: 1.5rem;
+        }
+        .file-info-section h4 {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.75rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+        .file-info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            font-size: 0.85rem;
+        }
+        .file-info-label {
+            color: var(--text-muted);
+        }
+        .file-info-value {
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+        .file-info-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 1rem;
+            background: var(--bg-deep);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .file-info-icon svg {
+            width: 40px;
+            height: 40px;
+        }
+        .file-info-icon.pdf { color: #E74C3C; }
+        .file-info-icon.doc { color: #2B579A; }
+        .file-info-icon.xls { color: #217346; }
+        .file-info-icon.ppt { color: #D24726; }
+        .file-info-icon.image { color: #9B59B6; }
+        
+        /* Preview Footer */
+        .doc-preview-footer {
+            padding: 0.75rem 1rem;
+            background: var(--bg-deep);
+            border-top: 1px solid var(--border-subtle);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .doc-preview-nav {
+            display: flex;
+            gap: 0.5rem;
+        }
+        .doc-preview-nav-btn {
+            padding: 0.4rem 0.75rem;
+            background: transparent;
+            border: 1px solid var(--border-subtle);
+            border-radius: 6px;
+            color: var(--text-muted);
+            font-size: 0.75rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+            transition: all 0.2s ease;
+        }
+        .doc-preview-nav-btn:hover:not(:disabled) {
+            border-color: var(--gold-primary);
+            color: var(--gold-primary);
+        }
+        .doc-preview-nav-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+        .doc-preview-nav-btn svg {
+            width: 14px;
+            height: 14px;
+        }
+        .doc-preview-download-btn {
+            padding: 0.5rem 1rem;
+            background: var(--gold-primary);
+            color: var(--bg-deep);
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 0.8rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            transition: all 0.2s ease;
+        }
+        .doc-preview-download-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(212, 168, 83, 0.3);
+        }
+        .doc-preview-download-btn svg {
+            width: 16px;
+            height: 16px;
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 1200px) {
+            .detail-panel.has-preview .detail-main { width: 45%; }
+            .doc-preview-panel { width: 55%; }
+        }
+        @media (max-width: 900px) {
+            .detail-panel.has-preview .detail-main { display: none; }
+            .doc-preview-panel { width: 100%; }
+        }
         .file-preview-modal-actions { display: flex; align-items: center; gap: 0.75rem; }
         .file-preview-modal-download { display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; background: var(--gold); color: var(--bg-dark); border: none; border-radius: 6px; cursor: pointer; font-weight: 500; transition: all 0.2s ease; }
         .file-preview-modal-download:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(212, 175, 55, 0.3); }
@@ -1107,8 +1600,8 @@
 
         /* Files List (Documents) */
         .files-list { display: flex; flex-direction: column; gap: 0.5rem; }
-        .file-card.document-card { display: flex; align-items: center; gap: 1rem; padding: 1rem; background: var(--bg-deep); border-radius: 8px; border: 1px solid var(--border-subtle); transition: all 0.2s ease; }
-        .file-card.document-card:hover { border-color: var(--gold); background: rgba(212, 175, 55, 0.05); }
+        .file-card.document-card { display: flex; align-items: center; gap: 1rem; padding: 1rem; background: var(--bg-deep); border-radius: 8px; border: 1px solid var(--border-subtle); transition: all 0.2s ease; cursor: pointer; }
+        .file-card.document-card:hover { border-color: var(--gold-primary); background: rgba(212, 168, 83, 0.08); transform: translateX(4px); }
         .file-card-icon { width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; background: var(--bg-card); border-radius: 8px; flex-shrink: 0; }
         .file-card-icon svg { width: 28px; height: 28px; }
         .file-card-icon.pdf { background: rgba(231, 76, 60, 0.1); }
@@ -1285,39 +1778,40 @@
 
         <!-- Right Panel - Detail View -->
         <section class="detail-panel" id="detailPanel">
-            <div class="empty-state" id="emptyState">
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
-                <h3>Select a Partner</h3>
-                <p>Choose a partner from the list to view conversation</p>
-            </div>
-
-            <div id="conversationView" style="display: none; flex-direction: column; height: 100%;">
-                <div class="detail-header">
-                    <div class="detail-header-info">
-                        <h2 id="detailName">Partner Name</h2>
-                        <p id="detailMeta">Details</p>
-                    </div>
-                    <div class="detail-actions">
-                        <button class="action-btn" id="btnCopyKey" title="Copy key">
-                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
-                            Copy Key
-                        </button>
-                        <button class="action-btn" id="btnMarkStatus">
-                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-                            Mark Viewed
-                        </button>
-                    </div>
+            <div class="detail-main">
+                <div class="empty-state" id="emptyState">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+                    <h3>Select a Partner</h3>
+                    <p>Choose a partner from the list to view conversation</p>
                 </div>
 
-                <div class="detail-tabs">
-                    <button class="detail-tab active" data-tab="conversation">Conversation</button>
-                    <button class="detail-tab" data-tab="files">Files</button>
-                    <button class="detail-tab" data-tab="details">Details</button>
-                </div>
+                <div id="conversationView" style="display: none; flex-direction: column; height: 100%;">
+                    <div class="detail-header">
+                        <div class="detail-header-info">
+                            <h2 id="detailName">Partner Name</h2>
+                            <p id="detailMeta">Details</p>
+                        </div>
+                        <div class="detail-actions">
+                            <button class="action-btn" id="btnCopyKey" title="Copy key">
+                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                                Copy Key
+                            </button>
+                            <button class="action-btn" id="btnMarkStatus">
+                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                                Mark Viewed
+                            </button>
+                        </div>
+                    </div>
 
-                <div class="detail-content" id="detailContent"></div>
+                    <div class="detail-tabs">
+                        <button class="detail-tab active" data-tab="conversation">Conversation</button>
+                        <button class="detail-tab" data-tab="files">Files</button>
+                        <button class="detail-tab" data-tab="details">Details</button>
+                    </div>
 
-                <div class="compose-area" id="composeArea">
+                    <div class="detail-content" id="detailContent"></div>
+
+                    <div class="compose-area" id="composeArea">
                     <div class="compose-header">
                         <span class="compose-label">Your Response</span>
                         <div class="compose-tools">
@@ -1338,6 +1832,133 @@
                             <button class="action-btn primary" id="btnSendMessage">Send Message</button>
                         </div>
                     </div>
+                </div>
+            </div>
+            </div><!-- End detail-main -->
+
+            <!-- Document Preview Panel (Split View) -->
+            <div class="doc-preview-panel" id="docPreviewPanel">
+                <div class="doc-preview-header">
+                    <div class="doc-preview-header-info">
+                        <div class="doc-preview-title" id="previewFileName">Document Name</div>
+                        <div class="doc-preview-meta">
+                            <span id="previewFileSize">0 KB</span>
+                            <span>•</span>
+                            <span id="previewFileType">PDF</span>
+                            <span>•</span>
+                            <span id="previewFileSender">From Partner</span>
+                        </div>
+                    </div>
+                    <div class="doc-preview-actions">
+                        <button class="doc-preview-btn" id="btnPreviewFullscreen" title="Fullscreen">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"/></svg>
+                        </button>
+                        <button class="doc-preview-btn" id="btnPreviewNewTab" title="Open in new tab">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+                        </button>
+                        <button class="doc-preview-btn close" id="btnClosePreview" title="Close preview">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="doc-preview-tabs">
+                    <button class="doc-preview-tab active" data-preview-tab="preview">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                        Preview
+                    </button>
+                    <button class="doc-preview-tab" data-preview-tab="comments">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"/></svg>
+                        Comments
+                        <span class="doc-preview-tab-badge" id="commentCount" style="display: none;">0</span>
+                    </button>
+                    <button class="doc-preview-tab" data-preview-tab="info">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                        Info
+                    </button>
+                </div>
+
+                <div class="doc-preview-content">
+                    <!-- Preview Tab -->
+                    <div class="doc-preview-viewer" id="previewViewer">
+                        <!-- Content injected by JS -->
+                    </div>
+
+                    <!-- Comments Tab -->
+                    <div class="doc-preview-annotations" id="previewComments" style="display: none;">
+                        <div class="annotation-form" id="annotationForm">
+                            <textarea id="annotationInput" placeholder="Add a comment about this document..."></textarea>
+                            <div class="annotation-form-actions">
+                                <button class="annotation-form-btn cancel" onclick="toggleAnnotationForm(false)">Cancel</button>
+                                <button class="annotation-form-btn save" onclick="saveAnnotation()">Add Comment</button>
+                            </div>
+                        </div>
+                        <div class="annotation-header">
+                            <h4>Document Comments</h4>
+                            <button class="annotation-add-btn" onclick="toggleAnnotationForm(true)">
+                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                                Add Comment
+                            </button>
+                        </div>
+                        <div class="annotation-list" id="annotationList">
+                            <!-- Comments injected by JS -->
+                        </div>
+                    </div>
+
+                    <!-- Info Tab -->
+                    <div class="doc-preview-info" id="previewInfo" style="display: none;">
+                        <div class="file-info-icon" id="fileInfoIcon">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                        </div>
+                        <div class="file-info-section">
+                            <h4>File Details</h4>
+                            <div class="file-info-row">
+                                <span class="file-info-label">Name</span>
+                                <span class="file-info-value" id="infoFileName">-</span>
+                            </div>
+                            <div class="file-info-row">
+                                <span class="file-info-label">Type</span>
+                                <span class="file-info-value" id="infoFileType">-</span>
+                            </div>
+                            <div class="file-info-row">
+                                <span class="file-info-label">Size</span>
+                                <span class="file-info-value" id="infoFileSize">-</span>
+                            </div>
+                        </div>
+                        <div class="file-info-section">
+                            <h4>Message Context</h4>
+                            <div class="file-info-row">
+                                <span class="file-info-label">Sent by</span>
+                                <span class="file-info-value" id="infoSender">-</span>
+                            </div>
+                            <div class="file-info-row">
+                                <span class="file-info-label">Date</span>
+                                <span class="file-info-value" id="infoDate">-</span>
+                            </div>
+                            <div class="file-info-row">
+                                <span class="file-info-label">Message</span>
+                                <span class="file-info-value" id="infoMessage">-</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="doc-preview-footer">
+                    <div class="doc-preview-nav">
+                        <button class="doc-preview-nav-btn" id="btnPrevFile" onclick="navigatePreviewFile(-1)">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+                            Previous
+                        </button>
+                        <span id="fileNavCounter" style="font-size: 0.75rem; color: var(--text-muted); padding: 0 0.5rem;">1 of 3</span>
+                        <button class="doc-preview-nav-btn" id="btnNextFile" onclick="navigatePreviewFile(1)">
+                            Next
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                        </button>
+                    </div>
+                    <button class="doc-preview-download-btn" id="btnDownloadPreview" onclick="downloadPreviewFile()">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                        Download
+                    </button>
                 </div>
             </div>
         </section>
@@ -1853,7 +2474,7 @@ Please let us know if you have other questions.
                 if (msg.attachments && msg.attachments.length > 0) {
                     attachmentsHtml = `
                         <div class="message-attachments">
-                            ${msg.attachments.map(att => renderMessageAttachment(att)).join('')}
+                            ${msg.attachments.map((att, attIdx) => renderMessageAttachment(att, idx, attIdx)).join('')}
                         </div>
                     `;
                 }
@@ -1894,7 +2515,7 @@ Please let us know if you have other questions.
             container.scrollTop = container.scrollHeight;
         }
         
-        function renderMessageAttachment(att) {
+        function renderMessageAttachment(att, msgIndex, attIndex) {
             const isImage = att.type && att.type.startsWith('image/');
             const isPDF = att.type === 'application/pdf' || att.name.toLowerCase().endsWith('.pdf');
             const isDoc = att.type && (att.type.includes('word') || att.type.includes('document')) || 
@@ -1908,7 +2529,7 @@ Please let us know if you have other questions.
             // Determine icon/color based on file type
             let iconHtml, iconClass;
             if (isImage) {
-                iconHtml = `<img src="${url}" alt="${att.name}">`;
+                iconHtml = `<img src="${url}" alt="${escapeHtml(att.name)}">`;
                 iconClass = 'image';
             } else if (isPDF) {
                 iconHtml = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>`;
@@ -1924,39 +2545,63 @@ Please let us know if you have other questions.
                 iconClass = 'generic';
             }
             
-            if (isImage) {
-                return `
-                    <div class="message-attachment ${iconClass}" onclick="openLightbox('${url}')">
-                        <div class="message-attachment-icon">
-                            ${iconHtml}
-                        </div>
-                        <div class="message-attachment-info">
-                            <div class="message-attachment-name">${att.name}</div>
-                            <div class="message-attachment-size">${size}</div>
-                        </div>
-                        <button class="attachment-download" onclick="event.stopPropagation(); downloadFile('${url}', '${att.name}')" title="Download">
+            // Create a JSON string for the file data to pass to preview
+            const fileDataStr = JSON.stringify({
+                name: att.name,
+                type: att.type,
+                size: att.size,
+                url: url,
+                data: att.data
+            }).replace(/"/g, '&quot;');
+            
+            return `
+                <div class="message-attachment ${iconClass}" onclick="openSingleFilePreview(${msgIndex}, ${attIndex})" style="cursor: pointer;">
+                    <div class="message-attachment-icon">
+                        ${iconHtml}
+                    </div>
+                    <div class="message-attachment-info">
+                        <div class="message-attachment-name">${escapeHtml(att.name)}</div>
+                        <div class="message-attachment-size">${size}</div>
+                    </div>
+                    <div class="attachment-actions">
+                        <button class="attachment-preview" onclick="event.stopPropagation(); openSingleFilePreview(${msgIndex}, ${attIndex})" title="Preview">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                        </button>
+                        <button class="attachment-download" onclick="event.stopPropagation(); downloadFile('${url}', '${escapeHtml(att.name)}')" title="Download">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
                         </button>
                     </div>
-                `;
-            } else {
-                return `
-                    <div class="message-attachment ${iconClass}">
-                        <div class="message-attachment-icon">
-                            ${iconHtml}
-                        </div>
-                        <div class="message-attachment-info">
-                            <div class="message-attachment-name">${att.name}</div>
-                            <div class="message-attachment-size">${size}</div>
-                        </div>
-                        <div class="attachment-actions">
-                            ${isPDF ? `<button class="attachment-preview" onclick="previewFile('${url}', '${att.name}', '${att.type}')" title="Preview"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg></button>` : ''}
-                            <button class="attachment-download" onclick="downloadFile('${url}', '${att.name}')" title="Download">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-                            </button>
-                        </div>
-                    </div>
-                `;
+                </div>
+            `;
+        }
+        
+        // Open preview for a single file from conversation
+        function openSingleFilePreview(msgIndex, attIndex) {
+            if (!currentPartner || !currentPartner.messages) return;
+            
+            // Collect all files from all messages for navigation
+            const allFiles = [];
+            let targetIndex = 0;
+            
+            currentPartner.messages.forEach((msg, mIdx) => {
+                if (msg.attachments && msg.attachments.length > 0) {
+                    msg.attachments.forEach((att, aIdx) => {
+                        if (mIdx === msgIndex && aIdx === attIndex) {
+                            targetIndex = allFiles.length;
+                        }
+                        allFiles.push({
+                            ...att,
+                            sender: msg.fromLuminary ? 'Luminary' : currentPartner.recipientName,
+                            fromLuminary: msg.fromLuminary,
+                            date: msg.date,
+                            messageContext: msg.content !== '(File attachment)' ? msg.content : ''
+                        });
+                    });
+                }
+            });
+            
+            if (allFiles.length > 0) {
+                openDocPreview(allFiles[targetIndex], allFiles, targetIndex);
             }
         }
         
@@ -1971,61 +2616,357 @@ Please let us know if you have other questions.
             document.body.removeChild(a);
         }
         
-        // Preview file in modal
-        function previewFile(url, filename, type) {
-            let preview = document.getElementById('filePreviewModal');
-            if (!preview) {
-                preview = document.createElement('div');
-                preview.id = 'filePreviewModal';
-                preview.className = 'file-preview-modal';
-                preview.innerHTML = `
-                    <div class="file-preview-modal-content">
-                        <div class="file-preview-modal-header">
-                            <span class="file-preview-modal-title"></span>
-                            <div class="file-preview-modal-actions">
-                                <button class="file-preview-modal-download" onclick="downloadFile(currentPreviewUrl, currentPreviewName)">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-                                    Download
-                                </button>
-                                <button class="file-preview-modal-close" onclick="closeFilePreview()">&times;</button>
-                            </div>
-                        </div>
-                        <div class="file-preview-modal-body"></div>
+        // ===== SPLIT VIEW DOCUMENT PREVIEW SYSTEM =====
+        
+        let currentPreviewFile = null;
+        let currentPreviewIndex = 0;
+        let allPreviewFiles = [];
+        let currentPreviewTab = 'preview';
+        let fileAnnotations = {}; // Store annotations by fileId
+        
+        // Open document preview in split view
+        function openDocPreview(file, allFiles, index) {
+            currentPreviewFile = file;
+            allPreviewFiles = allFiles || [file];
+            currentPreviewIndex = index || 0;
+            
+            const panel = document.getElementById('detailPanel');
+            panel.classList.add('has-preview');
+            
+            updatePreviewContent();
+            updateFileNavigation();
+            switchPreviewTab('preview');
+        }
+        
+        // Update preview content based on current file
+        function updatePreviewContent() {
+            if (!currentPreviewFile) return;
+            
+            const file = currentPreviewFile;
+            const url = file.url || file.data;
+            const filename = file.name;
+            const type = file.type || '';
+            
+            // Update header info
+            document.getElementById('previewFileName').textContent = filename;
+            document.getElementById('previewFileSize').textContent = formatFileSize(file.size);
+            document.getElementById('previewFileType').textContent = getFileTypeLabel(type, filename);
+            document.getElementById('previewFileSender').textContent = file.sender ? `From ${file.sender}` : '';
+            
+            // Update viewer content
+            const viewer = document.getElementById('previewViewer');
+            const isPDF = type === 'application/pdf' || filename.toLowerCase().endsWith('.pdf');
+            const isImage = type && type.startsWith('image/');
+            
+            if (isPDF) {
+                viewer.innerHTML = `<iframe src="${url}#toolbar=1&navpanes=0" style="width: 100%; height: 100%; border: none;"></iframe>`;
+            } else if (isImage) {
+                viewer.innerHTML = `<img src="${url}" alt="${escapeHtml(filename)}" onclick="toggleImageZoom(this)">`;
+            } else if (type === 'text/plain' || filename.match(/\.(txt|md|json|js|css|html)$/i)) {
+                // Try to display text files
+                if (file.data && file.data.startsWith('data:')) {
+                    try {
+                        const base64 = file.data.split(',')[1];
+                        const text = atob(base64);
+                        viewer.innerHTML = `<pre style="padding: 1rem; margin: 0; font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; color: var(--text-primary); white-space: pre-wrap; text-align: left; width: 100%; overflow: auto;">${escapeHtml(text)}</pre>`;
+                    } catch (e) {
+                        showUnsupportedPreview(viewer, filename, url);
+                    }
+                } else {
+                    showUnsupportedPreview(viewer, filename, url);
+                }
+            } else {
+                showUnsupportedPreview(viewer, filename, url);
+            }
+            
+            // Update info tab
+            updatePreviewInfo(file);
+            
+            // Load annotations
+            loadAnnotations(file.id);
+        }
+        
+        function showUnsupportedPreview(viewer, filename, url) {
+            const ext = getFileExtension(filename);
+            const iconClass = getFileIconClass(filename);
+            
+            viewer.innerHTML = `
+                <div class="doc-preview-unsupported">
+                    <div class="file-info-icon ${iconClass}">
+                        ${getFileIconSVG(filename)}
+                    </div>
+                    <h4>${escapeHtml(filename)}</h4>
+                    <p>Preview not available for this file type</p>
+                    <button class="download-btn" onclick="downloadPreviewFile()">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                        Download to View
+                    </button>
+                </div>
+            `;
+        }
+        
+        function toggleImageZoom(img) {
+            img.classList.toggle('zoomed');
+        }
+        
+        function updatePreviewInfo(file) {
+            document.getElementById('infoFileName').textContent = file.name;
+            document.getElementById('infoFileType').textContent = getFileTypeLabel(file.type, file.name);
+            document.getElementById('infoFileSize').textContent = formatFileSize(file.size);
+            document.getElementById('infoSender').textContent = file.sender || '-';
+            document.getElementById('infoDate').textContent = file.date ? formatDate(file.date) : '-';
+            document.getElementById('infoMessage').textContent = file.messageContext || '-';
+            
+            // Update icon
+            const iconClass = getFileIconClass(file.name);
+            const iconEl = document.getElementById('fileInfoIcon');
+            iconEl.className = 'file-info-icon ' + iconClass;
+            iconEl.innerHTML = getFileIconSVG(file.name);
+        }
+        
+        function getFileTypeLabel(type, filename) {
+            if (!type && !filename) return 'Unknown';
+            const ext = getFileExtension(filename).toUpperCase();
+            if (type === 'application/pdf' || ext === 'PDF') return 'PDF Document';
+            if (type && type.startsWith('image/')) return 'Image';
+            if (type && type.includes('word') || ext === 'DOC' || ext === 'DOCX') return 'Word Document';
+            if (type && type.includes('excel') || ext === 'XLS' || ext === 'XLSX') return 'Spreadsheet';
+            if (type && type.includes('powerpoint') || ext === 'PPT' || ext === 'PPTX') return 'Presentation';
+            if (ext === 'TXT') return 'Text File';
+            return ext || 'File';
+        }
+        
+        function getFileIconClass(filename) {
+            const ext = getFileExtension(filename).toLowerCase();
+            if (ext === 'pdf') return 'pdf';
+            if (['doc', 'docx'].includes(ext)) return 'doc';
+            if (['xls', 'xlsx', 'csv'].includes(ext)) return 'xls';
+            if (['ppt', 'pptx'].includes(ext)) return 'ppt';
+            if (['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg'].includes(ext)) return 'image';
+            return '';
+        }
+        
+        function getFileIconSVG(filename) {
+            const ext = getFileExtension(filename).toLowerCase();
+            if (ext === 'pdf') {
+                return `<svg fill="currentColor" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6z"></path><path d="M14 2v6h6M9 13h6M9 17h3"/></svg>`;
+            }
+            return `<svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>`;
+        }
+        
+        // Close preview panel
+        function closeDocPreview() {
+            const panel = document.getElementById('detailPanel');
+            panel.classList.remove('has-preview');
+            currentPreviewFile = null;
+            allPreviewFiles = [];
+            currentPreviewIndex = 0;
+        }
+        
+        // Switch preview tabs
+        function switchPreviewTab(tabName) {
+            currentPreviewTab = tabName;
+            
+            // Update tab buttons
+            document.querySelectorAll('.doc-preview-tab').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.previewTab === tabName);
+            });
+            
+            // Show/hide content
+            document.getElementById('previewViewer').style.display = tabName === 'preview' ? 'flex' : 'none';
+            document.getElementById('previewComments').style.display = tabName === 'comments' ? 'block' : 'none';
+            document.getElementById('previewInfo').style.display = tabName === 'info' ? 'block' : 'none';
+        }
+        
+        // Navigate between files
+        function navigatePreviewFile(direction) {
+            const newIndex = currentPreviewIndex + direction;
+            if (newIndex >= 0 && newIndex < allPreviewFiles.length) {
+                currentPreviewIndex = newIndex;
+                currentPreviewFile = allPreviewFiles[newIndex];
+                updatePreviewContent();
+                updateFileNavigation();
+            }
+        }
+        
+        function updateFileNavigation() {
+            const prevBtn = document.getElementById('btnPrevFile');
+            const nextBtn = document.getElementById('btnNextFile');
+            const counter = document.getElementById('fileNavCounter');
+            
+            prevBtn.disabled = currentPreviewIndex === 0;
+            nextBtn.disabled = currentPreviewIndex >= allPreviewFiles.length - 1;
+            counter.textContent = `${currentPreviewIndex + 1} of ${allPreviewFiles.length}`;
+            
+            // Hide nav if only one file
+            const navContainer = document.querySelector('.doc-preview-nav');
+            navContainer.style.display = allPreviewFiles.length > 1 ? 'flex' : 'none';
+        }
+        
+        // Download current preview file
+        function downloadPreviewFile() {
+            if (!currentPreviewFile) return;
+            const url = currentPreviewFile.url || currentPreviewFile.data;
+            downloadFile(url, currentPreviewFile.name);
+        }
+        
+        // Fullscreen preview
+        function toggleFullscreenPreview() {
+            const viewer = document.getElementById('previewViewer');
+            if (!document.fullscreenElement) {
+                viewer.requestFullscreen?.() || viewer.webkitRequestFullscreen?.();
+            } else {
+                document.exitFullscreen?.() || document.webkitExitFullscreen?.();
+            }
+        }
+        
+        // Open in new tab
+        function openPreviewInNewTab() {
+            if (!currentPreviewFile) return;
+            const url = currentPreviewFile.url || currentPreviewFile.data;
+            window.open(url, '_blank');
+        }
+        
+        // ===== ANNOTATIONS/COMMENTS SYSTEM =====
+        
+        function loadAnnotations(fileId) {
+            const annotations = fileAnnotations[fileId] || [];
+            renderAnnotations(annotations);
+            updateCommentCount(annotations.length);
+        }
+        
+        function renderAnnotations(annotations) {
+            const list = document.getElementById('annotationList');
+            
+            if (annotations.length === 0) {
+                list.innerHTML = `
+                    <div class="annotation-empty">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"/></svg>
+                        <p>No comments yet</p>
+                        <small>Add comments to discuss this document</small>
                     </div>
                 `;
-                preview.addEventListener('click', (e) => {
-                    if (e.target === preview) closeFilePreview();
-                });
-                document.body.appendChild(preview);
+                return;
             }
             
-            window.currentPreviewUrl = url;
-            window.currentPreviewName = filename;
-            
-            preview.querySelector('.file-preview-modal-title').textContent = filename;
-            const body = preview.querySelector('.file-preview-modal-body');
-            
-            if (type === 'application/pdf' || filename.toLowerCase().endsWith('.pdf')) {
-                body.innerHTML = `<iframe src="${url}" width="100%" height="100%"></iframe>`;
-            } else if (type && type.startsWith('image/')) {
-                body.innerHTML = `<img src="${url}" alt="${filename}">`;
+            list.innerHTML = annotations.map((ann, idx) => `
+                <div class="annotation-item ${ann.fromPartner ? 'partner' : ''}">
+                    <div class="annotation-item-header">
+                        <span class="annotation-author">${escapeHtml(ann.author)}</span>
+                        <span class="annotation-time">${formatDate(ann.date)}</span>
+                    </div>
+                    <div class="annotation-text">${escapeHtml(ann.text)}</div>
+                    ${!ann.fromPartner ? `
+                        <div class="annotation-actions">
+                            <button class="annotation-action-btn" onclick="editAnnotation(${idx})">Edit</button>
+                            <button class="annotation-action-btn" onclick="deleteAnnotation(${idx})">Delete</button>
+                        </div>
+                    ` : ''}
+                </div>
+            `).join('');
+        }
+        
+        function updateCommentCount(count) {
+            const badge = document.getElementById('commentCount');
+            if (count > 0) {
+                badge.textContent = count;
+                badge.style.display = 'inline';
             } else {
-                body.innerHTML = `<div class="file-preview-unsupported">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="64" height="64"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
-                    <p>Preview not available for this file type</p>
-                    <button onclick="downloadFile('${url}', '${filename}')">Download File</button>
-                </div>`;
+                badge.style.display = 'none';
+            }
+        }
+        
+        function toggleAnnotationForm(show) {
+            const form = document.getElementById('annotationForm');
+            form.classList.toggle('active', show);
+            if (show) {
+                document.getElementById('annotationInput').focus();
+            } else {
+                document.getElementById('annotationInput').value = '';
+            }
+        }
+        
+        function saveAnnotation() {
+            const input = document.getElementById('annotationInput');
+            const text = input.value.trim();
+            if (!text || !currentPreviewFile) return;
+            
+            const fileId = currentPreviewFile.id || currentPreviewFile.name;
+            if (!fileAnnotations[fileId]) {
+                fileAnnotations[fileId] = [];
             }
             
-            preview.classList.add('active');
+            fileAnnotations[fileId].push({
+                id: 'ann_' + Date.now(),
+                author: 'Luminary',
+                text: text,
+                date: new Date().toISOString(),
+                fromPartner: false
+            });
+            
+            toggleAnnotationForm(false);
+            loadAnnotations(fileId);
+            
+            // TODO: Save to server
+            console.log('Annotation saved:', fileAnnotations[fileId]);
+        }
+        
+        function deleteAnnotation(idx) {
+            if (!currentPreviewFile) return;
+            const fileId = currentPreviewFile.id || currentPreviewFile.name;
+            
+            if (fileAnnotations[fileId] && fileAnnotations[fileId][idx]) {
+                fileAnnotations[fileId].splice(idx, 1);
+                loadAnnotations(fileId);
+            }
+        }
+        
+        function editAnnotation(idx) {
+            if (!currentPreviewFile) return;
+            const fileId = currentPreviewFile.id || currentPreviewFile.name;
+            const ann = fileAnnotations[fileId]?.[idx];
+            
+            if (ann) {
+                document.getElementById('annotationInput').value = ann.text;
+                toggleAnnotationForm(true);
+                // Remove old annotation
+                fileAnnotations[fileId].splice(idx, 1);
+            }
+        }
+        
+        // Legacy modal preview (keep for fullscreen option)
+        function previewFile(url, filename, type) {
+            // Instead of modal, open in split view
+            openDocPreview({
+                name: filename,
+                type: type,
+                url: url,
+                data: url,
+                size: 0
+            });
         }
         
         function closeFilePreview() {
-            const preview = document.getElementById('filePreviewModal');
-            if (preview) preview.classList.remove('active');
+            closeDocPreview();
         }
         
+        // Initialize preview panel event listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            // Preview tab switching
+            document.querySelectorAll('.doc-preview-tab').forEach(btn => {
+                btn.addEventListener('click', () => switchPreviewTab(btn.dataset.previewTab));
+            });
+            
+            // Preview buttons
+            document.getElementById('btnClosePreview')?.addEventListener('click', closeDocPreview);
+            document.getElementById('btnPreviewFullscreen')?.addEventListener('click', toggleFullscreenPreview);
+            document.getElementById('btnPreviewNewTab')?.addEventListener('click', openPreviewInNewTab);
+        });
+        
         // Render Files tab
+        // Store all files for preview navigation
+        let currentConversationFiles = [];
+        
         function renderFiles(container) {
             const messages = currentPartner.messages || [];
             
@@ -2033,17 +2974,22 @@ Please let us know if you have other questions.
             const allFiles = [];
             messages.forEach((msg, msgIdx) => {
                 if (msg.attachments && msg.attachments.length > 0) {
-                    msg.attachments.forEach(att => {
+                    msg.attachments.forEach((att, attIdx) => {
                         allFiles.push({
                             ...att,
                             sender: msg.fromLuminary ? 'Luminary' : currentPartner.recipientName,
                             fromLuminary: msg.fromLuminary,
                             date: msg.date,
-                            messageContent: msg.content
+                            messageContent: msg.content,
+                            messageContext: msg.content !== '(File attachment)' ? msg.content : '',
+                            globalIndex: allFiles.length
                         });
                     });
                 }
             });
+            
+            // Store globally for preview navigation
+            currentConversationFiles = allFiles;
             
             if (allFiles.length === 0) {
                 container.innerHTML = `
@@ -2110,28 +3056,35 @@ Please let us know if you have other questions.
             container.innerHTML = html;
         }
         
+        function openFilePreview(index) {
+            if (currentConversationFiles.length > 0 && index >= 0 && index < currentConversationFiles.length) {
+                openDocPreview(currentConversationFiles[index], currentConversationFiles, index);
+            }
+        }
+        
         function renderFileCard(file, isImage) {
             const url = file.url || file.data;
             const ext = getFileExtension(file.name);
             const size = formatFileSize(file.size);
             const date = formatDate(file.date);
             const isPDF = file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf');
+            const fileIndex = file.globalIndex;
             
             if (isImage) {
                 return `
-                    <div class="file-card image-card" onclick="openLightbox('${url}')">
+                    <div class="file-card image-card" onclick="openFilePreview(${fileIndex})">
                         <div class="file-card-preview">
-                            <img src="${url}" alt="${file.name}">
+                            <img src="${url}" alt="${escapeHtml(file.name)}">
                         </div>
                         <div class="file-card-info">
-                            <div class="file-card-name" title="${file.name}">${file.name}</div>
+                            <div class="file-card-name" title="${escapeHtml(file.name)}">${escapeHtml(file.name)}</div>
                             <div class="file-card-meta">
-                                <span class="file-card-sender ${file.fromLuminary ? 'luminary' : 'partner'}">${file.sender}</span>
+                                <span class="file-card-sender ${file.fromLuminary ? 'luminary' : 'partner'}">${escapeHtml(file.sender)}</span>
                                 <span class="file-card-date">${date}</span>
                             </div>
                         </div>
                         <div class="file-card-actions">
-                            <button onclick="event.stopPropagation(); downloadFile('${url}', '${file.name}')" title="Download">
+                            <button onclick="event.stopPropagation(); downloadFile('${url}', '${escapeHtml(file.name)}')" title="Download">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
                             </button>
                         </div>
@@ -2139,25 +3092,25 @@ Please let us know if you have other questions.
                 `;
             } else {
                 return `
-                    <div class="file-card document-card">
+                    <div class="file-card document-card" onclick="openFilePreview(${fileIndex})">
                         <div class="file-card-icon ${ext.toLowerCase()}">
                             ${getFileIcon(file.type, file.name)}
                         </div>
                         <div class="file-card-info">
-                            <div class="file-card-name" title="${file.name}">${file.name}</div>
+                            <div class="file-card-name" title="${escapeHtml(file.name)}">${escapeHtml(file.name)}</div>
                             <div class="file-card-meta">
                                 <span class="file-card-size">${size}</span>
-                                <span class="file-card-sender ${file.fromLuminary ? 'luminary' : 'partner'}">${file.sender}</span>
+                                <span class="file-card-sender ${file.fromLuminary ? 'luminary' : 'partner'}">${escapeHtml(file.sender)}</span>
                                 <span class="file-card-date">${date}</span>
                             </div>
                             ${file.messageContent && file.messageContent !== '(File attachment)' ? 
-                                `<div class="file-card-context">"${truncateText(file.messageContent, 50)}"</div>` : ''}
+                                `<div class="file-card-context">"${escapeHtml(truncateText(file.messageContent, 50))}"</div>` : ''}
                         </div>
                         <div class="file-card-actions">
-                            ${isPDF ? `<button onclick="previewFile('${url}', '${file.name}', '${file.type}')" title="Preview">
+                            <button onclick="event.stopPropagation(); openFilePreview(${fileIndex})" title="Preview">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
-                            </button>` : ''}
-                            <button onclick="downloadFile('${url}', '${file.name}')" title="Download">
+                            </button>
+                            <button onclick="event.stopPropagation(); downloadFile('${url}', '${escapeHtml(file.name)}')" title="Download">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
                             </button>
                         </div>
@@ -2631,6 +3584,18 @@ Please let us know if you have other questions.
 
         function copyText(text) {
             navigator.clipboard.writeText(text).then(() => showSaveIndicator('saved'));
+        }
+
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function escapeBackticks(text) {
+            if (!text) return '';
+            return text.replace(/`/g, '\\`').replace(/\$/g, '\\$');
         }
 
         function formatDate(d) {
