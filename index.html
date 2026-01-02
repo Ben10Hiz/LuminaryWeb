@@ -597,6 +597,26 @@
         // Shared storage key - MUST match admin dashboard
         const STORAGE_KEY = 'luminary_partners_data';
         
+        // Initialize partner database from JSON if not already in localStorage
+        async function initializePartnerDatabase() {
+            const existing = localStorage.getItem(STORAGE_KEY);
+            if (!existing) {
+                try {
+                    const response = await fetch('partner-keys.json');
+                    if (response.ok) {
+                        const data = await response.json();
+                        localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+                        console.log('Partner database initialized from JSON');
+                    }
+                } catch (e) {
+                    console.log('Could not load partner-keys.json, using embedded data only');
+                }
+            }
+        }
+        
+        // Initialize on page load
+        initializePartnerDatabase();
+        
         // Load partner data from localStorage (syncs with admin)
         function getStoredPartnerData() {
             try {
@@ -612,8 +632,25 @@
         function savePartnerData(key, data) {
             try {
                 const allData = getStoredPartnerData();
-                allData[key] = data;
+                
+                // Don't save the generated proposal - it's created dynamically
+                const { proposal, ...dataToSave } = data;
+                
+                // Merge with existing data to preserve any fields we might not have
+                if (allData[key]) {
+                    allData[key] = {
+                        ...allData[key],
+                        ...dataToSave,
+                        messages: dataToSave.messages || [],
+                        status: dataToSave.status || allData[key].status || 'pending',
+                        lastActivity: dataToSave.lastActivity || new Date().toISOString()
+                    };
+                } else {
+                    allData[key] = dataToSave;
+                }
+                
                 localStorage.setItem(STORAGE_KEY, JSON.stringify(allData));
+                console.log('Saved partner data for key:', key, 'Messages:', allData[key].messages?.length || 0);
                 return true;
             } catch (e) {
                 console.error('Failed to save data:', e);
@@ -892,12 +929,13 @@
                     data = await response.json();
                     if (!response.ok) throw new Error(data.error || 'Invalid key');
                 } else {
-                    // Local validation - check both university and media partners
+                    // Local validation - check embedded data AND localStorage
                     await new Promise(resolve => setTimeout(resolve, 1000));
                     
                     let embeddedData = null;
                     let partnerType = null;
                     
+                    // First check embedded sample data
                     if (partnerData[key]) {
                         embeddedData = { ...partnerData[key] };
                         partnerType = 'university';
@@ -905,7 +943,15 @@
                         embeddedData = { ...mediaPartnerData[key] };
                         partnerType = 'media';
                     } else {
-                        throw new Error('Invalid key');
+                        // Check localStorage for full partner database
+                        const storedData = getStoredPartnerData();
+                        if (storedData[key]) {
+                            embeddedData = { ...storedData[key] };
+                            partnerType = storedData[key].recipientType || 
+                                (storedData[key].outletName ? 'media' : 'university');
+                        } else {
+                            throw new Error('Invalid key');
+                        }
                     }
                     
                     // Merge with any stored messages from localStorage
@@ -1068,20 +1114,26 @@
                 
                 // Add message to dialogue
                 if (!currentDialogue.messages) currentDialogue.messages = [];
-                currentDialogue.messages.push({
+                
+                const newMessage = {
                     id: 'msg_' + Date.now(),
                     content: content,
                     fromLuminary: false,
                     date: new Date().toISOString(),
                     read: false
-                });
+                };
+                
+                currentDialogue.messages.push(newMessage);
+                console.log('Added message:', newMessage);
+                console.log('Total messages:', currentDialogue.messages.length);
                 
                 // Update status and activity
                 currentDialogue.status = 'responded';
                 currentDialogue.lastActivity = new Date().toISOString();
                 
                 // Save to localStorage (syncs with admin dashboard)
-                savePartnerData(currentKey, currentDialogue);
+                const saved = savePartnerData(currentKey, currentDialogue);
+                console.log('Save result:', saved);
                 
                 input.value = '';
                 renderMessages();
@@ -1089,6 +1141,7 @@
                 showNotification('Response sent! The Luminary team will be notified and will respond soon.');
 
             } catch (error) {
+                console.error('Error sending response:', error);
                 showNotification('Failed to send response. Please try again.', true);
             }
         }
