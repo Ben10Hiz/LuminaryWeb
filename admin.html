@@ -1816,6 +1816,11 @@ Please let us know if you have other questions.
             const templateContent = processTemplate(isMedia ? templates.pitch : templates.proposal, currentPartner);
             const messages = currentPartner.messages || [];
 
+            console.log('Rendering conversation with messages:', messages.length);
+            messages.forEach((m, i) => {
+                console.log(`  Message ${i}: "${m.content?.substring(0, 30)}...", attachments:`, m.attachments);
+            });
+
             let html = '<div class="message-thread">';
 
             // Initial outbound
@@ -1853,6 +1858,12 @@ Please let us know if you have other questions.
                     `;
                 }
                 
+                // Don't show "(File attachment)" as content if there are actual attachments
+                const hasAttachments = msg.attachments && Array.isArray(msg.attachments) && msg.attachments.length > 0;
+                const displayContent = msg.content === '(File attachment)' && hasAttachments 
+                    ? '' 
+                    : formatContent(msg.content);
+                
                 html += `
                     <div class="message-item ${msg.fromLuminary ? 'outbound' : 'inbound'}">
                         <div class="message-bubble">
@@ -1860,7 +1871,7 @@ Please let us know if you have other questions.
                                 <span class="message-sender">${msg.fromLuminary ? 'Luminary' : currentPartner.recipientName}</span>
                                 <span class="message-time">${formatDate(msg.date)}</span>
                             </div>
-                            <div class="message-body">${formatContent(msg.content)}${attachmentsHtml}</div>
+                            <div class="message-body">${displayContent}${attachmentsHtml}</div>
                             <div class="message-actions">
                                 <button class="message-action-btn" onclick="copyText(\`${escapeBackticks(msg.content)}\`)">
                                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
@@ -2320,37 +2331,46 @@ Please let us know if you have other questions.
             for (const file of files) {
                 try {
                     const base64 = await fileToBase64(file);
+                    console.log(`Admin uploading file: ${file.name}, size: ${file.size}`);
                     
-                    // Upload to R2 via API
-                    const response = await fetch(`${API_BASE}/api/admin/files/upload`, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': `Bearer ${authToken}`
-                        },
-                        body: JSON.stringify({
-                            partnerId: currentPartner.id,
-                            filename: file.name,
-                            contentType: file.type,
-                            data: base64,
-                            size: file.size
-                        })
-                    });
+                    // Try to upload to R2 via API
+                    try {
+                        const response = await fetch(`${API_BASE}/api/admin/files/upload`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Authorization': `Bearer ${authToken}`
+                            },
+                            body: JSON.stringify({
+                                partnerId: currentPartner.id,
+                                filename: file.name,
+                                contentType: file.type,
+                                data: base64,
+                                size: file.size
+                            })
+                        });
+                        
+                        if (response.ok) {
+                            const result = await response.json();
+                            console.log('R2 upload success:', result);
+                            uploadedFiles.push({
+                                id: result.fileId,
+                                name: file.name,
+                                type: file.type,
+                                size: file.size,
+                                url: result.url
+                            });
+                            continue;
+                        } else {
+                            const errText = await response.text();
+                            console.warn('R2 upload failed:', response.status, errText);
+                        }
+                    } catch (r2Error) {
+                        console.warn('R2 upload error:', r2Error);
+                    }
                     
-                    if (!response.ok) throw new Error('Upload failed');
-                    
-                    const result = await response.json();
-                    uploadedFiles.push({
-                        id: result.fileId,
-                        name: file.name,
-                        type: file.type,
-                        size: file.size,
-                        url: result.url
-                    });
-                } catch (error) {
-                    console.error('File upload error:', error);
                     // Fallback to base64 if R2 upload fails
-                    const base64 = await fileToBase64(file);
+                    console.log('Using base64 fallback for:', file.name);
                     uploadedFiles.push({
                         id: 'local_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9),
                         name: file.name,
@@ -2358,9 +2378,13 @@ Please let us know if you have other questions.
                         size: file.size,
                         data: base64
                     });
+                    
+                } catch (error) {
+                    console.error('File processing error:', error);
                 }
             }
             
+            console.log('Admin uploaded files:', uploadedFiles.map(f => ({ name: f.name, hasUrl: !!f.url, hasData: !!f.data })));
             return uploadedFiles;
         }
         
@@ -2400,8 +2424,17 @@ Please let us know if you have other questions.
                 // Upload files
                 let attachments = [];
                 if (adminPendingFiles.length > 0) {
+                    console.log('Admin: uploading files...');
                     attachments = await uploadAdminFiles(adminPendingFiles);
+                    console.log('Admin: upload complete, attachments:', attachments);
                 }
+                
+                const payload = {
+                    partnerId: currentPartner.id,
+                    content: content || '(File attachment)',
+                    attachments: attachments
+                };
+                console.log('Admin: sending message payload:', { ...payload, attachments: payload.attachments.map(a => ({ name: a.name, hasUrl: !!a.url, hasData: !!a.data })) });
                 
                 const response = await fetch(`${API_BASE}/api/admin/messages`, {
                     method: 'POST',
@@ -2409,16 +2442,23 @@ Please let us know if you have other questions.
                         'Content-Type': 'application/json',
                         'Authorization': `Bearer ${authToken}`
                     },
-                    body: JSON.stringify({
-                        partnerId: currentPartner.id,
-                        content: content || '(File attachment)',
-                        attachments: attachments
-                    })
+                    body: JSON.stringify(payload)
                 });
                 
-                if (!response.ok) throw new Error('Failed to send message');
+                if (!response.ok) {
+                    const errText = await response.text();
+                    console.error('Admin: send message failed:', response.status, errText);
+                    throw new Error('Failed to send message');
+                }
                 
                 const data = await response.json();
+                console.log('Admin: message sent, response:', data);
+                
+                // Ensure attachments are preserved
+                if (attachments.length > 0 && (!data.message.attachments || data.message.attachments.length === 0)) {
+                    console.log('Admin: preserving local attachments');
+                    data.message.attachments = attachments;
+                }
                 
                 // Add message to local state
                 if (!currentPartner.messages) currentPartner.messages = [];

@@ -497,6 +497,13 @@ app.get('/api/admin/partners', requireAdmin, async (req, res) => {
             .sort({ date: 1 })
             .toArray();
         
+        // Log messages with attachments
+        const msgsWithAttachments = messages.filter(m => m.attachments && m.attachments.length > 0);
+        console.log(`Admin partners: Found ${messages.length} total messages, ${msgsWithAttachments.length} with attachments`);
+        msgsWithAttachments.forEach(m => {
+            console.log(`  Message ${m.id}: ${m.attachments.length} attachments`);
+        });
+        
         // Group messages by partnerId
         const messagesByPartner = {};
         messages.forEach(msg => {
@@ -555,6 +562,13 @@ app.post('/api/admin/messages', requireAdmin, async (req, res) => {
     try {
         const { partnerId, content, attachments } = req.body;
         
+        console.log('Admin message received:', {
+            partnerId,
+            content: content?.substring(0, 50),
+            attachmentsCount: attachments ? attachments.length : 0,
+            attachments: attachments ? attachments.map(a => ({ name: a.name, hasUrl: !!a.url, hasData: !!a.data })) : []
+        });
+        
         if (!partnerId || (!content && (!attachments || attachments.length === 0))) {
             return res.status(400).json({ error: 'Partner ID and content or attachments required' });
         }
@@ -568,6 +582,8 @@ app.post('/api/admin/messages', requireAdmin, async (req, res) => {
             attachments: attachments || []
         };
         
+        console.log('Saving admin message with attachments:', message.attachments.length);
+        
         await db.collection('messages').insertOne(message);
         
         // Update partner activity
@@ -577,6 +593,7 @@ app.post('/api/admin/messages', requireAdmin, async (req, res) => {
         );
         
         delete message._id;
+        console.log('Admin message saved, returning with attachments:', message.attachments.length);
         res.json({ success: true, message });
         
     } catch (error) {
