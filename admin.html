@@ -1312,6 +1312,8 @@
 
     <script>
         // ===== AUTHENTICATION =====
+        const API_BASE = 'https://exciting-vitality-production-431a.up.railway.app';
+        let authToken = localStorage.getItem('luminary_auth_token') || null;
         // Password: "Luminary2025!Command" 
         // SHA-256 hash of the password
         const VALID_HASH = '8a9bcf4e2d1c7b3a5f6e8d0c9b2a4f7e1d3c6b8a0e2f4d6c8b0a2e4f6d8c0b2a';
@@ -1327,15 +1329,14 @@
 
         // Check if already authenticated
         function checkAuth() {
-            const session = sessionStorage.getItem('luminary_auth');
-            if (session === 'authenticated') {
+            if (authToken) {
                 showApp();
                 return true;
             }
             return false;
         }
 
-        // Attempt login
+        // Attempt login via API
         async function attemptLogin() {
             const input = document.getElementById('accessCode');
             const error = document.getElementById('loginError');
@@ -1351,17 +1352,23 @@
             btn.disabled = true;
             btn.textContent = 'Authenticating...';
 
-            // Simulate network delay for security
-            await new Promise(r => setTimeout(r, 800));
-
-            const hash = await hashPassword(password);
-            
-            // Check against known password: "Luminary2025!Command"
-            // In production, this would validate against a server
-            if (password === 'Luminary2025!Command') {
-                sessionStorage.setItem('luminary_auth', 'authenticated');
-                showApp();
-            } else {
+            try {
+                const response = await fetch(`${API_BASE}/api/admin/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ password })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok && data.token) {
+                    authToken = data.token;
+                    localStorage.setItem('luminary_auth_token', authToken);
+                    showApp();
+                } else {
+                    throw new Error(data.error || 'Invalid credentials');
+                }
+            } catch (err) {
                 input.classList.add('error');
                 error.classList.add('visible');
                 setTimeout(() => {
@@ -1381,7 +1388,8 @@
         }
 
         function logout() {
-            sessionStorage.removeItem('luminary_auth');
+            authToken = null;
+            localStorage.removeItem('luminary_auth_token');
             location.reload();
         }
 
@@ -1476,72 +1484,62 @@ Please let us know if you have other questions.
 — Luminary AI Technologies`
         };
 
-        // Load data
+        // Load data from API
         async function loadPartnerData() {
-            // Load templates from localStorage
+            // Load templates from localStorage (still local for now)
             const savedTemplates = localStorage.getItem(TEMPLATES_KEY);
             if (savedTemplates) {
                 templates = { ...templates, ...JSON.parse(savedTemplates) };
             }
 
-            // Load partner data from localStorage first (for changes)
-            const savedData = localStorage.getItem(STORAGE_KEY);
-            if (savedData) {
-                allPartners = JSON.parse(savedData);
-                updateCounts();
-                renderPartnerList();
-                return;
-            }
-
-            // Otherwise load from JSON file
+            // Load partner data from API
             try {
-                const response = await fetch('partner-keys.json');
-                allPartners = await response.json();
-                saveData(); // Save to localStorage
+                const response = await fetch(`${API_BASE}/api/admin/partners`, {
+                    headers: { 'Authorization': `Bearer ${authToken}` }
+                });
+                
+                if (!response.ok) {
+                    if (response.status === 401) {
+                        logout();
+                        return;
+                    }
+                    throw new Error('Failed to load partners');
+                }
+                
+                const partnersArray = await response.json();
+                
+                // Convert array to object keyed by id
+                allPartners = {};
+                partnersArray.forEach(p => {
+                    allPartners[p.id] = p;
+                });
+                
+                console.log(`Loaded ${partnersArray.length} partners from API`);
             } catch (error) {
-                console.log('Using sample data');
-                allPartners = generateSampleData();
+                console.error('Error loading partners:', error);
+                allPartners = {};
             }
             
             updateCounts();
             renderPartnerList();
         }
 
-        function generateSampleData() {
-            return {
-                'JDXNCILWKG4DRGH': { id: 'JDXNCILWKG4DRGH', recipientName: 'Haas School of Business at UC Berkeley', universityName: 'University of California, Berkeley', schoolName: 'Haas School of Business', state: 'CA', recipientType: 'university', contacts: [{ name: 'Jennifer Chatman', title: 'Dean', email: 'chatman@berkeley.edu' }], colors: { primary: '#003262', secondary: '#FDB515' }, status: 'pending', messages: [], lastActivity: new Date().toISOString() },
-                'AXB4ZQG5N6RMRJG': { id: 'AXB4ZQG5N6RMRJG', recipientName: 'Harvard Business School', universityName: 'Harvard University', schoolName: 'Harvard Business School', state: 'MA', recipientType: 'university', contacts: [{ name: 'MBA Programs', title: 'Admissions', email: 'mba@hbs.edu' }], colors: { primary: '#A51C30', secondary: '#000000' }, status: 'viewed', messages: [], lastActivity: new Date().toISOString() },
-                '1XQJZQA1G2P2C6Q': { id: '1XQJZQA1G2P2C6Q', recipientName: 'TechCrunch', outletName: 'TechCrunch', focus: 'Startups, venture, tech news', recipientType: 'media', contacts: [{ name: 'Tips inbox', type: 'Tips', email: 'tips@techcrunch.com' }], colors: { primary: '#0A9E01', secondary: '#000000' }, status: 'pending', messages: [], lastActivity: new Date().toISOString() },
-                '1Z54M8SMG4XV61T': { id: '1Z54M8SMG4XV61T', recipientName: 'The Verge', outletName: 'The Verge', focus: 'Consumer tech, internet culture', recipientType: 'media', contacts: [{ name: 'Tips inbox', type: 'Tips', email: 'tips@theverge.com' }], colors: { primary: '#FA4B2A', secondary: '#000000' }, status: 'responded', messages: [{ id: 'msg1', content: 'Interested in learning more about your platform.', fromLuminary: false, date: new Date(Date.now() - 86400000).toISOString() }], lastActivity: new Date().toISOString() },
-            };
-        }
-
-        // Save data
-        function saveData() {
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(allPartners));
-            showSaveIndicator('saved');
-        }
-        
-        // Refresh data from localStorage (picks up changes from partner portal)
-        function refreshData() {
-            const savedData = localStorage.getItem(STORAGE_KEY);
-            if (savedData) {
-                allPartners = JSON.parse(savedData);
-                updateCounts();
-                renderPartnerList();
-                
-                // If a partner is currently selected, refresh their view
-                if (currentPartner) {
-                    const updatedPartner = allPartners[currentPartner.id];
-                    if (updatedPartner) {
-                        currentPartner = updatedPartner;
-                        renderCurrentTab();
-                    }
+        // Refresh data from API
+        async function refreshData() {
+            showSaveIndicator('saving');
+            await loadPartnerData();
+            
+            // If a partner is currently selected, refresh their view
+            if (currentPartner) {
+                const updatedPartner = allPartners[currentPartner.id];
+                if (updatedPartner) {
+                    currentPartner = updatedPartner;
+                    renderCurrentTab();
                 }
-                
-                showSaveIndicator('saved');
-                console.log('Data refreshed from localStorage');
             }
+            
+            showSaveIndicator('saved');
+            console.log('Data refreshed from API');
         }
 
         function showSaveIndicator(status) {
@@ -1635,14 +1633,28 @@ Please let us know if you have other questions.
         }
 
         // ===== PARTNER SELECTION =====
-        function selectPartner(id) {
+        async function selectPartner(id) {
             currentPartner = allPartners[id];
             if (!currentPartner) return;
 
-            // Mark messages as read
-            if (currentPartner.messages) {
-                currentPartner.messages.forEach(m => { if (!m.fromLuminary) m.read = true; });
-                saveData();
+            // Mark messages as read via API
+            const hasUnread = currentPartner.messages && currentPartner.messages.some(m => !m.fromLuminary && !m.read);
+            if (hasUnread) {
+                try {
+                    await fetch(`${API_BASE}/api/admin/messages/read`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${authToken}`
+                        },
+                        body: JSON.stringify({ partnerId: id })
+                    });
+                    
+                    // Update local state
+                    currentPartner.messages.forEach(m => { if (!m.fromLuminary) m.read = true; });
+                } catch (error) {
+                    console.error('Mark read error:', error);
+                }
             }
 
             document.getElementById('emptyState').style.display = 'none';
@@ -1805,28 +1817,45 @@ Please let us know if you have other questions.
         }
 
         // ===== MESSAGING =====
-        function sendMessage() {
+        async function sendMessage() {
             const content = document.getElementById('composeEditor').value.trim();
             if (!content || !currentPartner) return;
 
-            if (!currentPartner.messages) currentPartner.messages = [];
-
-            currentPartner.messages.push({
-                id: 'msg' + Date.now(),
-                content: content,
-                fromLuminary: true,
-                date: new Date().toISOString()
-            });
-
-            currentPartner.lastActivity = new Date().toISOString();
-            if (currentPartner.status === 'pending') currentPartner.status = 'viewed';
-
-            document.getElementById('composeEditor').value = '';
-
-            saveData();
-            renderCurrentTab();
-            renderPartnerList();
-            updateCounts();
+            showSaveIndicator('saving');
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/admin/messages`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${authToken}`
+                    },
+                    body: JSON.stringify({
+                        partnerId: currentPartner.id,
+                        content: content
+                    })
+                });
+                
+                if (!response.ok) throw new Error('Failed to send message');
+                
+                const data = await response.json();
+                
+                // Add message to local state
+                if (!currentPartner.messages) currentPartner.messages = [];
+                currentPartner.messages.push(data.message);
+                currentPartner.lastActivity = new Date().toISOString();
+                
+                document.getElementById('composeEditor').value = '';
+                
+                showSaveIndicator('saved');
+                renderCurrentTab();
+                renderPartnerList();
+                updateCounts();
+                
+            } catch (error) {
+                console.error('Send message error:', error);
+                showSaveIndicator('error');
+            }
         }
 
         function confirmDeleteMessage(idx) {
@@ -1836,14 +1865,35 @@ Please let us know if you have other questions.
             openModal('confirmModal');
         }
 
-        function deleteMessage(idx) {
-            if (currentPartner && currentPartner.messages) {
+        async function deleteMessage(idx) {
+            if (!currentPartner || !currentPartner.messages || !currentPartner.messages[idx]) {
+                closeModal('confirmModal');
+                return;
+            }
+            
+            const messageId = currentPartner.messages[idx].id;
+            showSaveIndicator('saving');
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/admin/messages/${messageId}`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${authToken}` }
+                });
+                
+                if (!response.ok) throw new Error('Failed to delete message');
+                
                 currentPartner.messages.splice(idx, 1);
                 currentPartner.lastActivity = new Date().toISOString();
-                saveData();
+                
+                showSaveIndicator('saved');
                 renderCurrentTab();
                 renderPartnerList();
+                
+            } catch (error) {
+                console.error('Delete message error:', error);
+                showSaveIndicator('error');
             }
+            
             closeModal('confirmModal');
         }
 
@@ -1899,27 +1949,54 @@ Please let us know if you have other questions.
             document.getElementById('importFile').click();
         }
 
-        document.getElementById('importFile').addEventListener('change', (e) => {
+        document.getElementById('importFile').addEventListener('change', async (e) => {
             const file = e.target.files[0];
             if (!file) return;
 
             const reader = new FileReader();
-            reader.onload = (event) => {
+            reader.onload = async (event) => {
                 try {
                     const data = JSON.parse(event.target.result);
+                    
+                    // Import partners via API
                     if (data.partners) {
-                        allPartners = { ...allPartners, ...data.partners };
-                        saveData();
+                        showSaveIndicator('saving');
+                        
+                        // Convert to array if it's an object
+                        let partnersArray = Array.isArray(data.partners) 
+                            ? data.partners 
+                            : Object.values(data.partners);
+                        
+                        const response = await fetch(`${API_BASE}/api/admin/import`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Authorization': `Bearer ${authToken}`
+                            },
+                            body: JSON.stringify({ partners: partnersArray })
+                        });
+                        
+                        if (!response.ok) throw new Error('Import failed');
+                        
+                        const result = await response.json();
+                        console.log(`Imported ${result.insertedCount} partners`);
+                        
+                        // Reload data from API
+                        await loadPartnerData();
+                        showSaveIndicator('saved');
                     }
+                    
+                    // Templates still stored locally
                     if (data.templates) {
                         templates = { ...templates, ...data.templates };
                         localStorage.setItem(TEMPLATES_KEY, JSON.stringify(templates));
                     }
-                    updateCounts();
-                    renderPartnerList();
+                    
                     alert('Data imported successfully!');
                 } catch (err) {
-                    alert('Invalid file format');
+                    console.error('Import error:', err);
+                    alert('Import failed: ' + err.message);
+                    showSaveIndicator('error');
                 }
             };
             reader.readAsText(file);
@@ -1959,14 +2036,41 @@ Please let us know if you have other questions.
             return str.replace(/`/g, '\\`').replace(/\$/g, '\\$');
         }
 
-        function markStatus() {
+        async function markStatus() {
             if (!currentPartner) return;
-            if (currentPartner.status === 'pending') currentPartner.status = 'viewed';
-            else if (currentPartner.status === 'viewed') currentPartner.status = 'responded';
-            saveData();
-            updateStatusButton();
-            renderPartnerList();
-            updateCounts();
+            
+            let newStatus;
+            if (currentPartner.status === 'pending') newStatus = 'viewed';
+            else if (currentPartner.status === 'viewed') newStatus = 'responded';
+            else return;
+            
+            showSaveIndicator('saving');
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/admin/partners/status`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${authToken}`
+                    },
+                    body: JSON.stringify({
+                        partnerId: currentPartner.id,
+                        status: newStatus
+                    })
+                });
+                
+                if (!response.ok) throw new Error('Failed to update status');
+                
+                currentPartner.status = newStatus;
+                showSaveIndicator('saved');
+                updateStatusButton();
+                renderPartnerList();
+                updateCounts();
+                
+            } catch (error) {
+                console.error('Mark status error:', error);
+                showSaveIndicator('error');
+            }
         }
 
         function copyKey() {

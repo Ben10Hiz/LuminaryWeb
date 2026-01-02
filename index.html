@@ -591,8 +591,8 @@
 
         // ===== PARTNER KEY & DIALOGUE SYSTEM =====
         
-        // Configuration - Replace with your actual API endpoint when ready
-        const API_BASE = ''; // e.g., 'https://api.luminary-tech.ai'
+        // Configuration - Live API endpoint
+        const API_BASE = 'https://exciting-vitality-production-431a.up.railway.app';
         
         // Shared storage key - MUST match admin dashboard
         const STORAGE_KEY = 'luminary_partners_data';
@@ -928,6 +928,22 @@
                     });
                     data = await response.json();
                     if (!response.ok) throw new Error(data.error || 'Invalid key');
+                    
+                    // Determine partner type
+                    data.partnerType = data.recipientType || (data.outletName ? 'media' : 'university');
+                    
+                    // Generate proposal/pitch locally
+                    if (data.partnerType === 'media') {
+                        data.proposal = generateMediaPitch(data);
+                        if (!data.colors) {
+                            data.colors = { primary: '#1A1A2E', secondary: '#E94560' };
+                        }
+                    } else {
+                        data.proposal = generateProposal(data);
+                        if (!data.colors) {
+                            data.colors = { primary: '#003366', secondary: '#D4A853' };
+                        }
+                    }
                 } else {
                     // Local validation - check embedded data AND localStorage
                     await new Promise(resolve => setTimeout(resolve, 1000));
@@ -1102,38 +1118,39 @@
             if (!content) return;
 
             try {
+                let newMessage;
+                
                 if (API_BASE) {
-                    // Real API call - will send email notification to Luminary
+                    // Real API call
                     const response = await fetch(`${API_BASE}/api/dialogue/respond`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ key: currentKey, content })
                     });
+                    
                     if (!response.ok) throw new Error('Failed to send response');
+                    
+                    const data = await response.json();
+                    newMessage = data.message;
+                } else {
+                    // Local mode - create message locally
+                    newMessage = {
+                        id: 'msg_' + Date.now(),
+                        content: content,
+                        fromLuminary: false,
+                        date: new Date().toISOString(),
+                        read: false
+                    };
+                    
+                    // Save to localStorage
+                    currentDialogue.status = 'responded';
+                    currentDialogue.lastActivity = new Date().toISOString();
+                    savePartnerData(currentKey, currentDialogue);
                 }
                 
-                // Add message to dialogue
+                // Add message to local dialogue state
                 if (!currentDialogue.messages) currentDialogue.messages = [];
-                
-                const newMessage = {
-                    id: 'msg_' + Date.now(),
-                    content: content,
-                    fromLuminary: false,
-                    date: new Date().toISOString(),
-                    read: false
-                };
-                
                 currentDialogue.messages.push(newMessage);
-                console.log('Added message:', newMessage);
-                console.log('Total messages:', currentDialogue.messages.length);
-                
-                // Update status and activity
-                currentDialogue.status = 'responded';
-                currentDialogue.lastActivity = new Date().toISOString();
-                
-                // Save to localStorage (syncs with admin dashboard)
-                const saved = savePartnerData(currentKey, currentDialogue);
-                console.log('Save result:', saved);
                 
                 input.value = '';
                 renderMessages();
@@ -1157,23 +1174,22 @@
             }
 
             try {
+                const responseContent = isMedia
+                    ? `We're interested in covering this story and would like to schedule an interview with the Luminary team.`
+                    : 'We accept this partnership proposal and look forward to working together with Luminary AI Technologies.';
+                
                 if (API_BASE) {
-                    // Real API call
-                    const endpoint = isMedia ? `${API_BASE}/api/dialogue/interview` : `${API_BASE}/api/dialogue/accept`;
-                    const response = await fetch(endpoint, {
+                    // Use respond endpoint with acceptance message
+                    const response = await fetch(`${API_BASE}/api/dialogue/respond`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ key: currentKey })
+                        body: JSON.stringify({ key: currentKey, content: responseContent })
                     });
                     if (!response.ok) throw new Error('Failed to process request');
                 }
 
-                // Add response message
+                // Add response message locally
                 if (!currentDialogue.messages) currentDialogue.messages = [];
-                
-                const responseContent = isMedia
-                    ? `We're interested in covering this story and would like to schedule an interview with the Luminary team.`
-                    : 'We accept this partnership proposal and look forward to working together with Luminary AI Technologies.';
                 
                 currentDialogue.messages.push({
                     id: 'msg_' + Date.now(),
@@ -1187,8 +1203,10 @@
                 currentDialogue.status = 'accepted';
                 currentDialogue.lastActivity = new Date().toISOString();
                 
-                // Save to localStorage (syncs with admin dashboard)
-                savePartnerData(currentKey, currentDialogue);
+                // Save to localStorage only in local mode
+                if (!API_BASE) {
+                    savePartnerData(currentKey, currentDialogue);
+                }
                 
                 renderMessages();
                 
