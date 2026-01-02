@@ -2889,6 +2889,7 @@ media@luminary-tech.ai"></textarea>
                     body: JSON.stringify({
                         type,
                         partner: {
+                            id: currentPartner._id || currentPartner.id,
                             name: currentPartner.recipientName,
                             organization: currentPartner.organizationName || currentPartner.universityName,
                             type: currentPartner.recipientType,
