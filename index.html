@@ -170,6 +170,66 @@
         .fade-in-delay-1 { transition-delay: 0.1s; }
         .fade-in-delay-2 { transition-delay: 0.2s; }
         .fade-in-delay-3 { transition-delay: 0.3s; }
+
+        /* Partner Access Button */
+        .nav-key-trigger { background: rgba(212, 168, 83, 0.1) !important; padding: 0.4rem 1rem !important; border: 1px solid var(--gold-primary) !important; border-radius: 2px; }
+
+        /* Partner Key Modal */
+        .key-modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(10, 11, 15, 0.95); z-index: 2000; display: flex; align-items: center; justify-content: center; opacity: 0; visibility: hidden; transition: all 0.4s ease; backdrop-filter: blur(10px); }
+        .key-modal-overlay.active { opacity: 1; visibility: visible; }
+        .key-modal { background: var(--bg-card); border: 1px solid var(--border-subtle); padding: 3rem; max-width: 480px; width: 90%; text-align: center; transform: scale(0.9) translateY(20px); transition: all 0.4s ease; position: relative; }
+        .key-modal-overlay.active .key-modal { transform: scale(1) translateY(0); }
+        .key-modal h3 { font-family: 'Cinzel', serif; font-size: 1.5rem; color: var(--gold-primary); margin-bottom: 0.75rem; }
+        .key-modal > p { color: var(--text-secondary); margin-bottom: 2rem; font-size: 1rem; }
+        .key-input-wrapper { position: relative; margin-bottom: 1.5rem; }
+        .key-input { width: 100%; padding: 1rem 1.25rem; background: rgba(10, 11, 15, 0.8); border: 1px solid var(--border-subtle); color: var(--text-primary); font-family: 'Cormorant Garamond', serif; font-size: 1.1rem; letter-spacing: 0.1em; text-align: center; transition: all 0.3s ease; }
+        .key-input:focus { outline: none; border-color: var(--gold-primary); box-shadow: 0 0 20px rgba(212, 168, 83, 0.2); }
+        .key-input::placeholder { color: var(--text-muted); letter-spacing: 0.05em; }
+        .key-input.validating { border-color: var(--gold-primary); animation: keyPulse 1s ease-in-out infinite; }
+        .key-input.valid { border-color: #4ade80; background: rgba(74, 222, 128, 0.1); }
+        .key-input.invalid { border-color: #f87171; animation: keyShake 0.5s ease; }
+        @keyframes keyPulse { 0%, 100% { box-shadow: 0 0 20px rgba(212, 168, 83, 0.2); } 50% { box-shadow: 0 0 30px rgba(212, 168, 83, 0.4); } }
+        @keyframes keyShake { 0%, 100% { transform: translateX(0); } 20%, 60% { transform: translateX(-8px); } 40%, 80% { transform: translateX(8px); } }
+        .key-status { font-size: 0.85rem; color: var(--text-muted); min-height: 1.5rem; margin-bottom: 1rem; }
+        .key-status.error { color: #f87171; }
+        .key-status.success { color: #4ade80; }
+        .key-modal-close { position: absolute; top: 1rem; right: 1rem; background: none; border: none; color: var(--text-muted); font-size: 1.5rem; cursor: pointer; transition: color 0.3s ease; padding: 0.5rem; line-height: 1; }
+        .key-modal-close:hover { color: var(--gold-primary); }
+
+        /* Dialogue Panel */
+        .dialogue-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(10, 11, 15, 0.7); z-index: 2000; opacity: 0; visibility: hidden; transition: all 0.4s ease; }
+        .dialogue-overlay.active { opacity: 1; visibility: visible; }
+        .dialogue-panel { position: fixed; top: 0; right: -600px; width: 600px; max-width: 100vw; height: 100vh; background: var(--bg-deep); border-left: 1px solid var(--border-subtle); z-index: 2001; transition: right 0.5s cubic-bezier(0.4, 0, 0.2, 1); display: flex; flex-direction: column; }
+        .dialogue-panel.active { right: 0; }
+        .dialogue-header { padding: 1.5rem 2rem; border-bottom: 1px solid var(--border-subtle); display: flex; justify-content: space-between; align-items: center; background: var(--bg-card); }
+        .dialogue-header-info h3 { font-family: 'Cinzel', serif; font-size: 1.2rem; color: var(--gold-primary); margin-bottom: 0.25rem; }
+        .dialogue-recipient { font-size: 0.85rem; color: var(--text-secondary); }
+        .dialogue-close { background: none; border: none; color: var(--text-muted); font-size: 1.5rem; cursor: pointer; transition: color 0.3s ease; line-height: 1; padding: 0.5rem; }
+        .dialogue-close:hover { color: var(--gold-primary); }
+        .dialogue-messages { flex: 1; overflow-y: auto; padding: 2rem; display: flex; flex-direction: column; gap: 1.5rem; }
+        .dialogue-message { max-width: 85%; padding: 1.25rem 1.5rem; border-radius: 2px; }
+        .dialogue-message.from-luminary { background: rgba(212, 168, 83, 0.1); border: 1px solid var(--border-subtle); align-self: flex-start; }
+        .dialogue-message.from-recipient { background: var(--bg-card); border: 1px solid rgba(212, 168, 83, 0.3); align-self: flex-end; }
+        .dialogue-message-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; gap: 1rem; }
+        .dialogue-message-sender { font-family: 'Cinzel', serif; font-size: 0.75rem; color: var(--gold-primary); letter-spacing: 0.1em; }
+        .dialogue-message-time { font-size: 0.7rem; color: var(--text-muted); }
+        .dialogue-message-content { color: var(--text-secondary); line-height: 1.7; font-size: 0.95rem; }
+        .dialogue-message-content p { margin-bottom: 0.75rem; }
+        .dialogue-message-content p:last-child { margin-bottom: 0; }
+        .dialogue-message-content strong { color: var(--gold-light); }
+        .dialogue-actions { padding: 1.5rem 2rem; border-top: 1px solid var(--border-subtle); background: var(--bg-card); }
+        .dialogue-response-input { width: 100%; padding: 1rem; background: rgba(10, 11, 15, 0.8); border: 1px solid var(--border-subtle); color: var(--text-primary); font-family: 'Cormorant Garamond', serif; font-size: 1rem; resize: none; min-height: 80px; margin-bottom: 1rem; transition: border-color 0.3s ease; }
+        .dialogue-response-input:focus { outline: none; border-color: var(--gold-primary); }
+        .dialogue-response-input::placeholder { color: var(--text-muted); }
+        .dialogue-btn-group { display: flex; gap: 1rem; }
+        .dialogue-btn-group .btn { flex: 1; justify-content: center; padding: 0.85rem 1.5rem; }
+        .btn-accept { background: linear-gradient(135deg, #4ade80, #22c55e); color: var(--bg-deep); font-weight: 600; }
+        .btn-accept:hover { box-shadow: 0 10px 40px rgba(74, 222, 128, 0.3); transform: translateY(-2px); }
+
+        @media (max-width: 600px) {
+            .dialogue-panel { width: 100vw; }
+            .dialogue-message { max-width: 95%; }
+        }
     </style>
 </head>
 <body>
@@ -186,6 +246,7 @@
             <li><a href="#architecture">Architecture</a></li>
             <li><a href="#future">Future</a></li>
             <li><a href="#contact">Contact</a></li>
+            <li><a href="#" class="nav-key-trigger" onclick="openKeyModal(); return false;">Partner Access</a></li>
         </ul>
     </nav>
 
@@ -433,6 +494,42 @@
         </div>
     </footer>
 
+    <!-- Partner Key Modal -->
+    <div class="key-modal-overlay" id="keyModal">
+        <div class="key-modal">
+            <button class="key-modal-close" onclick="closeKeyModal()">&times;</button>
+            <h3>Partner Access</h3>
+            <p>Enter your partnership key to access your dedicated dialogue with Luminary.</p>
+            <div class="key-input-wrapper">
+                <input type="text" class="key-input" id="keyInput" placeholder="Enter your key" autocomplete="off" spellcheck="false">
+            </div>
+            <p class="key-status" id="keyStatus"></p>
+            <button class="btn btn-primary" onclick="validateKey()" style="width: 100%; justify-content: center;">Access Dialogue</button>
+        </div>
+    </div>
+
+    <!-- Dialogue Panel -->
+    <div class="dialogue-overlay" id="dialogueOverlay" onclick="closeDialogue()"></div>
+    <div class="dialogue-panel" id="dialoguePanel">
+        <div class="dialogue-header">
+            <div class="dialogue-header-info">
+                <h3>Partnership Dialogue</h3>
+                <p class="dialogue-recipient" id="dialogueRecipient">Loading...</p>
+            </div>
+            <button class="dialogue-close" onclick="closeDialogue()">&times;</button>
+        </div>
+        <div class="dialogue-messages" id="dialogueMessages">
+            <!-- Messages load here -->
+        </div>
+        <div class="dialogue-actions">
+            <textarea class="dialogue-response-input" id="responseInput" placeholder="Write your response..."></textarea>
+            <div class="dialogue-btn-group">
+                <button class="btn btn-accept" onclick="acceptProposal()">Accept Proposal</button>
+                <button class="btn btn-primary" onclick="sendResponse()">Send Response</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         const canvas = document.getElementById('networkCanvas');
         const ctx = canvas.getContext('2d');
@@ -472,9 +569,319 @@
         const fadeElements = document.querySelectorAll('.fade-in');
         const observer = new IntersectionObserver((entries) => { entries.forEach(entry => { if (entry.isIntersecting) { entry.target.classList.add('visible'); } }); }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
         fadeElements.forEach(el => observer.observe(el));
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => { anchor.addEventListener('click', function(e) { e.preventDefault(); const target = document.querySelector(this.getAttribute('href')); if (target) { target.scrollIntoView({ behavior: 'smooth', block: 'start' }); } }); });
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => { anchor.addEventListener('click', function(e) { if (this.classList.contains('nav-key-trigger')) return; e.preventDefault(); const target = document.querySelector(this.getAttribute('href')); if (target) { target.scrollIntoView({ behavior: 'smooth', block: 'start' }); } }); });
+
+        // ===== PARTNER KEY & DIALOGUE SYSTEM =====
+        
+        // Configuration - Replace with your actual API endpoint when ready
+        const API_BASE = ''; // e.g., 'https://api.luminary-tech.ai'
+        
+        // Partner data - sample entries for client-side validation
+        // Full data loaded from API or partner-keys.json
+        const partnerData = {
+            'LUMI-DEMO-2025': { id: 'LUMI-DEMO-2025', recipientName: 'Demo Business School', universityName: 'Demo University', schoolName: 'Demo Business School', state: 'CA', contacts: [{ name: 'Demo Contact', title: 'Dean', email: 'demo@university.edu' }], status: 'pending', messages: [] },
+            'JDXNCILWKG4DRGH': { id: 'JDXNCILWKG4DRGH', recipientName: 'Haas School of Business at University of California, Berkeley', universityName: 'University of California, Berkeley', schoolName: 'Haas School of Business', state: 'CA', contacts: [{ name: 'Jennifer Chatman', title: 'Dean', email: 'chatman@berkeley.edu' }], status: 'pending', messages: [] },
+            'P7O5544TFRWTC3M': { id: 'P7O5544TFRWTC3M', recipientName: 'Anderson School of Management at UCLA', universityName: 'University of California, Los Angeles', schoolName: 'Anderson School of Management', state: 'CA', contacts: [{ name: 'Margaret Shih', title: 'Interim Dean', email: 'margaret.shih@anderson.ucla.edu' }], status: 'pending', messages: [] },
+            'RQPCUQ5STEY2YT7': { id: 'RQPCUQ5STEY2YT7', recipientName: 'Marshall School of Business at USC', universityName: 'University of Southern California', schoolName: 'Marshall School of Business', state: 'CA', contacts: [{ name: "Dean's Office", title: 'Monitored inbox', email: 'dean@marshall.usc.edu' }], status: 'pending', messages: [] },
+            'RVHXLJAD4VH5TSM': { id: 'RVHXLJAD4VH5TSM', recipientName: 'Graduate School of Business at Stanford University', universityName: 'Stanford University', schoolName: 'Graduate School of Business', state: 'CA', contacts: [{ name: 'Margaret Long Hayes', title: 'Assistant Dean', email: 'hayes_margaret@gsb.stanford.edu' }], status: 'pending', messages: [] },
+            'AXB4ZQG5N6RMRJG': { id: 'AXB4ZQG5N6RMRJG', recipientName: 'Harvard Business School', universityName: 'Harvard University', schoolName: 'Harvard Business School', state: 'MA', contacts: [{ name: 'MBA & Doctoral Programs', title: 'Monitored inbox', email: 'mbaanddoctoral@hbs.edu' }], status: 'pending', messages: [] },
+            'HSIAOG6ISAUTMW4': { id: 'HSIAOG6ISAUTMW4', recipientName: 'MIT Sloan School of Management', universityName: 'Massachusetts Institute of Technology', schoolName: 'MIT Sloan School of Management', state: 'MA', contacts: [{ name: 'MBA Admissions', title: 'Monitored inbox', email: 'mbaadmissions.mitsloan@mit.edu' }], status: 'pending', messages: [] },
+            '4CSPEKIRL7QFASK': { id: '4CSPEKIRL7QFASK', recipientName: 'Booth School of Business at University of Chicago', universityName: 'University of Chicago', schoolName: 'Booth School of Business', state: 'IL', contacts: [{ name: 'Donna Swinford', title: 'Associate Dean', email: 'donna.swinford@chicagobooth.edu' }], status: 'pending', messages: [] },
+            'FZQXZM3EVDQ64WC': { id: 'FZQXZM3EVDQ64WC', recipientName: 'Kellogg School of Management at Northwestern', universityName: 'Northwestern University', schoolName: 'Kellogg School of Management', state: 'IL', contacts: [{ name: "Dean's Office", title: 'Monitored inbox', email: 'dean@kellogg.northwestern.edu' }], status: 'pending', messages: [] },
+            'PIEYCGEF4Q5OOWD': { id: 'PIEYCGEF4Q5OOWD', recipientName: 'The Wharton School at University of Pennsylvania', universityName: 'University of Pennsylvania', schoolName: 'The Wharton School', state: 'PA', contacts: [{ name: 'Erika James', title: 'Dean', email: 'erika.james@wharton.upenn.edu' }], status: 'pending', messages: [] },
+            'C6C5U3K4TAD54SV': { id: 'C6C5U3K4TAD54SV', recipientName: 'Stern School of Business at NYU', universityName: 'New York University', schoolName: 'Stern School of Business', state: 'NY', contacts: [{ name: "Dean's Office", title: 'Monitored inbox', email: 'deansoffice@stern.nyu.edu' }], status: 'pending', messages: [] },
+            'IJIF5WRKTZYQEY2': { id: 'IJIF5WRKTZYQEY2', recipientName: 'Columbia Business School', universityName: 'Columbia University', schoolName: 'Columbia Business School', state: 'NY', contacts: [{ name: "Dean's Office", title: 'Monitored inbox', email: 'deansoffice@gsb.columbia.edu' }], status: 'pending', messages: [] },
+            'DPMQWYR3EAKSEPS': { id: 'DPMQWYR3EAKSEPS', recipientName: 'Kelley School of Business at Indiana University', universityName: 'Indiana University Bloomington', schoolName: 'Kelley School of Business', state: 'IN', contacts: [{ name: 'Patrick E. Hopkins', title: 'Dean', email: 'deankelley@iu.edu' }], status: 'pending', messages: [] },
+            'YIBNWN6YRRUPBBB': { id: 'YIBNWN6YRRUPBBB', recipientName: 'Daniels School of Business at Purdue', universityName: 'Purdue University', schoolName: 'Mitchell E. Daniels School of Business', state: 'IN', contacts: [{ name: "Dean's Office", title: 'Monitored inbox', email: 'businessdean@purdue.edu' }], status: 'pending', messages: [] },
+            'V5BOR5AHYBATFTQ': { id: 'V5BOR5AHYBATFTQ', recipientName: 'Mendoza College of Business at Notre Dame', universityName: 'University of Notre Dame', schoolName: 'Mendoza College of Business', state: 'IN', contacts: [{ name: 'Martijn Cremers', title: 'Dean', email: 'mcremers@nd.edu' }], status: 'pending', messages: [] },
+            'TBGKKZ6UKA7KO6G': { id: 'TBGKKZ6UKA7KO6G', recipientName: 'McCombs School of Business at UT Austin', universityName: 'The University of Texas at Austin', schoolName: 'McCombs School of Business', state: 'TX', contacts: [{ name: 'Lillian Mills', title: 'Dean', email: 'lillian.mills@mccombs.utexas.edu' }], status: 'pending', messages: [] },
+            'HNNOYK2L6E6OOZM': { id: 'HNNOYK2L6E6OOZM', recipientName: 'Jones Graduate School of Business at Rice', universityName: 'Rice University', schoolName: 'Jones Graduate School of Business', state: 'TX', contacts: [{ name: 'Peter Rodriguez', title: 'Dean', email: 'peter.l.rodriguez@rice.edu' }], status: 'pending', messages: [] },
+            'CKGLW6RZERWYLBX': { id: 'CKGLW6RZERWYLBX', recipientName: 'Scheller College of Business at Georgia Tech', universityName: 'Georgia Institute of Technology', schoolName: 'Scheller College of Business', state: 'GA', contacts: [{ name: "Dean's Office", title: 'Monitored inbox', email: 'dean@scheller.gatech.edu' }], status: 'pending', messages: [] },
+            'ZZHYH4K3Y435D5V': { id: 'ZZHYH4K3Y435D5V', recipientName: 'Fuqua School of Business at Duke', universityName: 'Duke University', schoolName: 'Fuqua School of Business', state: 'NC', contacts: [{ name: "Dean's Office", title: 'Monitored inbox', email: 'dean@fuqua.duke.edu' }], status: 'pending', messages: [] },
+            'DXUVUHKOHPVF4KQ': { id: 'DXUVUHKOHPVF4KQ', recipientName: 'Darden School of Business at UVA', universityName: 'University of Virginia', schoolName: 'Darden School of Business', state: 'VA', contacts: [{ name: 'Batten Institute', title: 'Innovation/program inbox', email: 'Batten@darden.virginia.edu' }], status: 'pending', messages: [] },
+            'TZJYCLL7D6I3Z3X': { id: 'TZJYCLL7D6I3Z3X', recipientName: 'Ross School of Business at Michigan', universityName: 'University of Michigan', schoolName: 'Ross School of Business', state: 'MI', contacts: [{ name: 'Sharon Matusik', title: 'Dean', email: 'matusik@umich.edu' }], status: 'pending', messages: [] },
+            'U6FFSF5IJXV6PZ2': { id: 'U6FFSF5IJXV6PZ2', recipientName: 'Fisher College of Business at Ohio State', universityName: 'The Ohio State University', schoolName: 'Fisher College of Business', state: 'OH', contacts: [{ name: 'Aravind Chandrasekaran', title: 'Interim Dean', email: 'chandrasekaran.24@osu.edu' }], status: 'pending', messages: [] },
+            'M723MJ4W4MVT7W5': { id: 'M723MJ4W4MVT7W5', recipientName: 'Warrington College of Business at Florida', universityName: 'University of Florida', schoolName: 'Warrington College of Business', state: 'FL', contacts: [{ name: 'Saby Mitra', title: 'Dean', email: 'saby.mitra@warrington.ufl.edu' }], status: 'pending', messages: [] },
+            'H63GCOWWOUULMPJ': { id: 'H63GCOWWOUULMPJ', recipientName: 'Miami Herbert Business School', universityName: 'University of Miami', schoolName: 'Miami Herbert Business School', state: 'FL', contacts: [{ name: 'Paul A. Pavlou', title: 'Dean', email: 'pap172@miami.edu' }], status: 'pending', messages: [] }
+        };
+
+        // Generate personalized proposal based on school data
+        function generateProposal(partner) {
+            const today = new Date().toISOString();
+            return {
+                title: 'Strategic Partnership Proposal',
+                content: `<p>Dear ${partner.schoolName},</p>
+                
+                <p>We are reaching out to introduce <strong>Luminary AI Technologies</strong> and explore a strategic partnership with ${partner.universityName}.</p>
+                
+                <p>Luminary is building intelligent infrastructure for complex operations—technology designed to make fragmented, legacy systems coherent and accessible. We believe academic institutions, particularly leading business schools like yours, are natural partners in this mission.</p>
+                
+                <p><strong>What We're Proposing:</strong></p>
+                
+                <p>• <strong>Vestiq Access for Students & Faculty</strong> — Our wealth intelligence platform provides transparent, thesis-driven investment analysis. We believe business students deserve tools that teach them <em>how</em> to think about markets, not just what to trade.</p>
+                
+                <p>• <strong>Legal Insights Integration</strong> — Policy intelligence that tracks regulatory changes relevant to business operations, entrepreneurship, and compliance education.</p>
+                
+                <p>• <strong>Luminary Studios for Student Projects</strong> — Our development infrastructure allows students to build real applications without needing deep technical expertise. We're creating a new approach to coding that works the way people think.</p>
+                
+                <p>• <strong>Research Collaboration</strong> — Joint initiatives exploring AI infrastructure, market intelligence, and the future of business technology.</p>
+                
+                <p>• <strong>Talent Pipeline</strong> — We're actively hiring and want to connect with ${partner.universityName}'s graduating students who are excited about building infrastructure that matters.</p>
+                
+                <p><strong>Why We're Different:</strong></p>
+                
+                <p>We have taken zero institutional funding. No Silicon Valley money. No hedge fund backing. We've spent years building quietly because we wanted to remain free to build technology for people—not just institutions. We believe your students and faculty will appreciate working with a company that shares academic values of transparency, rigor, and long-term thinking.</p>
+                
+                <p>We're not looking for a standard sponsorship or vendor relationship. We're looking for genuine partners who want to help shape what business technology looks like for the next hundred years.</p>
+                
+                <p>We would welcome the opportunity to discuss this further at your convenience.</p>
+                
+                <p><strong>— Luminary AI Technologies</strong><br>
+                <em>Technology for the people. Not power.</em></p>`,
+                date: today
+            };
+        }
+
+        let currentDialogue = null;
+        let currentKey = null;
+
+        function openKeyModal() {
+            document.getElementById('keyModal').classList.add('active');
+            setTimeout(() => document.getElementById('keyInput').focus(), 100);
+            document.getElementById('keyInput').value = '';
+            document.getElementById('keyStatus').textContent = '';
+            document.getElementById('keyInput').className = 'key-input';
+        }
+
+        function closeKeyModal() {
+            document.getElementById('keyModal').classList.remove('active');
+        }
+
+        async function validateKey() {
+            const keyInput = document.getElementById('keyInput');
+            const keyStatus = document.getElementById('keyStatus');
+            const key = keyInput.value.trim().toUpperCase();
+
+            if (!key) {
+                keyStatus.textContent = 'Please enter a key';
+                keyStatus.className = 'key-status error';
+                keyInput.classList.add('invalid');
+                setTimeout(() => keyInput.classList.remove('invalid'), 500);
+                return;
+            }
+
+            // Show validating state
+            keyInput.classList.remove('invalid', 'valid');
+            keyInput.classList.add('validating');
+            keyStatus.textContent = 'Validating key...';
+            keyStatus.className = 'key-status';
+
+            try {
+                let data;
+                
+                if (API_BASE) {
+                    // Real API call
+                    const response = await fetch(`${API_BASE}/api/validate-key`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ key })
+                    });
+                    data = await response.json();
+                    if (!response.ok) throw new Error(data.error || 'Invalid key');
+                } else {
+                    // Local validation
+                    await new Promise(resolve => setTimeout(resolve, 1000));
+                    if (partnerData[key]) {
+                        data = { ...partnerData[key] };
+                        data.proposal = generateProposal(data);
+                    } else {
+                        throw new Error('Invalid key');
+                    }
+                }
+
+                keyInput.classList.remove('validating');
+                keyInput.classList.add('valid');
+                keyStatus.textContent = 'Key validated! Opening dialogue...';
+                keyStatus.className = 'key-status success';
+                
+                currentDialogue = data;
+                currentKey = key;
+                
+                setTimeout(() => {
+                    closeKeyModal();
+                    openDialogue();
+                }, 800);
+
+            } catch (error) {
+                keyInput.classList.remove('validating');
+                keyInput.classList.add('invalid');
+                keyStatus.textContent = error.message || 'Invalid key. Please check and try again.';
+                keyStatus.className = 'key-status error';
+                setTimeout(() => keyInput.classList.remove('invalid'), 500);
+            }
+        }
+
+        function openDialogue() {
+            if (!currentDialogue) return;
+            
+            document.getElementById('dialogueRecipient').textContent = currentDialogue.recipientName;
+            renderMessages();
+            
+            document.getElementById('dialogueOverlay').classList.add('active');
+            document.getElementById('dialoguePanel').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeDialogue() {
+            document.getElementById('dialogueOverlay').classList.remove('active');
+            document.getElementById('dialoguePanel').classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        function renderMessages() {
+            const container = document.getElementById('dialogueMessages');
+            container.innerHTML = '';
+            
+            // Render initial proposal
+            const proposalEl = document.createElement('div');
+            proposalEl.className = 'dialogue-message from-luminary';
+            proposalEl.innerHTML = `
+                <div class="dialogue-message-header">
+                    <span class="dialogue-message-sender">LUMINARY</span>
+                    <span class="dialogue-message-time">${formatDate(currentDialogue.proposal.date)}</span>
+                </div>
+                <div class="dialogue-message-content">
+                    ${currentDialogue.proposal.content}
+                </div>
+            `;
+            container.appendChild(proposalEl);
+            
+            // Render any subsequent messages
+            if (currentDialogue.messages && currentDialogue.messages.length > 0) {
+                currentDialogue.messages.forEach(msg => {
+                    const msgEl = document.createElement('div');
+                    msgEl.className = `dialogue-message ${msg.fromLuminary ? 'from-luminary' : 'from-recipient'}`;
+                    msgEl.innerHTML = `
+                        <div class="dialogue-message-header">
+                            <span class="dialogue-message-sender">${msg.fromLuminary ? 'LUMINARY' : (currentDialogue.schoolName || currentDialogue.recipientName).toUpperCase()}</span>
+                            <span class="dialogue-message-time">${formatDate(msg.date)}</span>
+                        </div>
+                        <div class="dialogue-message-content">
+                            <p>${escapeHtml(msg.content)}</p>
+                        </div>
+                    `;
+                    container.appendChild(msgEl);
+                });
+            }
+            
+            // Scroll to bottom
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function formatDate(dateStr) {
+            const date = new Date(dateStr);
+            return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        async function sendResponse() {
+            const input = document.getElementById('responseInput');
+            const content = input.value.trim();
+            
+            if (!content) return;
+
+            try {
+                if (API_BASE) {
+                    // Real API call - will send email notification to Luminary
+                    const response = await fetch(`${API_BASE}/api/dialogue/respond`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ key: currentKey, content })
+                    });
+                    if (!response.ok) throw new Error('Failed to send response');
+                }
+                
+                // Add message to dialogue
+                if (!currentDialogue.messages) currentDialogue.messages = [];
+                currentDialogue.messages.push({
+                    content: content,
+                    fromLuminary: false,
+                    date: new Date().toISOString()
+                });
+                
+                input.value = '';
+                renderMessages();
+                
+                showNotification('Response sent! The Luminary team will be notified and will respond soon.');
+
+            } catch (error) {
+                showNotification('Failed to send response. Please try again.', true);
+            }
+        }
+
+        async function acceptProposal() {
+            if (!confirm('Are you sure you want to accept this proposal? This will initiate the partnership process and notify the Luminary team.')) {
+                return;
+            }
+
+            try {
+                if (API_BASE) {
+                    // Real API call
+                    const response = await fetch(`${API_BASE}/api/dialogue/accept`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ key: currentKey })
+                    });
+                    if (!response.ok) throw new Error('Failed to accept proposal');
+                }
+
+                // Add acceptance message
+                if (!currentDialogue.messages) currentDialogue.messages = [];
+                currentDialogue.messages.push({
+                    content: 'We accept this partnership proposal and look forward to working together with Luminary AI Technologies.',
+                    fromLuminary: false,
+                    date: new Date().toISOString()
+                });
+                
+                renderMessages();
+                showNotification('Proposal accepted! The Luminary team will reach out shortly to begin the partnership process.');
+
+            } catch (error) {
+                showNotification('Failed to accept proposal. Please try again.', true);
+            }
+        }
+
+        function showNotification(message, isError = false) {
+            // Simple alert for now - can be replaced with a toast notification
+            alert(message);
+        }
+
+        // Key input enter handler
+        document.getElementById('keyInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') validateKey();
+        });
+
+        // Close modal/dialogue on escape
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                if (document.getElementById('dialoguePanel').classList.contains('active')) {
+                    closeDialogue();
+                } else if (document.getElementById('keyModal').classList.contains('active')) {
+                    closeKeyModal();
+                }
+            }
+        });
+
+        // Close modal when clicking outside
+        document.getElementById('keyModal').addEventListener('click', function(e) {
+            if (e.target === this) closeKeyModal();
+        });
     </script>
 </body>
 </html>
-
 
