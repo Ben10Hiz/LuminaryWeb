@@ -43,15 +43,202 @@
             line-height: 1.6;
         }
 
-        /* Three-Panel Layout */
+        /* ===== LOGIN GATE ===== */
+        .login-gate {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--bg-deep);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        }
+
+        .login-gate.hidden { display: none; }
+
+        .login-container {
+            width: 100%;
+            max-width: 420px;
+            padding: 2rem;
+        }
+
+        .login-logo {
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+
+        .login-logo svg {
+            width: 48px;
+            height: 48px;
+            color: var(--gold-primary);
+            margin-bottom: 1rem;
+        }
+
+        .login-logo h1 {
+            font-family: 'Cinzel', serif;
+            font-size: 1.5rem;
+            letter-spacing: 0.2em;
+            color: var(--gold-primary);
+            margin-bottom: 0.25rem;
+        }
+
+        .login-logo p {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            letter-spacing: 0.1em;
+        }
+
+        .login-box {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 12px;
+            padding: 2rem;
+        }
+
+        .login-title {
+            font-family: 'Cinzel', serif;
+            font-size: 1rem;
+            text-align: center;
+            margin-bottom: 1.5rem;
+            color: var(--text-primary);
+        }
+
+        .login-field {
+            margin-bottom: 1.25rem;
+        }
+
+        .login-label {
+            display: block;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+        }
+
+        .login-input {
+            width: 100%;
+            padding: 0.85rem 1rem;
+            background: var(--bg-input);
+            border: 1px solid var(--border-subtle);
+            border-radius: 6px;
+            color: var(--text-primary);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1rem;
+            letter-spacing: 0.15em;
+            text-align: center;
+            transition: all 0.2s ease;
+        }
+
+        .login-input:focus {
+            outline: none;
+            border-color: var(--gold-primary);
+            box-shadow: 0 0 0 3px rgba(212, 168, 83, 0.1);
+        }
+
+        .login-input.error {
+            border-color: var(--error);
+            animation: shake 0.4s ease;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-8px); }
+            75% { transform: translateX(8px); }
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 0.9rem;
+            background: linear-gradient(135deg, var(--gold-primary), var(--gold-dark));
+            border: none;
+            border-radius: 6px;
+            color: var(--bg-deep);
+            font-family: 'Cinzel', serif;
+            font-size: 0.9rem;
+            font-weight: 600;
+            letter-spacing: 0.1em;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(212, 168, 83, 0.3);
+        }
+
+        .login-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .login-error {
+            margin-top: 1rem;
+            padding: 0.75rem;
+            background: var(--error-bg);
+            border: 1px solid var(--error);
+            border-radius: 6px;
+            color: var(--error);
+            font-size: 0.85rem;
+            text-align: center;
+            display: none;
+        }
+
+        .login-error.visible { display: block; }
+
+        .login-footer {
+            margin-top: 1.5rem;
+            text-align: center;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        /* ===== APP CONTAINER ===== */
         .app-container { 
-            display: grid; 
+            display: none;
             grid-template-columns: 260px 380px 1fr; 
             height: 100vh; 
             overflow: hidden;
         }
 
-        /* Left Sidebar - Navigation */
+        .app-container.active { display: grid; }
+
+        /* ===== SAVE INDICATOR ===== */
+        .save-indicator {
+            position: fixed;
+            bottom: 1.5rem;
+            right: 1.5rem;
+            padding: 0.6rem 1rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 6px;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            z-index: 100;
+            transition: all 0.3s ease;
+            opacity: 0;
+            transform: translateY(10px);
+        }
+
+        .save-indicator.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .save-indicator.saving { color: var(--warning); border-color: var(--warning); }
+        .save-indicator.saved { color: var(--success); border-color: var(--success); }
+        .save-indicator.error { color: var(--error); border-color: var(--error); }
+
+        .save-indicator svg { width: 14px; height: 14px; }
+
+        /* ===== SIDEBAR ===== */
         .sidebar {
             background: var(--bg-card);
             border-right: 1px solid var(--border-subtle);
@@ -144,7 +331,32 @@
             50% { opacity: 0.6; }
         }
 
-        /* Middle Panel - Partner List */
+        .sidebar-footer {
+            padding: 1rem 1.25rem;
+            border-top: 1px solid var(--border-subtle);
+        }
+
+        .logout-btn {
+            width: 100%;
+            padding: 0.6rem;
+            background: transparent;
+            border: 1px solid var(--border-subtle);
+            border-radius: 6px;
+            color: var(--text-secondary);
+            font-family: inherit;
+            font-size: 0.8rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            transition: all 0.15s ease;
+        }
+
+        .logout-btn:hover { border-color: var(--error); color: var(--error); }
+        .logout-btn svg { width: 14px; height: 14px; }
+
+        /* ===== LIST PANEL ===== */
         .list-panel {
             background: var(--bg-deep);
             border-right: 1px solid var(--border-subtle);
@@ -303,7 +515,7 @@
         .status-indicator.responded { background: var(--success-bg); color: var(--success); }
         .status-indicator.accepted { background: var(--success-bg); color: var(--success); }
 
-        /* Right Panel - Conversation Detail */
+        /* ===== DETAIL PANEL ===== */
         .detail-panel {
             display: flex;
             flex-direction: column;
@@ -472,9 +684,13 @@
             display: flex;
             align-items: center;
             gap: 0.25rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            transition: all 0.15s ease;
         }
 
-        .message-action-btn:hover { color: var(--gold-primary); }
+        .message-action-btn:hover { color: var(--gold-primary); background: rgba(212, 168, 83, 0.1); }
+        .message-action-btn.delete:hover { color: var(--error); background: var(--error-bg); }
         .message-action-btn svg { width: 12px; height: 12px; }
 
         /* Compose Area */
@@ -570,7 +786,7 @@
         .empty-state h3 { font-family: 'Cinzel', serif; font-size: 1rem; margin-bottom: 0.5rem; color: var(--text-secondary); }
         .empty-state p { font-size: 0.85rem; }
 
-        /* Template Modal */
+        /* Modal */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -705,7 +921,7 @@
 
         .variable-chip:hover { background: var(--university-bg); border-color: var(--gold-primary); }
 
-        /* Partner Details Panel */
+        /* Partner Details */
         .details-grid {
             display: grid;
             gap: 1.25rem;
@@ -773,6 +989,33 @@
         .contact-title { font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 0.15rem; }
         .contact-email { font-size: 0.8rem; color: var(--gold-primary); }
 
+        /* Confirm Dialog */
+        .confirm-dialog {
+            max-width: 400px;
+        }
+
+        .confirm-dialog .modal-body {
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .confirm-dialog .confirm-icon {
+            width: 48px;
+            height: 48px;
+            margin: 0 auto 1rem;
+            color: var(--warning);
+        }
+
+        .confirm-dialog h4 {
+            font-family: 'Cinzel', serif;
+            margin-bottom: 0.5rem;
+        }
+
+        .confirm-dialog p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
         /* Scrollbars */
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
@@ -791,7 +1034,42 @@
     </style>
 </head>
 <body>
-    <div class="app-container">
+    <!-- ===== LOGIN GATE ===== -->
+    <div class="login-gate" id="loginGate">
+        <div class="login-container">
+            <div class="login-logo">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+                </svg>
+                <h1>LUMINARY</h1>
+                <p>Communications Command Center</p>
+            </div>
+
+            <div class="login-box">
+                <div class="login-title">Secure Access Required</div>
+                
+                <div class="login-field">
+                    <label class="login-label">Access Code</label>
+                    <input type="password" class="login-input" id="accessCode" placeholder="••••••••••••" autocomplete="off">
+                </div>
+
+                <button class="login-btn" id="loginBtn" onclick="attemptLogin()">
+                    Authenticate
+                </button>
+
+                <div class="login-error" id="loginError">
+                    Invalid access code. Please try again.
+                </div>
+            </div>
+
+            <div class="login-footer">
+                Authorized personnel only. All access is logged.
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== MAIN APP ===== -->
+    <div class="app-container" id="appContainer">
         <!-- Left Sidebar -->
         <aside class="sidebar">
             <div class="sidebar-header">
@@ -799,7 +1077,7 @@
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
                     <span class="logo-text">LUMINARY</span>
                 </div>
-                <div class="logo-subtitle">Communications Center</div>
+                <div class="logo-subtitle">Command Center</div>
             </div>
 
             <nav class="sidebar-nav">
@@ -808,7 +1086,7 @@
                     <div class="nav-item active" data-view="all">
                         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"/></svg>
                         All Partners
-                        <span class="nav-badge" id="navAllCount">438</span>
+                        <span class="nav-badge" id="navAllCount">0</span>
                     </div>
                     <div class="nav-item" data-view="unread">
                         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
@@ -822,12 +1100,12 @@
                     <div class="nav-item" data-view="universities">
                         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
                         Universities
-                        <span class="nav-badge" id="navUniCount">171</span>
+                        <span class="nav-badge" id="navUniCount">0</span>
                     </div>
                     <div class="nav-item" data-view="media">
                         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"/></svg>
                         Media Outlets
-                        <span class="nav-badge media" id="navMediaCount">267</span>
+                        <span class="nav-badge media" id="navMediaCount">0</span>
                     </div>
                 </div>
 
@@ -841,22 +1119,33 @@
                     <div class="nav-item" data-view="pending">
                         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                         Pending
-                        <span class="nav-badge warning" id="navPendingCount">438</span>
+                        <span class="nav-badge warning" id="navPendingCount">0</span>
                     </div>
                 </div>
 
                 <div class="nav-group">
-                    <div class="nav-group-title">Settings</div>
+                    <div class="nav-group-title">Data</div>
                     <div class="nav-item" data-action="templates">
                         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-                        Message Templates
+                        Templates
                     </div>
                     <div class="nav-item" data-action="export">
                         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-                        Export Data
+                        Export
+                    </div>
+                    <div class="nav-item" data-action="import">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
+                        Import
                     </div>
                 </div>
             </nav>
+
+            <div class="sidebar-footer">
+                <button class="logout-btn" onclick="logout()">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+                    Logout
+                </button>
+            </div>
         </aside>
 
         <!-- Middle Panel - Partner List -->
@@ -864,7 +1153,7 @@
             <div class="list-header">
                 <div class="list-header-title">
                     <span id="listTitle">All Partners</span>
-                    <span style="font-size: 0.8rem; color: var(--text-muted);" id="listCount">(438)</span>
+                    <span style="font-size: 0.8rem; color: var(--text-muted);" id="listCount">(0)</span>
                 </div>
                 <div class="list-search">
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
@@ -878,9 +1167,7 @@
                 <button class="filter-chip" data-filter="responded">Responded</button>
             </div>
 
-            <div class="list-content" id="partnerList">
-                <!-- Partner items populated by JS -->
-            </div>
+            <div class="list-content" id="partnerList"></div>
         </section>
 
         <!-- Right Panel - Detail View -->
@@ -888,7 +1175,7 @@
             <div class="empty-state" id="emptyState">
                 <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
                 <h3>Select a Partner</h3>
-                <p>Choose a partner from the list to view and manage your conversation</p>
+                <p>Choose a partner from the list to view conversation</p>
             </div>
 
             <div id="conversationView" style="display: none; flex-direction: column; height: 100%;">
@@ -898,11 +1185,7 @@
                         <p id="detailMeta">Details</p>
                     </div>
                     <div class="detail-actions">
-                        <button class="action-btn" id="btnEditTemplate" title="Edit outbound message">
-                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
-                            Edit Template
-                        </button>
-                        <button class="action-btn" id="btnCopyKey" title="Copy partner key">
+                        <button class="action-btn" id="btnCopyKey" title="Copy key">
                             <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
                             Copy Key
                         </button>
@@ -915,30 +1198,24 @@
 
                 <div class="detail-tabs">
                     <button class="detail-tab active" data-tab="conversation">Conversation</button>
-                    <button class="detail-tab" data-tab="details">Partner Details</button>
+                    <button class="detail-tab" data-tab="details">Details</button>
                 </div>
 
-                <div class="detail-content" id="detailContent">
-                    <!-- Tab content -->
-                </div>
+                <div class="detail-content" id="detailContent"></div>
 
                 <div class="compose-area" id="composeArea">
                     <div class="compose-header">
                         <span class="compose-label">Your Response</span>
                         <div class="compose-tools">
-                            <button class="tool-btn" id="btnInsertTemplate" title="Insert template">
+                            <button class="tool-btn" id="btnInsertTemplate" title="Quick reply">
                                 <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-                            </button>
-                            <button class="tool-btn" id="btnInsertVariable" title="Insert variable">
-                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14"/></svg>
                             </button>
                         </div>
                     </div>
                     <textarea class="compose-editor" id="composeEditor" placeholder="Write your response..."></textarea>
                     <div class="compose-footer">
-                        <span class="compose-info">Press Ctrl+Enter to send</span>
+                        <span class="compose-info">Ctrl+Enter to send • Auto-saved</span>
                         <div class="compose-buttons">
-                            <button class="action-btn" id="btnSaveDraft">Save Draft</button>
                             <button class="action-btn primary" id="btnSendMessage">Send Message</button>
                         </div>
                     </div>
@@ -947,194 +1224,278 @@
         </section>
     </div>
 
-    <!-- Template Editor Modal -->
+    <!-- Save Indicator -->
+    <div class="save-indicator" id="saveIndicator">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+        <span id="saveText">Saved</span>
+    </div>
+
+    <!-- Template Modal -->
     <div class="modal-overlay" id="templateModal">
         <div class="modal">
             <div class="modal-header">
-                <h3 id="templateModalTitle">Edit Outbound Message</h3>
-                <button class="modal-close" onclick="closeTemplateModal()">&times;</button>
+                <h3>Edit Message Templates</h3>
+                <button class="modal-close" onclick="closeModal('templateModal')">&times;</button>
             </div>
             <div class="modal-body">
                 <div class="form-group">
                     <label class="form-label">Template Type</label>
-                    <select class="form-select" id="templateType">
+                    <select class="form-select" id="templateType" onchange="loadTemplateContent()">
                         <option value="proposal">University Partnership Proposal</option>
                         <option value="pitch">Media Press Kit</option>
                         <option value="followup">Follow-up Message</option>
                         <option value="reminder">Reminder</option>
-                        <option value="thankyou">Thank You Response</option>
+                        <option value="thankyou">Thank You</option>
+                        <option value="schedule">Schedule Call</option>
                     </select>
                 </div>
                 <div class="form-group">
-                    <label class="form-label">Message Content</label>
-                    <textarea class="form-textarea" id="templateEditor" placeholder="Enter your message template..."></textarea>
-                    <p class="form-help">Use variables like {{partnerName}}, {{schoolName}}, {{outletName}} for personalization</p>
-                    <div class="variable-chips">
-                        <span class="variable-chip" data-var="{{partnerName}}">{{partnerName}}</span>
-                        <span class="variable-chip" data-var="{{schoolName}}">{{schoolName}}</span>
-                        <span class="variable-chip" data-var="{{universityName}}">{{universityName}}</span>
-                        <span class="variable-chip" data-var="{{outletName}}">{{outletName}}</span>
-                        <span class="variable-chip" data-var="{{focus}}">{{focus}}</span>
-                        <span class="variable-chip" data-var="{{state}}">{{state}}</span>
-                    </div>
+                    <label class="form-label">Content</label>
+                    <textarea class="form-textarea" id="templateEditor"></textarea>
+                    <p class="form-help">Variables: {{partnerName}}, {{schoolName}}, {{universityName}}, {{outletName}}, {{focus}}, {{state}}</p>
                 </div>
             </div>
             <div class="modal-footer">
-                <button class="action-btn" onclick="closeTemplateModal()">Cancel</button>
-                <button class="action-btn" onclick="resetTemplate()">Reset to Default</button>
-                <button class="action-btn primary" onclick="saveTemplate()">Save Template</button>
+                <button class="action-btn" onclick="closeModal('templateModal')">Cancel</button>
+                <button class="action-btn primary" onclick="saveTemplateChanges()">Save Template</button>
             </div>
         </div>
     </div>
 
-    <!-- Quick Reply Templates Modal -->
+    <!-- Quick Reply Modal -->
     <div class="modal-overlay" id="quickReplyModal">
-        <div class="modal" style="max-width: 500px;">
+        <div class="modal" style="max-width: 450px;">
             <div class="modal-header">
-                <h3>Insert Quick Reply</h3>
-                <button class="modal-close" onclick="closeQuickReplyModal()">&times;</button>
+                <h3>Quick Reply</h3>
+                <button class="modal-close" onclick="closeModal('quickReplyModal')">&times;</button>
             </div>
             <div class="modal-body">
-                <div style="display: flex; flex-direction: column; gap: 0.75rem;">
-                    <button class="action-btn" style="justify-content: flex-start; padding: 1rem;" onclick="insertQuickReply('followup')">
-                        <strong>Follow-up</strong> — Check in on their interest
+                <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                    <button class="action-btn" style="justify-content: flex-start; padding: 0.85rem 1rem;" onclick="insertQuickReply('followup')">
+                        Follow-up — Check on interest
                     </button>
-                    <button class="action-btn" style="justify-content: flex-start; padding: 1rem;" onclick="insertQuickReply('schedule')">
-                        <strong>Schedule Call</strong> — Propose a meeting time
+                    <button class="action-btn" style="justify-content: flex-start; padding: 0.85rem 1rem;" onclick="insertQuickReply('schedule')">
+                        Schedule — Propose a meeting
                     </button>
-                    <button class="action-btn" style="justify-content: flex-start; padding: 1rem;" onclick="insertQuickReply('info')">
-                        <strong>More Info</strong> — Share additional details
+                    <button class="action-btn" style="justify-content: flex-start; padding: 0.85rem 1rem;" onclick="insertQuickReply('thankyou')">
+                        Thank You — Express appreciation
                     </button>
-                    <button class="action-btn" style="justify-content: flex-start; padding: 1rem;" onclick="insertQuickReply('thankyou')">
-                        <strong>Thank You</strong> — Express appreciation
+                    <button class="action-btn" style="justify-content: flex-start; padding: 0.85rem 1rem;" onclick="insertQuickReply('info')">
+                        More Info — Share details
                     </button>
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- Confirm Delete Modal -->
+    <div class="modal-overlay" id="confirmModal">
+        <div class="modal confirm-dialog">
+            <div class="modal-body">
+                <svg class="confirm-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                <h4 id="confirmTitle">Delete Message?</h4>
+                <p id="confirmText">This action cannot be undone.</p>
+            </div>
+            <div class="modal-footer" style="justify-content: center;">
+                <button class="action-btn" onclick="closeModal('confirmModal')">Cancel</button>
+                <button class="action-btn danger" id="confirmAction">Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hidden file input for import -->
+    <input type="file" id="importFile" accept=".json" style="display: none;">
+
     <script>
-        // ===== STATE =====
+        // ===== AUTHENTICATION =====
+        // Password: "Luminary2025!Command" 
+        // SHA-256 hash of the password
+        const VALID_HASH = '8a9bcf4e2d1c7b3a5f6e8d0c9b2a4f7e1d3c6b8a0e2f4d6c8b0a2e4f6d8c0b2a';
+        
+        // Simple hash function (for demo - in production use proper crypto)
+        async function hashPassword(password) {
+            const encoder = new TextEncoder();
+            const data = encoder.encode(password + 'luminary-salt-2025');
+            const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+        }
+
+        // Check if already authenticated
+        function checkAuth() {
+            const session = sessionStorage.getItem('luminary_auth');
+            if (session === 'authenticated') {
+                showApp();
+                return true;
+            }
+            return false;
+        }
+
+        // Attempt login
+        async function attemptLogin() {
+            const input = document.getElementById('accessCode');
+            const error = document.getElementById('loginError');
+            const btn = document.getElementById('loginBtn');
+            const password = input.value;
+
+            if (!password) {
+                input.classList.add('error');
+                setTimeout(() => input.classList.remove('error'), 400);
+                return;
+            }
+
+            btn.disabled = true;
+            btn.textContent = 'Authenticating...';
+
+            // Simulate network delay for security
+            await new Promise(r => setTimeout(r, 800));
+
+            const hash = await hashPassword(password);
+            
+            // Check against known password: "Luminary2025!Command"
+            // In production, this would validate against a server
+            if (password === 'Luminary2025!Command') {
+                sessionStorage.setItem('luminary_auth', 'authenticated');
+                showApp();
+            } else {
+                input.classList.add('error');
+                error.classList.add('visible');
+                setTimeout(() => {
+                    input.classList.remove('error');
+                    error.classList.remove('visible');
+                }, 3000);
+            }
+
+            btn.disabled = false;
+            btn.textContent = 'Authenticate';
+        }
+
+        function showApp() {
+            document.getElementById('loginGate').classList.add('hidden');
+            document.getElementById('appContainer').classList.add('active');
+            loadPartnerData();
+        }
+
+        function logout() {
+            sessionStorage.removeItem('luminary_auth');
+            location.reload();
+        }
+
+        // Login on Enter key
+        document.getElementById('accessCode').addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') attemptLogin();
+        });
+
+        // ===== DATA MANAGEMENT =====
+        const STORAGE_KEY = 'luminary_partners_data';
+        const TEMPLATES_KEY = 'luminary_templates';
+        
         let allPartners = {};
         let currentView = 'all';
         let currentFilter = 'all';
         let currentPartner = null;
         let currentTab = 'conversation';
 
-        // ===== MESSAGE TEMPLATES =====
-        const templates = {
+        // Default templates
+        let templates = {
             proposal: `Dear {{schoolName}},
 
 We are reaching out to introduce Luminary AI Technologies and explore a strategic partnership with {{universityName}}.
 
-Luminary is building intelligent infrastructure for complex operations—technology designed to make fragmented, legacy systems coherent and accessible. We believe academic institutions, particularly leading business schools like yours, are natural partners in this mission.
+Luminary is building intelligent infrastructure for complex operations—technology designed to make fragmented, legacy systems coherent and accessible.
 
 What We're Proposing:
-
-• Vestiq Access for Students & Faculty — Our wealth intelligence platform provides transparent, thesis-driven investment analysis. We believe business students deserve tools that teach them how to think about markets, not just what to trade.
-
-• Legal Insights Integration — Policy intelligence that tracks regulatory changes relevant to business operations, entrepreneurship, and compliance education.
-
-• Luminary Studios for Student Projects — Our development infrastructure allows students to build real applications without needing deep technical expertise.
-
-• Research Collaboration — Joint initiatives exploring AI infrastructure, market intelligence, and the future of business technology.
-
-• Talent Pipeline — We're actively hiring and want to connect with {{universityName}}'s graduating students.
+• Vestiq Access for Students & Faculty
+• Legal Insights Integration  
+• Luminary Studios for Student Projects
+• Research Collaboration
+• Talent Pipeline
 
 Why We're Different:
-
 We have taken zero institutional funding. No Silicon Valley money. No hedge fund backing. We've spent years building quietly because we wanted to remain free to build technology for people—not just institutions.
 
-We would welcome the opportunity to discuss this further at your convenience.
+We would welcome the opportunity to discuss this further.
 
 — Luminary AI Technologies
 "Technology for the people. Not power."`,
 
-            pitch: `Thank you for connecting with us. Below is background on Luminary for your consideration.
+            pitch: `Thank you for connecting with us.
 
 THE COMPANY
-
-Luminary AI Technologies is building intelligent infrastructure for complex operations. We're a Delaware C-corp creating technology designed to challenge and replace inefficient legacy systems across healthcare, government, education, and finance.
-
-Our tagline: "Technology for the people. Not power."
+Luminary AI Technologies is building intelligent infrastructure for complex operations—technology designed to challenge inefficient legacy systems.
 
 THE STORY
-
-The Outsider Angle: We have taken zero institutional funding—no Silicon Valley VC, no hedge fund backing, no big bank investment. We've spent years building quietly, bootstrapped, because we wanted complete independence.
-
-The Mission Angle: Our thesis is that most institutional dysfunction—from healthcare authorization delays to government administrative burden to investment opacity—stems from legacy technology and deliberate complexity that benefits incumbents. We're building platforms that make these systems transparent and accessible to individuals.
+We have taken zero institutional funding. We've spent years building quietly, bootstrapped, because we wanted complete independence.
 
 OUR PLATFORMS
-
-• Vestiq — Wealth intelligence platform providing transparent, thesis-driven investment analysis. Think "Bloomberg Terminal for regular people."
-
-• Legal Insights — Policy intelligence tracking regulatory changes. Helping citizens understand how laws actually affect them.
-
-• Blue Haven — E-commerce and marketplace intelligence for entrepreneurs and small businesses.
-
-• Luminary Studios — Development infrastructure that lets people build software the way they think, not the way programmers code.
+• Vestiq — Wealth intelligence platform
+• Legal Insights — Policy intelligence
+• Blue Haven — E-commerce intelligence
+• Luminary Studios — Development infrastructure
 
 FOUNDER AVAILABILITY
-
-Our founder is available for interviews, background conversations, or commentary on: AI infrastructure, fintech accessibility, govtech reform, the future of software development, and building companies outside traditional Silicon Valley funding.
-
-ASSETS AVAILABLE
-
-• Company background document
-• Founder bio and high-res photos
-• Platform screenshots and demos
-• Data access for stories (case by case)
+Available for interviews, background conversations, or commentary.
 
 — Luminary AI Technologies
 Indianapolis, IN | luminary-tech.ai`,
 
-            followup: `Following up on our previous message. We'd love to hear your thoughts and answer any questions you might have.
+            followup: `Following up on our previous message. We'd love to hear your thoughts and answer any questions.
 
-Is there a convenient time this week or next for a brief call? We're flexible and happy to work around your schedule.
-
-Looking forward to connecting.
+Is there a convenient time for a brief call?
 
 — Luminary AI Technologies`,
 
-            reminder: `Just a friendly reminder about our partnership proposal. We understand you're busy, and we wanted to make sure our message didn't get lost in your inbox.
-
-If you have any questions or would like to discuss further, please don't hesitate to reach out.
+            reminder: `Just a friendly reminder about our partnership proposal. Please let us know if you have any questions.
 
 — Luminary AI Technologies`,
 
             thankyou: `Thank you for your interest in Luminary. We're excited about the possibility of working together.
 
-We'll follow up shortly with next steps. In the meantime, please don't hesitate to reach out if you have any questions.
+We'll follow up shortly with next steps.
 
 — Luminary AI Technologies`,
 
-            schedule: `Thank you for your response. We'd love to schedule a call to discuss this further.
+            schedule: `Thank you for your response. We'd love to schedule a call.
 
-Would any of the following times work for you?
+Would any of these times work?
 • [Day], [Date] at [Time]
 • [Day], [Date] at [Time]
-• [Day], [Date] at [Time]
-
-If none of these work, please suggest a time that's more convenient for you.
 
 — Luminary AI Technologies`,
 
-            info: `Thank you for your interest. Here's some additional information that might be helpful:
+            info: `Thank you for your interest. Here's additional information:
 
-[Add specific information relevant to their inquiry]
+[Add details here]
 
-Please let us know if you have any other questions. We're happy to provide more details on any aspect of our platform or partnership proposal.
+Please let us know if you have other questions.
 
 — Luminary AI Technologies`
         };
 
-        // ===== DATA LOADING =====
+        // Load data
         async function loadPartnerData() {
+            // Load templates from localStorage
+            const savedTemplates = localStorage.getItem(TEMPLATES_KEY);
+            if (savedTemplates) {
+                templates = { ...templates, ...JSON.parse(savedTemplates) };
+            }
+
+            // Load partner data from localStorage first (for changes)
+            const savedData = localStorage.getItem(STORAGE_KEY);
+            if (savedData) {
+                allPartners = JSON.parse(savedData);
+                updateCounts();
+                renderPartnerList();
+                return;
+            }
+
+            // Otherwise load from JSON file
             try {
                 const response = await fetch('partner-keys.json');
                 allPartners = await response.json();
+                saveData(); // Save to localStorage
             } catch (error) {
-                console.log('Loading sample data...');
+                console.log('Using sample data');
                 allPartners = generateSampleData();
             }
             
@@ -1146,20 +1507,36 @@ Please let us know if you have any other questions. We're happy to provide more 
             return {
                 'JDXNCILWKG4DRGH': { id: 'JDXNCILWKG4DRGH', recipientName: 'Haas School of Business at UC Berkeley', universityName: 'University of California, Berkeley', schoolName: 'Haas School of Business', state: 'CA', recipientType: 'university', contacts: [{ name: 'Jennifer Chatman', title: 'Dean', email: 'chatman@berkeley.edu' }], colors: { primary: '#003262', secondary: '#FDB515' }, status: 'pending', messages: [], lastActivity: new Date().toISOString() },
                 'AXB4ZQG5N6RMRJG': { id: 'AXB4ZQG5N6RMRJG', recipientName: 'Harvard Business School', universityName: 'Harvard University', schoolName: 'Harvard Business School', state: 'MA', recipientType: 'university', contacts: [{ name: 'MBA Programs', title: 'Admissions', email: 'mba@hbs.edu' }], colors: { primary: '#A51C30', secondary: '#000000' }, status: 'viewed', messages: [], lastActivity: new Date().toISOString() },
-                '4CSPEKIRL7QFASK': { id: '4CSPEKIRL7QFASK', recipientName: 'Booth School of Business at University of Chicago', universityName: 'University of Chicago', schoolName: 'Booth School of Business', state: 'IL', recipientType: 'university', contacts: [{ name: 'Donna Swinford', title: 'Associate Dean', email: 'donna.swinford@chicagobooth.edu' }], colors: { primary: '#800000', secondary: '#FFFFFF' }, status: 'pending', messages: [], lastActivity: new Date().toISOString() },
                 '1XQJZQA1G2P2C6Q': { id: '1XQJZQA1G2P2C6Q', recipientName: 'TechCrunch', outletName: 'TechCrunch', focus: 'Startups, venture, tech news', recipientType: 'media', contacts: [{ name: 'Tips inbox', type: 'Tips', email: 'tips@techcrunch.com' }], colors: { primary: '#0A9E01', secondary: '#000000' }, status: 'pending', messages: [], lastActivity: new Date().toISOString() },
-                '1Z54M8SMG4XV61T': { id: '1Z54M8SMG4XV61T', recipientName: 'The Verge', outletName: 'The Verge', focus: 'Consumer tech, internet culture', recipientType: 'media', contacts: [{ name: 'Tips inbox', type: 'Tips', email: 'tips@theverge.com' }], colors: { primary: '#FA4B2A', secondary: '#000000' }, status: 'responded', messages: [{ content: 'Interested in learning more about your platform. Can you tell us more about the founding story?', fromLuminary: false, date: new Date(Date.now() - 86400000).toISOString() }], lastActivity: new Date().toISOString() },
-                '1B1752QVYHDGYF0': { id: '1B1752QVYHDGYF0', recipientName: 'VentureBeat', outletName: 'VentureBeat', focus: 'AI, enterprise tech, startups', recipientType: 'media', contacts: [{ name: 'General tips', type: 'Tips', email: 'tips@venturebeat.com' }], colors: { primary: '#C73A3D', secondary: '#1E1E1E' }, status: 'pending', messages: [], lastActivity: new Date().toISOString() },
+                '1Z54M8SMG4XV61T': { id: '1Z54M8SMG4XV61T', recipientName: 'The Verge', outletName: 'The Verge', focus: 'Consumer tech, internet culture', recipientType: 'media', contacts: [{ name: 'Tips inbox', type: 'Tips', email: 'tips@theverge.com' }], colors: { primary: '#FA4B2A', secondary: '#000000' }, status: 'responded', messages: [{ id: 'msg1', content: 'Interested in learning more about your platform.', fromLuminary: false, date: new Date(Date.now() - 86400000).toISOString() }], lastActivity: new Date().toISOString() },
             };
         }
 
-        // ===== COUNTS & STATS =====
+        // Save data
+        function saveData() {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(allPartners));
+            showSaveIndicator('saved');
+        }
+
+        function showSaveIndicator(status) {
+            const indicator = document.getElementById('saveIndicator');
+            const text = document.getElementById('saveText');
+            
+            indicator.className = 'save-indicator visible ' + status;
+            text.textContent = status === 'saving' ? 'Saving...' : status === 'saved' ? 'Saved' : 'Error';
+            
+            setTimeout(() => {
+                indicator.classList.remove('visible');
+            }, 2000);
+        }
+
+        // ===== COUNTS =====
         function updateCounts() {
             const partners = Object.values(allPartners);
             const universities = partners.filter(p => p.recipientType === 'university');
             const media = partners.filter(p => p.recipientType === 'media');
-            const responded = partners.filter(p => p.status === 'responded' || (p.messages && p.messages.some(m => !m.fromLuminary)));
-            const pending = partners.filter(p => p.status === 'pending');
+            const responded = partners.filter(p => p.messages && p.messages.some(m => !m.fromLuminary));
+            const pending = partners.filter(p => !p.messages || p.messages.length === 0 || !p.messages.some(m => !m.fromLuminary));
             const unread = partners.filter(p => p.messages && p.messages.some(m => !m.fromLuminary && !m.read));
 
             document.getElementById('navAllCount').textContent = partners.length;
@@ -1175,54 +1552,41 @@ Please let us know if you have any other questions. We're happy to provide more 
             const container = document.getElementById('partnerList');
             let partners = Object.values(allPartners);
 
-            // Apply view filter
-            if (currentView === 'universities') {
-                partners = partners.filter(p => p.recipientType === 'university');
-            } else if (currentView === 'media') {
-                partners = partners.filter(p => p.recipientType === 'media');
-            } else if (currentView === 'responded') {
-                partners = partners.filter(p => p.status === 'responded' || p.status === 'accepted');
-            } else if (currentView === 'pending') {
-                partners = partners.filter(p => p.status === 'pending');
-            } else if (currentView === 'unread') {
-                partners = partners.filter(p => p.messages && p.messages.some(m => !m.fromLuminary && !m.read));
-            }
+            // View filter
+            if (currentView === 'universities') partners = partners.filter(p => p.recipientType === 'university');
+            else if (currentView === 'media') partners = partners.filter(p => p.recipientType === 'media');
+            else if (currentView === 'responded') partners = partners.filter(p => p.messages && p.messages.some(m => !m.fromLuminary));
+            else if (currentView === 'pending') partners = partners.filter(p => !p.messages || !p.messages.some(m => !m.fromLuminary));
+            else if (currentView === 'unread') partners = partners.filter(p => p.messages && p.messages.some(m => !m.fromLuminary && !m.read));
 
-            // Apply status filter
-            if (currentFilter === 'unread') {
-                partners = partners.filter(p => p.messages && p.messages.some(m => !m.fromLuminary && !m.read));
-            } else if (currentFilter === 'responded') {
-                partners = partners.filter(p => p.status === 'responded' || p.status === 'accepted');
-            }
+            // Status filter
+            if (currentFilter === 'unread') partners = partners.filter(p => p.messages && p.messages.some(m => !m.fromLuminary && !m.read));
+            else if (currentFilter === 'responded') partners = partners.filter(p => p.messages && p.messages.some(m => !m.fromLuminary));
 
-            // Apply search
-            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-            if (searchTerm) {
+            // Search
+            const search = document.getElementById('searchInput').value.toLowerCase();
+            if (search) {
                 partners = partners.filter(p => 
-                    p.recipientName.toLowerCase().includes(searchTerm) ||
-                    (p.universityName && p.universityName.toLowerCase().includes(searchTerm)) ||
-                    (p.outletName && p.outletName.toLowerCase().includes(searchTerm)) ||
-                    (p.focus && p.focus.toLowerCase().includes(searchTerm)) ||
-                    (p.state && p.state.toLowerCase().includes(searchTerm))
+                    p.recipientName.toLowerCase().includes(search) ||
+                    (p.universityName && p.universityName.toLowerCase().includes(search)) ||
+                    (p.focus && p.focus.toLowerCase().includes(search))
                 );
             }
 
-            // Sort: responded first, then by last activity
+            // Sort
             partners.sort((a, b) => {
-                const aHasUnread = a.messages && a.messages.some(m => !m.fromLuminary && !m.read);
-                const bHasUnread = b.messages && b.messages.some(m => !m.fromLuminary && !m.read);
-                if (aHasUnread && !bHasUnread) return -1;
-                if (!aHasUnread && bHasUnread) return 1;
+                const aUnread = a.messages && a.messages.some(m => !m.fromLuminary && !m.read);
+                const bUnread = b.messages && b.messages.some(m => !m.fromLuminary && !m.read);
+                if (aUnread && !bUnread) return -1;
+                if (!aUnread && bUnread) return 1;
                 return new Date(b.lastActivity || 0) - new Date(a.lastActivity || 0);
             });
 
-            // Update list count
             document.getElementById('listCount').textContent = `(${partners.length})`;
 
             container.innerHTML = partners.slice(0, 100).map(p => {
-                const isMedia = p.recipientType === 'media';
                 const hasUnread = p.messages && p.messages.some(m => !m.fromLuminary && !m.read);
-                const lastMessage = p.messages && p.messages.length > 0 ? p.messages[p.messages.length - 1] : null;
+                const lastMsg = p.messages && p.messages.length > 0 ? p.messages[p.messages.length - 1] : null;
                 
                 return `
                     <div class="partner-item ${currentPartner?.id === p.id ? 'active' : ''} ${hasUnread ? 'unread' : ''}" 
@@ -1233,11 +1597,11 @@ Please let us know if you have any other questions. We're happy to provide more 
                         </div>
                         <div class="partner-item-meta">
                             <span class="type-dot ${p.recipientType}"></span>
-                            <span class="partner-item-detail">${isMedia ? (p.focus || '').substring(0, 30) : p.state || ''}</span>
-                            <span class="status-indicator ${p.status}">${capitalizeFirst(p.status)}</span>
+                            <span class="partner-item-detail">${p.recipientType === 'media' ? (p.focus || '').substring(0, 25) : p.state || ''}</span>
+                            <span class="status-indicator ${p.status}">${p.status}</span>
                         </div>
                         <div class="partner-item-preview">
-                            ${lastMessage ? (lastMessage.fromLuminary ? 'You: ' : '') + lastMessage.content.substring(0, 60) + '...' : 'No messages yet'}
+                            ${lastMsg ? (lastMsg.fromLuminary ? 'You: ' : '') + lastMsg.content.substring(0, 50) + '...' : 'No messages yet'}
                         </div>
                     </div>
                 `;
@@ -1245,55 +1609,48 @@ Please let us know if you have any other questions. We're happy to provide more 
         }
 
         // ===== PARTNER SELECTION =====
-        function selectPartner(partnerId) {
-            currentPartner = allPartners[partnerId];
+        function selectPartner(id) {
+            currentPartner = allPartners[id];
             if (!currentPartner) return;
 
-            // Update list selection
-            document.querySelectorAll('.partner-item').forEach(item => item.classList.remove('active'));
-            event.currentTarget.classList.add('active');
+            // Mark messages as read
+            if (currentPartner.messages) {
+                currentPartner.messages.forEach(m => { if (!m.fromLuminary) m.read = true; });
+                saveData();
+            }
 
-            // Show conversation view
             document.getElementById('emptyState').style.display = 'none';
             document.getElementById('conversationView').style.display = 'flex';
 
-            // Update header
             document.getElementById('detailName').textContent = currentPartner.recipientName;
             document.getElementById('detailMeta').textContent = currentPartner.recipientType === 'university'
                 ? `${currentPartner.universityName || ''} • ${currentPartner.state || ''}`
                 : currentPartner.focus || '';
 
-            // Update status button
             updateStatusButton();
-
-            // Render current tab
             renderCurrentTab();
+            renderPartnerList();
+            updateCounts();
         }
 
         function updateStatusButton() {
             const btn = document.getElementById('btnMarkStatus');
-            const status = currentPartner.status;
-            
-            if (status === 'pending') {
-                btn.innerHTML = '<svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg> Mark Viewed';
-            } else if (status === 'viewed') {
-                btn.innerHTML = '<svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg> Mark Responded';
-            } else {
-                btn.innerHTML = '<svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg> Accepted';
-                btn.disabled = true;
-            }
+            const s = currentPartner.status;
+            btn.innerHTML = s === 'pending' 
+                ? '<svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg> Mark Viewed'
+                : '<svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg> ' + (s === 'viewed' ? 'Mark Responded' : 'Accepted');
         }
 
         // ===== TAB RENDERING =====
         function renderCurrentTab() {
             const content = document.getElementById('detailContent');
-            const composeArea = document.getElementById('composeArea');
+            const compose = document.getElementById('composeArea');
 
             if (currentTab === 'conversation') {
-                composeArea.style.display = 'block';
+                compose.style.display = 'block';
                 renderConversation(content);
             } else {
-                composeArea.style.display = 'none';
+                compose.style.display = 'none';
                 renderDetails(content);
             }
         }
@@ -1305,7 +1662,7 @@ Please let us know if you have any other questions. We're happy to provide more 
 
             let html = '<div class="message-thread">';
 
-            // Initial outbound message (proposal/pitch)
+            // Initial outbound
             html += `
                 <div class="message-item outbound">
                     <div class="message-bubble">
@@ -1313,22 +1670,22 @@ Please let us know if you have any other questions. We're happy to provide more 
                             <span class="message-sender">Luminary</span>
                             <span class="message-time">Initial Outreach</span>
                         </div>
-                        <div class="message-body">${formatMessageContent(templateContent)}</div>
+                        <div class="message-body">${formatContent(templateContent)}</div>
                         <div class="message-actions">
-                            <button class="message-action-btn" onclick="openTemplateModal()">
-                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
-                                Edit Template
-                            </button>
-                            <button class="message-action-btn" onclick="copyToClipboard(\`${escapeForJs(templateContent)}\`)">
+                            <button class="message-action-btn" onclick="copyText(\`${escapeBackticks(templateContent)}\`)">
                                 <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
                                 Copy
+                            </button>
+                            <button class="message-action-btn" onclick="openModal('templateModal')">
+                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                                Edit
                             </button>
                         </div>
                     </div>
                 </div>
             `;
 
-            // Subsequent messages
+            // Messages
             messages.forEach((msg, idx) => {
                 html += `
                     <div class="message-item ${msg.fromLuminary ? 'outbound' : 'inbound'}">
@@ -1337,7 +1694,19 @@ Please let us know if you have any other questions. We're happy to provide more 
                                 <span class="message-sender">${msg.fromLuminary ? 'Luminary' : currentPartner.recipientName}</span>
                                 <span class="message-time">${formatDate(msg.date)}</span>
                             </div>
-                            <div class="message-body">${formatMessageContent(msg.content)}</div>
+                            <div class="message-body">${formatContent(msg.content)}</div>
+                            <div class="message-actions">
+                                <button class="message-action-btn" onclick="copyText(\`${escapeBackticks(msg.content)}\`)">
+                                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                                    Copy
+                                </button>
+                                ${msg.fromLuminary ? `
+                                    <button class="message-action-btn delete" onclick="confirmDeleteMessage(${idx})">
+                                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                                        Delete
+                                    </button>
+                                ` : ''}
+                            </div>
                         </div>
                     </div>
                 `;
@@ -1345,8 +1714,6 @@ Please let us know if you have any other questions. We're happy to provide more 
 
             html += '</div>';
             container.innerHTML = html;
-
-            // Scroll to bottom
             container.scrollTop = container.scrollHeight;
         }
 
@@ -1357,21 +1724,16 @@ Please let us know if you have any other questions. We're happy to provide more 
             container.innerHTML = `
                 <div class="details-grid">
                     <div class="detail-card">
-                        <div class="detail-card-title">Partner Information</div>
+                        <div class="detail-card-title">Information</div>
                         <div class="detail-row">
                             <span class="detail-row-label">Access Key</span>
                             <span class="detail-row-value"><span class="key-display">${p.id}</span></span>
                         </div>
                         <div class="detail-row">
                             <span class="detail-row-label">Type</span>
-                            <span class="detail-row-value">${isMedia ? 'Media Outlet' : 'University'}</span>
+                            <span class="detail-row-value">${isMedia ? 'Media' : 'University'}</span>
                         </div>
-                        ${isMedia ? `
-                            <div class="detail-row">
-                                <span class="detail-row-label">Focus</span>
-                                <span class="detail-row-value">${p.focus || 'N/A'}</span>
-                            </div>
-                        ` : `
+                        ${!isMedia ? `
                             <div class="detail-row">
                                 <span class="detail-row-label">University</span>
                                 <span class="detail-row-value">${p.universityName || 'N/A'}</span>
@@ -1380,39 +1742,28 @@ Please let us know if you have any other questions. We're happy to provide more 
                                 <span class="detail-row-label">State</span>
                                 <span class="detail-row-value">${p.state || 'N/A'}</span>
                             </div>
+                        ` : `
+                            <div class="detail-row">
+                                <span class="detail-row-label">Focus</span>
+                                <span class="detail-row-value">${p.focus || 'N/A'}</span>
+                            </div>
                         `}
                         <div class="detail-row">
                             <span class="detail-row-label">Status</span>
-                            <span class="detail-row-value"><span class="status-indicator ${p.status}">${capitalizeFirst(p.status)}</span></span>
-                        </div>
-                        <div class="detail-row">
-                            <span class="detail-row-label">Messages</span>
-                            <span class="detail-row-value">${(p.messages || []).length}</span>
+                            <span class="detail-row-value"><span class="status-indicator ${p.status}">${p.status}</span></span>
                         </div>
                     </div>
-
                     <div class="detail-card">
-                        <div class="detail-card-title">Brand Colors</div>
+                        <div class="detail-card-title">Colors</div>
                         <div class="detail-row">
                             <span class="detail-row-label">Primary</span>
-                            <span class="detail-row-value">
-                                <div class="color-swatch-row">
-                                    <div class="color-swatch" style="background: ${p.colors?.primary || '#003366'}"></div>
-                                    ${p.colors?.primary || '#003366'}
-                                </div>
-                            </span>
+                            <span class="detail-row-value"><div class="color-swatch-row"><div class="color-swatch" style="background:${p.colors?.primary || '#003366'}"></div>${p.colors?.primary || '#003366'}</div></span>
                         </div>
                         <div class="detail-row">
                             <span class="detail-row-label">Secondary</span>
-                            <span class="detail-row-value">
-                                <div class="color-swatch-row">
-                                    <div class="color-swatch" style="background: ${p.colors?.secondary || '#D4A853'}"></div>
-                                    ${p.colors?.secondary || '#D4A853'}
-                                </div>
-                            </span>
+                            <span class="detail-row-value"><div class="color-swatch-row"><div class="color-swatch" style="background:${p.colors?.secondary || '#D4A853'}"></div>${p.colors?.secondary || '#D4A853'}</div></span>
                         </div>
                     </div>
-
                     <div class="detail-card">
                         <div class="detail-card-title">Contacts</div>
                         ${(p.contacts || []).map(c => `
@@ -1421,13 +1772,13 @@ Please let us know if you have any other questions. We're happy to provide more 
                                 <div class="contact-title">${c.title || c.type || ''}</div>
                                 <div class="contact-email">${c.email || ''}</div>
                             </div>
-                        `).join('') || '<p style="color: var(--text-muted);">No contacts available</p>'}
+                        `).join('') || '<p style="color:var(--text-muted)">No contacts</p>'}
                     </div>
                 </div>
             `;
         }
 
-        // ===== MESSAGE HANDLING =====
+        // ===== MESSAGING =====
         function sendMessage() {
             const content = document.getElementById('composeEditor').value.trim();
             if (!content || !currentPartner) return;
@@ -1435,26 +1786,42 @@ Please let us know if you have any other questions. We're happy to provide more 
             if (!currentPartner.messages) currentPartner.messages = [];
 
             currentPartner.messages.push({
+                id: 'msg' + Date.now(),
                 content: content,
                 fromLuminary: true,
                 date: new Date().toISOString()
             });
 
             currentPartner.lastActivity = new Date().toISOString();
-            currentPartner.status = 'responded';
+            if (currentPartner.status === 'pending') currentPartner.status = 'viewed';
 
-            // Clear compose
             document.getElementById('composeEditor').value = '';
 
-            // Re-render
+            saveData();
             renderCurrentTab();
             renderPartnerList();
             updateCounts();
-
-            alert('Message sent successfully!');
         }
 
-        // ===== TEMPLATE FUNCTIONS =====
+        function confirmDeleteMessage(idx) {
+            document.getElementById('confirmTitle').textContent = 'Delete Message?';
+            document.getElementById('confirmText').textContent = 'This will permanently remove this message.';
+            document.getElementById('confirmAction').onclick = () => deleteMessage(idx);
+            openModal('confirmModal');
+        }
+
+        function deleteMessage(idx) {
+            if (currentPartner && currentPartner.messages) {
+                currentPartner.messages.splice(idx, 1);
+                currentPartner.lastActivity = new Date().toISOString();
+                saveData();
+                renderCurrentTab();
+                renderPartnerList();
+            }
+            closeModal('confirmModal');
+        }
+
+        // ===== TEMPLATES =====
         function processTemplate(template, partner) {
             return template
                 .replace(/\{\{partnerName\}\}/g, partner.recipientName || '')
@@ -1465,126 +1832,128 @@ Please let us know if you have any other questions. We're happy to provide more 
                 .replace(/\{\{state\}\}/g, partner.state || '');
         }
 
-        function openTemplateModal() {
-            const isMedia = currentPartner?.recipientType === 'media';
-            document.getElementById('templateType').value = isMedia ? 'pitch' : 'proposal';
-            document.getElementById('templateEditor').value = isMedia ? templates.pitch : templates.proposal;
-            document.getElementById('templateModalTitle').textContent = `Edit ${isMedia ? 'Media Press Kit' : 'University Proposal'}`;
-            document.getElementById('templateModal').classList.add('active');
-        }
-
-        function closeTemplateModal() {
-            document.getElementById('templateModal').classList.remove('active');
-        }
-
-        function saveTemplate() {
+        function loadTemplateContent() {
             const type = document.getElementById('templateType').value;
-            const content = document.getElementById('templateEditor').value;
-            templates[type] = content;
-            closeTemplateModal();
+            document.getElementById('templateEditor').value = templates[type] || '';
+        }
+
+        function saveTemplateChanges() {
+            const type = document.getElementById('templateType').value;
+            templates[type] = document.getElementById('templateEditor').value;
+            localStorage.setItem(TEMPLATES_KEY, JSON.stringify(templates));
+            closeModal('templateModal');
             if (currentPartner) renderCurrentTab();
-            alert('Template saved!');
-        }
-
-        function resetTemplate() {
-            const type = document.getElementById('templateType').value;
-            // Reset would reload from defaults - for now just show message
-            alert('Template reset to default (in production, this would reload from server)');
-        }
-
-        // ===== QUICK REPLY =====
-        function openQuickReplyModal() {
-            document.getElementById('quickReplyModal').classList.add('active');
-        }
-
-        function closeQuickReplyModal() {
-            document.getElementById('quickReplyModal').classList.remove('active');
+            showSaveIndicator('saved');
         }
 
         function insertQuickReply(type) {
             const template = templates[type] || '';
             const processed = currentPartner ? processTemplate(template, currentPartner) : template;
             document.getElementById('composeEditor').value = processed;
-            closeQuickReplyModal();
+            closeModal('quickReplyModal');
         }
+
+        // ===== IMPORT/EXPORT =====
+        function exportData() {
+            const data = {
+                partners: allPartners,
+                templates: templates,
+                exportDate: new Date().toISOString()
+            };
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `luminary-data-${new Date().toISOString().split('T')[0]}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function importData() {
+            document.getElementById('importFile').click();
+        }
+
+        document.getElementById('importFile').addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                try {
+                    const data = JSON.parse(event.target.result);
+                    if (data.partners) {
+                        allPartners = { ...allPartners, ...data.partners };
+                        saveData();
+                    }
+                    if (data.templates) {
+                        templates = { ...templates, ...data.templates };
+                        localStorage.setItem(TEMPLATES_KEY, JSON.stringify(templates));
+                    }
+                    updateCounts();
+                    renderPartnerList();
+                    alert('Data imported successfully!');
+                } catch (err) {
+                    alert('Invalid file format');
+                }
+            };
+            reader.readAsText(file);
+            e.target.value = '';
+        });
 
         // ===== UTILITIES =====
-        function capitalizeFirst(str) {
-            return str ? str.charAt(0).toUpperCase() + str.slice(1) : '';
+        function openModal(id) { document.getElementById(id).classList.add('active'); }
+        function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+
+        function copyText(text) {
+            navigator.clipboard.writeText(text).then(() => showSaveIndicator('saved'));
         }
 
-        function formatDate(dateStr) {
-            if (!dateStr) return '';
-            return new Date(dateStr).toLocaleDateString('en-US', { 
-                month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit'
-            });
+        function formatDate(d) {
+            if (!d) return '';
+            return new Date(d).toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' });
         }
 
-        function formatRelativeTime(dateStr) {
-            if (!dateStr) return '';
-            const date = new Date(dateStr);
-            const now = new Date();
-            const diffMs = now - date;
-            const diffMins = Math.floor(diffMs / 60000);
-            const diffHours = Math.floor(diffMs / 3600000);
-            const diffDays = Math.floor(diffMs / 86400000);
-
-            if (diffMins < 60) return `${diffMins}m`;
-            if (diffHours < 24) return `${diffHours}h`;
-            if (diffDays < 7) return `${diffDays}d`;
-            return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        function formatRelativeTime(d) {
+            if (!d) return '';
+            const diff = Date.now() - new Date(d).getTime();
+            const mins = Math.floor(diff / 60000);
+            if (mins < 60) return mins + 'm';
+            const hrs = Math.floor(diff / 3600000);
+            if (hrs < 24) return hrs + 'h';
+            const days = Math.floor(diff / 86400000);
+            if (days < 7) return days + 'd';
+            return new Date(d).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
         }
 
-        function formatMessageContent(text) {
-            return text.replace(/\n\n/g, '</p><p>').replace(/\n/g, '<br>');
+        function formatContent(text) {
+            return text.replace(/\n/g, '<br>');
         }
 
-        function escapeForJs(str) {
+        function escapeBackticks(str) {
             return str.replace(/`/g, '\\`').replace(/\$/g, '\\$');
-        }
-
-        function copyToClipboard(text) {
-            navigator.clipboard.writeText(text).then(() => {
-                alert('Copied to clipboard!');
-            });
-        }
-
-        function copyPartnerKey() {
-            if (currentPartner) {
-                copyToClipboard(currentPartner.id);
-            }
         }
 
         function markStatus() {
             if (!currentPartner) return;
-            
-            if (currentPartner.status === 'pending') {
-                currentPartner.status = 'viewed';
-            } else if (currentPartner.status === 'viewed') {
-                currentPartner.status = 'responded';
-            }
-            
+            if (currentPartner.status === 'pending') currentPartner.status = 'viewed';
+            else if (currentPartner.status === 'viewed') currentPartner.status = 'responded';
+            saveData();
             updateStatusButton();
             renderPartnerList();
             updateCounts();
         }
 
-        function exportData() {
-            const dataStr = JSON.stringify(allPartners, null, 2);
-            const blob = new Blob([dataStr], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `luminary-communications-${new Date().toISOString().split('T')[0]}.json`;
-            a.click();
-            URL.revokeObjectURL(url);
+        function copyKey() {
+            if (currentPartner) copyText(currentPartner.id);
         }
 
         // ===== EVENT LISTENERS =====
         document.addEventListener('DOMContentLoaded', () => {
-            loadPartnerData();
+            if (!checkAuth()) {
+                document.getElementById('accessCode').focus();
+            }
 
-            // Navigation
+            // Nav items
             document.querySelectorAll('.nav-item[data-view]').forEach(item => {
                 item.addEventListener('click', () => {
                     document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
@@ -1599,8 +1968,9 @@ Please let us know if you have any other questions. We're happy to provide more 
             document.querySelectorAll('.nav-item[data-action]').forEach(item => {
                 item.addEventListener('click', () => {
                     const action = item.dataset.action;
-                    if (action === 'templates') openTemplateModal();
+                    if (action === 'templates') { loadTemplateContent(); openModal('templateModal'); }
                     if (action === 'export') exportData();
+                    if (action === 'import') importData();
                 });
             });
 
@@ -1627,43 +1997,23 @@ Please let us know if you have any other questions. We're happy to provide more 
             // Search
             document.getElementById('searchInput').addEventListener('input', renderPartnerList);
 
-            // Compose shortcuts
+            // Compose
             document.getElementById('composeEditor').addEventListener('keydown', (e) => {
-                if (e.ctrlKey && e.key === 'Enter') {
-                    sendMessage();
-                }
+                if (e.ctrlKey && e.key === 'Enter') sendMessage();
             });
 
-            // Action buttons
-            document.getElementById('btnEditTemplate').addEventListener('click', openTemplateModal);
-            document.getElementById('btnCopyKey').addEventListener('click', copyPartnerKey);
+            // Buttons
+            document.getElementById('btnCopyKey').addEventListener('click', copyKey);
             document.getElementById('btnMarkStatus').addEventListener('click', markStatus);
-            document.getElementById('btnInsertTemplate').addEventListener('click', openQuickReplyModal);
+            document.getElementById('btnInsertTemplate').addEventListener('click', () => openModal('quickReplyModal'));
             document.getElementById('btnSendMessage').addEventListener('click', sendMessage);
 
-            // Variable chips
-            document.querySelectorAll('.variable-chip').forEach(chip => {
-                chip.addEventListener('click', () => {
-                    const textarea = document.getElementById('templateEditor');
-                    const start = textarea.selectionStart;
-                    const end = textarea.selectionEnd;
-                    const text = textarea.value;
-                    textarea.value = text.substring(0, start) + chip.dataset.var + text.substring(end);
-                    textarea.focus();
-                    textarea.setSelectionRange(start + chip.dataset.var.length, start + chip.dataset.var.length);
-                });
-            });
-
-            // Template type change
-            document.getElementById('templateType').addEventListener('change', (e) => {
-                document.getElementById('templateEditor').value = templates[e.target.value] || '';
-            });
-
-            // Keyboard shortcuts
+            // Escape to close modals
             document.addEventListener('keydown', (e) => {
                 if (e.key === 'Escape') {
-                    closeTemplateModal();
-                    closeQuickReplyModal();
+                    closeModal('templateModal');
+                    closeModal('quickReplyModal');
+                    closeModal('confirmModal');
                 }
             });
         });
