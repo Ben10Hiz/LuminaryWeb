@@ -1624,6 +1624,382 @@
         .image-lightbox img { max-width: 90vw; max-height: 90vh; object-fit: contain; border-radius: 8px; }
         .image-lightbox-close { position: absolute; top: 20px; right: 20px; width: 40px; height: 40px; background: rgba(255,255,255,0.1); border: none; border-radius: 50%; color: white; font-size: 24px; cursor: pointer; }
 
+        /* ===== PRESS RELEASE MODAL ===== */
+        .press-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.85);
+            z-index: 10000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        .press-modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        .press-modal-content {
+            width: 95vw;
+            max-width: 1200px;
+            height: 90vh;
+            background: var(--bg-card);
+            border-radius: 16px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            border: 1px solid var(--border-subtle);
+        }
+        .press-modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1.25rem 1.5rem;
+            background: linear-gradient(135deg, var(--bg-deep) 0%, var(--bg-card) 100%);
+            border-bottom: 1px solid var(--border-subtle);
+        }
+        .press-modal-header h2 {
+            font-family: 'Cinzel', serif;
+            font-size: 1.3rem;
+            color: var(--gold-primary);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        .press-modal-header h2 svg {
+            width: 24px;
+            height: 24px;
+        }
+        .press-modal-close {
+            width: 40px;
+            height: 40px;
+            background: transparent;
+            border: 1px solid var(--border-subtle);
+            border-radius: 8px;
+            color: var(--text-muted);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+        .press-modal-close:hover {
+            border-color: var(--error);
+            color: var(--error);
+            background: var(--error-bg);
+        }
+        .press-modal-close svg {
+            width: 20px;
+            height: 20px;
+        }
+        .press-modal-body {
+            flex: 1;
+            display: grid;
+            grid-template-columns: 1fr 320px;
+            overflow: hidden;
+        }
+        
+        /* Compose Area */
+        .press-compose {
+            padding: 1.5rem;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+        }
+        .press-field {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        .press-field label {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .press-field input,
+        .press-field textarea,
+        .press-field select {
+            padding: 0.875rem 1rem;
+            background: var(--bg-input);
+            border: 1px solid var(--border-subtle);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-family: inherit;
+            font-size: 0.95rem;
+            transition: all 0.2s ease;
+        }
+        .press-field input:focus,
+        .press-field textarea:focus,
+        .press-field select:focus {
+            outline: none;
+            border-color: var(--gold-primary);
+            box-shadow: 0 0 0 3px rgba(212, 168, 83, 0.1);
+        }
+        .press-field textarea {
+            min-height: 300px;
+            resize: vertical;
+            line-height: 1.6;
+        }
+        .press-field-hint {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+        .press-tokens {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+        .press-token {
+            padding: 0.35rem 0.65rem;
+            background: var(--bg-deep);
+            border: 1px solid var(--border-subtle);
+            border-radius: 4px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            color: var(--gold-primary);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .press-token:hover {
+            border-color: var(--gold-primary);
+            background: rgba(212, 168, 83, 0.1);
+        }
+        
+        /* Recipients Panel */
+        .press-recipients {
+            background: var(--bg-deep);
+            border-left: 1px solid var(--border-subtle);
+            display: flex;
+            flex-direction: column;
+        }
+        .press-recipients-header {
+            padding: 1rem 1.25rem;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+        .press-recipients-header h3 {
+            font-size: 0.9rem;
+            color: var(--text-primary);
+            margin-bottom: 0.75rem;
+        }
+        .press-recipients-stats {
+            display: flex;
+            gap: 1rem;
+            font-size: 0.8rem;
+        }
+        .press-recipients-stats span {
+            color: var(--text-muted);
+        }
+        .press-recipients-stats strong {
+            color: var(--gold-primary);
+        }
+        .press-recipients-filters {
+            padding: 0.75rem 1.25rem;
+            border-bottom: 1px solid var(--border-subtle);
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+        .press-recipients-filters select {
+            padding: 0.5rem 0.75rem;
+            background: var(--bg-input);
+            border: 1px solid var(--border-subtle);
+            border-radius: 6px;
+            color: var(--text-primary);
+            font-size: 0.85rem;
+        }
+        .press-recipients-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 0.75rem;
+        }
+        .press-recipient-item {
+            padding: 0.65rem 0.75rem;
+            background: var(--bg-card);
+            border-radius: 6px;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .press-recipient-item:hover {
+            background: var(--bg-elevated);
+        }
+        .press-recipient-item.selected {
+            border: 1px solid var(--gold-primary);
+            background: rgba(212, 168, 83, 0.1);
+        }
+        .press-recipient-item input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            accent-color: var(--gold-primary);
+        }
+        .press-recipient-info {
+            flex: 1;
+            min-width: 0;
+        }
+        .press-recipient-name {
+            font-size: 0.85rem;
+            color: var(--text-primary);
+            font-weight: 500;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .press-recipient-meta {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .press-recipient-email {
+            font-size: 0.7rem;
+            color: var(--gold-primary);
+        }
+        .press-no-email {
+            font-size: 0.7rem;
+            color: var(--error);
+            font-style: italic;
+        }
+        
+        /* Footer */
+        .press-modal-footer {
+            padding: 1rem 1.5rem;
+            background: var(--bg-deep);
+            border-top: 1px solid var(--border-subtle);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .press-footer-info {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+        .press-footer-info strong {
+            color: var(--gold-primary);
+        }
+        .press-footer-actions {
+            display: flex;
+            gap: 0.75rem;
+        }
+        .press-btn {
+            padding: 0.65rem 1.25rem;
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.2s ease;
+        }
+        .press-btn svg {
+            width: 16px;
+            height: 16px;
+        }
+        .press-btn.secondary {
+            background: transparent;
+            border: 1px solid var(--border-subtle);
+            color: var(--text-secondary);
+        }
+        .press-btn.secondary:hover {
+            border-color: var(--gold-primary);
+            color: var(--gold-primary);
+        }
+        .press-btn.primary {
+            background: var(--gold-primary);
+            border: none;
+            color: var(--bg-deep);
+        }
+        .press-btn.primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(212, 168, 83, 0.3);
+        }
+        .press-btn.primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        /* Sending Progress */
+        .press-sending-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(10, 10, 15, 0.95);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+        }
+        .press-sending-spinner {
+            width: 48px;
+            height: 48px;
+            border: 3px solid var(--border-subtle);
+            border-top-color: var(--gold-primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 1rem;
+        }
+        .press-sending-text {
+            color: var(--text-primary);
+            font-size: 1rem;
+            margin-bottom: 0.5rem;
+        }
+        .press-sending-progress {
+            color: var(--gold-primary);
+            font-size: 0.9rem;
+        }
+        
+        /* History View */
+        .press-history-list {
+            padding: 1rem;
+        }
+        .press-history-item {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .press-history-item:hover {
+            border-color: var(--gold-primary);
+        }
+        .press-history-subject {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+        .press-history-meta {
+            display: flex;
+            gap: 1rem;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+        .press-history-stat {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+        .press-history-stat.success { color: var(--success); }
+        .press-history-stat.failed { color: var(--error); }
+
         /* Responsive */
         @media (max-width: 1200px) {
             .app-container { grid-template-columns: 220px 320px 1fr; }
@@ -1722,6 +2098,18 @@
                         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                         Pending
                         <span class="nav-badge warning" id="navPendingCount">0</span>
+                    </div>
+                </div>
+
+                <div class="nav-group">
+                    <div class="nav-group-title">Outreach</div>
+                    <div class="nav-item" data-action="pressRelease">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"/></svg>
+                        Press Release
+                    </div>
+                    <div class="nav-item" data-action="pressHistory">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                        Send History
                     </div>
                 </div>
 
@@ -1964,6 +2352,123 @@
         </section>
     </div>
 
+    <!-- Press Release Modal -->
+    <div class="press-modal" id="pressReleaseModal">
+        <div class="press-modal-content">
+            <div class="press-modal-header">
+                <h2>
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"/></svg>
+                    Compose Press Release
+                </h2>
+                <button class="press-modal-close" onclick="closePressModal()">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
+            </div>
+            
+            <div class="press-modal-body">
+                <div class="press-compose">
+                    <div class="press-field">
+                        <label>Subject Line</label>
+                        <input type="text" id="pressSubject" placeholder="[Press Release] Your headline here">
+                        <div class="press-field-hint">Use personalization: <span class="press-tokens" id="subjectTokens"></span></div>
+                    </div>
+                    
+                    <div class="press-field">
+                        <label>Email Body (HTML supported)</label>
+                        <textarea id="pressBody" placeholder="Write your press release content here...
+
+Dear {{name}},
+
+[Your press release content]
+
+Best regards,
+Luminary AI Technologies
+media@luminary-tech.ai"></textarea>
+                        <div class="press-field-hint">
+                            Available tokens: 
+                            <div class="press-tokens">
+                                <span class="press-token" onclick="insertToken('{{name}}')">{{name}}</span>
+                                <span class="press-token" onclick="insertToken('{{first_name}}')">{{first_name}}</span>
+                                <span class="press-token" onclick="insertToken('{{outlet}}')">{{outlet}}</span>
+                                <span class="press-token" onclick="insertToken('{{category}}')">{{category}}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="press-recipients">
+                    <div class="press-recipients-header">
+                        <h3>Recipients</h3>
+                        <div class="press-recipients-stats">
+                            <span>Total: <strong id="pressTotalCount">0</strong></span>
+                            <span>With Email: <strong id="pressEmailCount">0</strong></span>
+                        </div>
+                    </div>
+                    
+                    <div class="press-recipients-filters">
+                        <select id="pressCategoryFilter" onchange="filterPressRecipients()">
+                            <option value="all">All Categories</option>
+                        </select>
+                        <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                            <input type="checkbox" id="pressSelectAll" onchange="toggleAllRecipients()" checked>
+                            <span style="font-size: 0.85rem; color: var(--text-secondary);">Select All with Email</span>
+                        </label>
+                    </div>
+                    
+                    <div class="press-recipients-list" id="pressRecipientsList">
+                        <!-- Recipients loaded dynamically -->
+                    </div>
+                </div>
+            </div>
+            
+            <div class="press-modal-footer">
+                <div class="press-footer-info">
+                    <strong id="pressSelectedCount">0</strong> recipients selected
+                </div>
+                <div class="press-footer-actions">
+                    <button class="press-btn secondary" onclick="savePressReleaseDraft()">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/></svg>
+                        Save Draft
+                    </button>
+                    <button class="press-btn secondary" onclick="sendTestEmail()">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                        Send Test
+                    </button>
+                    <button class="press-btn primary" id="pressSendBtn" onclick="sendPressRelease()">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>
+                        Send Press Release
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Sending Overlay -->
+            <div class="press-sending-overlay" id="pressSendingOverlay" style="display: none;">
+                <div class="press-sending-spinner"></div>
+                <div class="press-sending-text">Sending Press Release...</div>
+                <div class="press-sending-progress" id="pressSendingProgress">0 / 0 sent</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Press History Modal -->
+    <div class="press-modal" id="pressHistoryModal">
+        <div class="press-modal-content" style="max-width: 800px;">
+            <div class="press-modal-header">
+                <h2>
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    Press Release History
+                </h2>
+                <button class="press-modal-close" onclick="closePressHistoryModal()">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
+            </div>
+            
+            <div class="press-history-list" id="pressHistoryList">
+                <!-- History items loaded dynamically -->
+            </div>
+        </div>
+    </div>
+
     <!-- Save Indicator -->
     <div class="save-indicator" id="saveIndicator">
         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
@@ -2123,6 +2628,352 @@
             loadPartnerData();
         }
 
+        // ===== PRESS RELEASE FUNCTIONALITY =====
+        
+        let pressRecipients = [];
+        let selectedRecipients = new Set();
+        let pressCategories = [];
+        
+        // Open Press Release Modal
+        async function openPressReleaseModal() {
+            document.getElementById('pressReleaseModal').classList.add('active');
+            await loadPressRecipients();
+        }
+        
+        function closePressModal() {
+            document.getElementById('pressReleaseModal').classList.remove('active');
+        }
+        
+        // Load media recipients
+        async function loadPressRecipients() {
+            try {
+                const response = await fetch(`${API_BASE}/api/admin/press/recipients`, {
+                    headers: { 'Authorization': `Bearer ${authToken}` }
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    pressRecipients = data.recipients || [];
+                    pressCategories = data.categories || [];
+                    
+                    document.getElementById('pressTotalCount').textContent = data.totalMedia || 0;
+                    document.getElementById('pressEmailCount').textContent = data.withEmail || 0;
+                    
+                    // Populate category filter
+                    const categorySelect = document.getElementById('pressCategoryFilter');
+                    categorySelect.innerHTML = '<option value="all">All Categories</option>' +
+                        pressCategories.map(c => `<option value="${c}">${c}</option>`).join('');
+                    
+                    renderPressRecipients();
+                    updateSelectedCount();
+                }
+            } catch (error) {
+                console.error('Load press recipients error:', error);
+            }
+        }
+        
+        // Render recipients list
+        function renderPressRecipients() {
+            const filter = document.getElementById('pressCategoryFilter').value;
+            const list = document.getElementById('pressRecipientsList');
+            
+            let filtered = pressRecipients;
+            if (filter !== 'all') {
+                filtered = pressRecipients.filter(r => r.category === filter);
+            }
+            
+            if (filtered.length === 0) {
+                list.innerHTML = `
+                    <div style="text-align: center; padding: 2rem; color: var(--text-muted);">
+                        <p>No media contacts found</p>
+                        <small>Import media contacts with email addresses to send press releases</small>
+                    </div>
+                `;
+                return;
+            }
+            
+            list.innerHTML = filtered.map(r => `
+                <div class="press-recipient-item ${selectedRecipients.has(r.id) ? 'selected' : ''}" 
+                     onclick="toggleRecipient('${r.id}')">
+                    <input type="checkbox" ${selectedRecipients.has(r.id) ? 'checked' : ''} 
+                           ${!r.email ? 'disabled' : ''}
+                           onclick="event.stopPropagation(); toggleRecipient('${r.id}')">
+                    <div class="press-recipient-info">
+                        <div class="press-recipient-name">${escapeHtml(r.organization || r.name)}</div>
+                        <div class="press-recipient-meta">${escapeHtml(r.category || '')} ${r.location ? '• ' + escapeHtml(r.location) : ''}</div>
+                        ${r.email ? 
+                            `<div class="press-recipient-email">${escapeHtml(r.email)}</div>` : 
+                            `<div class="press-no-email">No email address</div>`
+                        }
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        // Toggle recipient selection
+        function toggleRecipient(id) {
+            const recipient = pressRecipients.find(r => r.id === id);
+            if (!recipient || !recipient.email) return;
+            
+            if (selectedRecipients.has(id)) {
+                selectedRecipients.delete(id);
+            } else {
+                selectedRecipients.add(id);
+            }
+            
+            renderPressRecipients();
+            updateSelectedCount();
+        }
+        
+        // Toggle all recipients
+        function toggleAllRecipients() {
+            const selectAll = document.getElementById('pressSelectAll').checked;
+            const filter = document.getElementById('pressCategoryFilter').value;
+            
+            let filtered = pressRecipients;
+            if (filter !== 'all') {
+                filtered = pressRecipients.filter(r => r.category === filter);
+            }
+            
+            if (selectAll) {
+                filtered.filter(r => r.email).forEach(r => selectedRecipients.add(r.id));
+            } else {
+                filtered.forEach(r => selectedRecipients.delete(r.id));
+            }
+            
+            renderPressRecipients();
+            updateSelectedCount();
+        }
+        
+        // Filter recipients by category
+        function filterPressRecipients() {
+            // Reset selection for new filter
+            selectedRecipients.clear();
+            document.getElementById('pressSelectAll').checked = true;
+            
+            const filter = document.getElementById('pressCategoryFilter').value;
+            let filtered = pressRecipients;
+            if (filter !== 'all') {
+                filtered = pressRecipients.filter(r => r.category === filter);
+            }
+            
+            // Select all with email in this category
+            filtered.filter(r => r.email).forEach(r => selectedRecipients.add(r.id));
+            
+            renderPressRecipients();
+            updateSelectedCount();
+        }
+        
+        // Update selected count
+        function updateSelectedCount() {
+            document.getElementById('pressSelectedCount').textContent = selectedRecipients.size;
+            document.getElementById('pressSendBtn').disabled = selectedRecipients.size === 0;
+        }
+        
+        // Insert personalization token
+        function insertToken(token) {
+            const textarea = document.getElementById('pressBody');
+            const start = textarea.selectionStart;
+            const end = textarea.selectionEnd;
+            const text = textarea.value;
+            textarea.value = text.substring(0, start) + token + text.substring(end);
+            textarea.selectionStart = textarea.selectionEnd = start + token.length;
+            textarea.focus();
+        }
+        
+        // Send test email
+        async function sendTestEmail() {
+            const subject = document.getElementById('pressSubject').value;
+            const body = document.getElementById('pressBody').value;
+            
+            if (!subject || !body) {
+                alert('Please enter a subject and body');
+                return;
+            }
+            
+            const testEmail = prompt('Enter test email address:', 'ben@luminary-tech.ai');
+            if (!testEmail) return;
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/admin/press/send`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        subject,
+                        htmlBody: body.replace(/\n/g, '<br>'),
+                        textBody: body,
+                        testEmail
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    alert(`Test email sent to ${testEmail}`);
+                } else {
+                    alert('Failed to send test: ' + result.error);
+                }
+            } catch (error) {
+                console.error('Send test error:', error);
+                alert('Error sending test email');
+            }
+        }
+        
+        // Send press release to all selected recipients
+        async function sendPressRelease() {
+            const subject = document.getElementById('pressSubject').value;
+            const body = document.getElementById('pressBody').value;
+            
+            if (!subject || !body) {
+                alert('Please enter a subject and body');
+                return;
+            }
+            
+            if (selectedRecipients.size === 0) {
+                alert('Please select at least one recipient');
+                return;
+            }
+            
+            const confirmMsg = `Send press release to ${selectedRecipients.size} recipients?\n\nSubject: ${subject}`;
+            if (!confirm(confirmMsg)) return;
+            
+            // Show sending overlay
+            const overlay = document.getElementById('pressSendingOverlay');
+            overlay.style.display = 'flex';
+            document.getElementById('pressSendingProgress').textContent = `0 / ${selectedRecipients.size} sent`;
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/admin/press/send`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        subject,
+                        htmlBody: body.replace(/\n/g, '<br>'),
+                        textBody: body,
+                        recipientIds: Array.from(selectedRecipients)
+                    })
+                });
+                
+                const result = await response.json();
+                
+                overlay.style.display = 'none';
+                
+                if (response.ok) {
+                    alert(`Press release sent!\n\nSent: ${result.sent}\nFailed: ${result.failed}`);
+                    closePressModal();
+                    
+                    // Clear form
+                    document.getElementById('pressSubject').value = '';
+                    document.getElementById('pressBody').value = '';
+                } else {
+                    alert('Failed to send: ' + result.error);
+                }
+            } catch (error) {
+                console.error('Send press release error:', error);
+                overlay.style.display = 'none';
+                alert('Error sending press release');
+            }
+        }
+        
+        // Save draft
+        async function savePressReleaseDraft() {
+            const subject = document.getElementById('pressSubject').value;
+            const body = document.getElementById('pressBody').value;
+            const category = document.getElementById('pressCategoryFilter').value;
+            
+            if (!subject && !body) {
+                alert('Nothing to save');
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/admin/press/draft`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        subject,
+                        htmlBody: body.replace(/\n/g, '<br>'),
+                        textBody: body,
+                        category
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    showSaveIndicator('saved');
+                } else {
+                    alert('Failed to save draft');
+                }
+            } catch (error) {
+                console.error('Save draft error:', error);
+            }
+        }
+        
+        // Press History
+        async function openPressHistoryModal() {
+            document.getElementById('pressHistoryModal').classList.add('active');
+            await loadPressHistory();
+        }
+        
+        function closePressHistoryModal() {
+            document.getElementById('pressHistoryModal').classList.remove('active');
+        }
+        
+        async function loadPressHistory() {
+            try {
+                const response = await fetch(`${API_BASE}/api/admin/press/history`, {
+                    headers: { 'Authorization': `Bearer ${authToken}` }
+                });
+                
+                const history = await response.json();
+                
+                if (response.ok) {
+                    renderPressHistory(history);
+                }
+            } catch (error) {
+                console.error('Load press history error:', error);
+            }
+        }
+        
+        function renderPressHistory(history) {
+            const list = document.getElementById('pressHistoryList');
+            
+            if (!history || history.length === 0) {
+                list.innerHTML = `
+                    <div style="text-align: center; padding: 3rem; color: var(--text-muted);">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="48" height="48" style="margin-bottom: 1rem; opacity: 0.3;">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"/>
+                        </svg>
+                        <p>No press releases sent yet</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            list.innerHTML = history.filter(h => !h.isDraft).map(h => `
+                <div class="press-history-item">
+                    <div class="press-history-subject">${escapeHtml(h.subject || 'Untitled')}</div>
+                    <div class="press-history-meta">
+                        <span>${formatDate(h.sentAt)}</span>
+                        <span class="press-history-stat success">✓ ${h.sentCount || 0} sent</span>
+                        ${h.failedCount > 0 ? `<span class="press-history-stat failed">✗ ${h.failedCount} failed</span>` : ''}
+                        <span>${h.recipientCount || 0} recipients</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
         function logout() {
             authToken = null;
             localStorage.removeItem('luminary_auth_token');
@@ -3689,6 +4540,8 @@ Please let us know if you have other questions.
                     if (action === 'export') exportData();
                     if (action === 'import') importData();
                     if (action === 'refresh') refreshData();
+                    if (action === 'pressRelease') openPressReleaseModal();
+                    if (action === 'pressHistory') openPressHistoryModal();
                 });
             });
 
