@@ -3816,6 +3816,71 @@
             color: var(--gold-primary);
         }
         
+        /* Smart Tier Recommendation */
+        .tier-recommendation {
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.15) 0%, rgba(212, 175, 55, 0.05) 100%);
+            border: 1px solid var(--gold-primary);
+            border-radius: 10px;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        .tier-recommendation-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 600;
+            color: var(--gold-primary);
+            margin-bottom: 0.5rem;
+        }
+        .tier-recommendation-content {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+        
+        /* Toggle Switch */
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 26px;
+        }
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            transition: 0.3s;
+            border-radius: 26px;
+        }
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 20px;
+            width: 20px;
+            left: 2px;
+            bottom: 2px;
+            background-color: var(--text-secondary);
+            transition: 0.3s;
+            border-radius: 50%;
+        }
+        .toggle-switch input:checked + .toggle-slider {
+            background-color: var(--gold-primary);
+            border-color: var(--gold-primary);
+        }
+        .toggle-switch input:checked + .toggle-slider:before {
+            transform: translateX(24px);
+            background-color: white;
+        }
+        
         /* Proposal Preview */
         .proposal-preview {
             background: white;
@@ -5177,6 +5242,17 @@
                 
                 <!-- Step 2: Terms & Deliverables -->
                 <div class="wizard-step-content" id="wizardStep2" style="display: none;">
+                    <!-- Smart Tier Detection -->
+                    <div id="tierRecommendation" class="tier-recommendation" style="display: none;">
+                        <div class="tier-recommendation-header">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="18" height="18"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>
+                            Smart Tier Recommendation
+                        </div>
+                        <div class="tier-recommendation-content">
+                            <span id="tierRecommendationText">Analyzing research data...</span>
+                        </div>
+                    </div>
+                    
                     <div class="proposal-config">
                         <div class="config-section">
                             <div class="config-section-title">
@@ -5187,37 +5263,38 @@
                                 <label>Partnership Tier</label>
                                 <div class="tier-options">
                                     <div class="tier-option" data-tier="explorer" onclick="selectTier('explorer')">
-                                        <div class="tier-option-name">Explorer</div>
-                                        <div class="tier-option-price">$5,000/yr</div>
+                                        <div class="tier-option-name">Teaching College</div>
+                                        <div class="tier-option-price">$5,000-$8,000/yr</div>
                                     </div>
                                     <div class="tier-option selected" data-tier="partner" onclick="selectTier('partner')">
-                                        <div class="tier-option-name">Partner</div>
-                                        <div class="tier-option-price">$15,000/yr</div>
+                                        <div class="tier-option-name">State Flagship</div>
+                                        <div class="tier-option-price">$15,000-$20,000/yr</div>
                                     </div>
                                     <div class="tier-option" data-tier="enterprise" onclick="selectTier('enterprise')">
-                                        <div class="tier-option-name">Enterprise</div>
-                                        <div class="tier-option-price">$50,000/yr</div>
+                                        <div class="tier-option-name">"Hedge Fund" School</div>
+                                        <div class="tier-option-price">$20,000-$30,000/yr</div>
                                     </div>
                                 </div>
                             </div>
                             <div class="config-field">
-                                <label>Custom Annual Investment ($)</label>
+                                <label>Annual Investment ($) - Flat Institutional Fee</label>
                                 <input type="number" id="proposalAmount" value="15000" min="0" step="1000">
+                                <small style="color: #888; font-size: 0.75rem;">Single line item for the department - no per-seat billing</small>
                             </div>
                             <div class="config-field">
-                                <label>Term Length</label>
+                                <label>Term Length (with Founding Partner Rate Lock)</label>
                                 <select id="proposalTerm">
                                     <option value="12">12 Months</option>
-                                    <option value="24" selected>24 Months</option>
+                                    <option value="24" selected>24 Months (Recommended)</option>
                                     <option value="36">36 Months</option>
                                 </select>
                             </div>
                             <div class="config-field">
                                 <label>Payment Schedule</label>
                                 <select id="proposalPaymentSchedule">
-                                    <option value="annual">Annual (one payment)</option>
+                                    <option value="annual" selected>Annual Upfront (Recommended)</option>
                                     <option value="semi-annual">Semi-Annual (2 payments)</option>
-                                    <option value="quarterly" selected>Quarterly (4 payments)</option>
+                                    <option value="quarterly">Quarterly (4 payments)</option>
                                 </select>
                             </div>
                         </div>
@@ -5237,12 +5314,57 @@
                                 </select>
                             </div>
                             <div class="config-field">
-                                <label>User Seats</label>
-                                <input type="number" id="proposalSeats" value="10" min="1">
+                                <label>Access Model</label>
+                                <select id="proposalSeats" onchange="updateSeatsLabel()">
+                                    <option value="999">Unlimited Institutional Access (Recommended)</option>
+                                    <option value="50">Department License (~50 users)</option>
+                                    <option value="100">Large Department (~100 users)</option>
+                                    <option value="250">Multi-Department (~250 users)</option>
+                                </select>
+                                <small id="seatsLabel" style="color: #888; font-size: 0.75rem;">All students and faculty can create accounts</small>
                             </div>
                             <div class="config-field">
                                 <label>Deliverables (one per line)</label>
-                                <textarea id="proposalDeliverables" placeholder="Full platform access&#10;Dedicated onboarding & training&#10;Priority technical support&#10;Quarterly business reviews"></textarea>
+                                <textarea id="proposalDeliverables" placeholder="Full platform access&#10;Two annual curriculum alignment sessions&#10;Priority email support for faculty&#10;Access to research publications&#10;Founding Partner rate lock"></textarea>
+                            </div>
+                        </div>
+                        
+                        <!-- Legacy Fund Configuration -->
+                        <div class="config-section">
+                            <div class="config-section-title">
+                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="16" height="16"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7"/></svg>
+                                Legacy Fund (Optional)
+                            </div>
+                            <p style="font-size: 0.85rem; color: #888; margin-bottom: 1rem;">Create a perpetual fund that grows over time and provides annual grants back to the partner institution.</p>
+                            <div class="config-field" style="display: flex; align-items: center; gap: 1rem;">
+                                <label style="flex: 1;">Enable Legacy Fund</label>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="legacyFundEnabled" onchange="updateLegacyFundPreview()">
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+                            <div id="legacyFundConfig" style="display: none; margin-top: 1rem; padding: 1rem; background: rgba(212, 175, 55, 0.1); border-radius: 8px;">
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                                    <div>
+                                        <label style="font-size: 0.8rem; color: #888;">Contribution Rate</label>
+                                        <select id="legacyContributionRate" onchange="updateLegacyFundPreview()">
+                                            <option value="0.05">5% of annual fee</option>
+                                            <option value="0.10" selected>10% of annual fee</option>
+                                            <option value="0.15">15% of annual fee</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label style="font-size: 0.8rem; color: #888;">Vesting Period</label>
+                                        <select id="legacyVestingPeriod">
+                                            <option value="2">2 Years</option>
+                                            <option value="3" selected>3 Years</option>
+                                            <option value="5">5 Years</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div id="legacyFundPreview" style="font-size: 0.85rem; color: #d4af37;">
+                                    Annual contribution: $1,500 → Projected fund at Year 10: ~$19,800 → Annual grant: ~$792
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -6418,6 +6540,7 @@ media@luminary-tech.ai"></textarea>
             }
             
             renderResearchSummary();
+            detectPricingTier(); // Auto-detect tier from research
         }
         
         function renderResearchSummary() {
@@ -6428,8 +6551,8 @@ media@luminary-tech.ai"></textarea>
                 { id: 'background', title: 'Organization Background', icon: '🏛️' },
                 { id: 'leadership', title: 'Key Decision Makers', icon: '👥' },
                 { id: 'tech_contracts', title: 'Active Tech Contracts', icon: '📋' },
-                { id: 'partnership_rules', title: 'Partnership Requirements', icon: '📜' },
-                { id: 'budget_funding', title: 'Budget & Funding', icon: '💰' },
+                { id: 'vendor_rules', title: 'Partnership Requirements', icon: '📜' },
+                { id: 'budget_cycles', title: 'Budget & Funding', icon: '💰' },
                 { id: 'payment_pathway', title: 'Payment Pathway', icon: '🛤️' },
                 { id: 'tax_benefits', title: 'Tax Benefits', icon: '📊' },
                 { id: 'competitive', title: 'Competitive Intel', icon: '🔍' }
@@ -6522,8 +6645,15 @@ media@luminary-tech.ai"></textarea>
                 proposalConfig.term = parseInt(document.getElementById('proposalTerm').value) || 24;
                 proposalConfig.paymentSchedule = document.getElementById('proposalPaymentSchedule').value;
                 proposalConfig.platform = document.getElementById('proposalPlatform').value;
-                proposalConfig.seats = parseInt(document.getElementById('proposalSeats').value) || 10;
+                proposalConfig.seats = parseInt(document.getElementById('proposalSeats').value) || 999;
                 proposalConfig.deliverables = document.getElementById('proposalDeliverables').value;
+                
+                // Capture Legacy Fund settings
+                proposalConfig.legacyFund = {
+                    enabled: document.getElementById('legacyFundEnabled').checked,
+                    contributionRate: parseFloat(document.getElementById('legacyContributionRate').value) || 0.10,
+                    vestingPeriod: parseInt(document.getElementById('legacyVestingPeriod').value) || 3
+                };
             } else if (wizardStep === 3) {
                 proposalConfig.rationale = document.getElementById('proposalRationale').value;
                 proposalConfig.paymentPathway = document.getElementById('proposalPaymentPathway').value;
@@ -6545,13 +6675,128 @@ media@luminary-tech.ai"></textarea>
         
         function selectTier(tier) {
             proposalConfig.tier = tier;
-            const amounts = { explorer: 5000, partner: 15000, enterprise: 50000 };
+            const amounts = { explorer: 8000, partner: 18000, enterprise: 25000 };
             proposalConfig.amount = amounts[tier];
             document.getElementById('proposalAmount').value = amounts[tier];
             
             document.querySelectorAll('.tier-option').forEach(el => {
                 el.classList.toggle('selected', el.dataset.tier === tier);
             });
+            
+            updateLegacyFundPreview();
+        }
+        
+        function updateSeatsLabel() {
+            const seats = document.getElementById('proposalSeats').value;
+            const label = document.getElementById('seatsLabel');
+            if (seats === '999') {
+                label.textContent = 'All students and faculty can create accounts';
+            } else {
+                label.textContent = `Up to ${seats} users can access the platform`;
+            }
+        }
+        
+        function updateLegacyFundPreview() {
+            const enabled = document.getElementById('legacyFundEnabled').checked;
+            const configDiv = document.getElementById('legacyFundConfig');
+            
+            if (enabled) {
+                configDiv.style.display = 'block';
+                
+                const amount = parseInt(document.getElementById('proposalAmount').value) || 15000;
+                const rate = parseFloat(document.getElementById('legacyContributionRate').value) || 0.10;
+                const contribution = Math.round(amount * rate);
+                
+                // Calculate 10-year projection (8% growth, 4% distribution after year 3)
+                let balance = 0;
+                const growthRate = 0.08;
+                for (let year = 1; year <= 10; year++) {
+                    balance = (balance + contribution) * (1 + growthRate);
+                }
+                const annualGrant = Math.round(balance * 0.04);
+                
+                const preview = document.getElementById('legacyFundPreview');
+                preview.innerHTML = `Annual contribution: <strong>$${contribution.toLocaleString()}</strong> → Projected fund at Year 10: <strong>~$${Math.round(balance).toLocaleString()}</strong> → Annual grant: <strong>~$${annualGrant.toLocaleString()}</strong>`;
+            } else {
+                configDiv.style.display = 'none';
+            }
+        }
+        
+        function detectPricingTier() {
+            // Smart tier detection based on research
+            if (!wizardResearch) return;
+            
+            const background = wizardResearch?.background?.content || '';
+            const techContracts = wizardResearch?.tech_contracts?.content || '';
+            const budget = wizardResearch?.budget_cycles?.content || '';
+            
+            let score = 0;
+            const reasons = [];
+            
+            // Check for Bloomberg terminals
+            if (techContracts.toLowerCase().includes('bloomberg')) {
+                score += 30;
+                reasons.push('Bloomberg terminal access detected');
+            }
+            
+            // Check for high tuition indicators
+            if (background.match(/tuition.{0,30}\$[4-6]\d,?\d{3}/i) || background.match(/\$[4-6]\d,?\d{3}.{0,30}tuition/i)) {
+                score += 25;
+                reasons.push('High tuition institution');
+            }
+            
+            // Check for private university
+            if (background.match(/private.{0,20}university/i)) {
+                score += 15;
+                reasons.push('Private institution');
+            }
+            
+            // Check for Student Managed Fund
+            if (background.toLowerCase().includes('student managed fund') || background.toLowerCase().includes('investment fund') || background.toLowerCase().includes('student fund')) {
+                score += 20;
+                reasons.push('Student investment program');
+            }
+            
+            // Check for large endowment
+            if (budget.match(/endowment.{0,30}\$\d+\s*(billion|b)/i)) {
+                score += 25;
+                reasons.push('Large endowment');
+            }
+            
+            // Check for state/public school (lower tier indicator)
+            if (background.match(/state university|public university|public research/i)) {
+                score -= 10;
+            }
+            
+            // Determine tier and show recommendation
+            const recDiv = document.getElementById('tierRecommendation');
+            const recText = document.getElementById('tierRecommendationText');
+            
+            if (reasons.length > 0) {
+                recDiv.style.display = 'block';
+                
+                let tier, amount, tierName;
+                if (score >= 50) {
+                    tier = 'enterprise';
+                    amount = 25000;
+                    tierName = '"Hedge Fund" School';
+                } else if (score >= 20) {
+                    tier = 'partner';
+                    amount = 18000;
+                    tierName = 'State Flagship';
+                } else {
+                    tier = 'explorer';
+                    amount = 8000;
+                    tierName = 'Teaching College';
+                }
+                
+                recText.innerHTML = `Based on research, we recommend <strong>${tierName}</strong> tier ($${amount.toLocaleString()}/yr). <br><small style="color: #888;">Indicators: ${reasons.join(', ')}</small>`;
+                
+                // Auto-select tier
+                selectTier(tier);
+            } else {
+                recDiv.style.display = 'none';
+            }
         }
         
         async function generateInvestmentRationale() {
